@@ -25,13 +25,17 @@ interface RootLayoutProps {
   };
 }
 
-export default function RootLayout({ children, params }: RootLayoutProps) {
+import HomePage from './page';
+
+export default async function RootLayout({ children, params }: RootLayoutProps) {
+  const awaitedParams = await params;
   return (
-    <html lang={params.lang} dir={params.lang === 'ar' ? 'rtl' : 'ltr'}>
+    <html lang={awaitedParams.lang} dir={awaitedParams.lang === 'ar' ? 'rtl' : 'ltr'}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <I18nProviderClient>
+          <HomePage lang={awaitedParams.lang} />
           {children}
         </I18nProviderClient>
       </body>

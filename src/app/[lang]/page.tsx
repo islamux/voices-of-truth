@@ -9,14 +9,10 @@ import { scholars as allScholarsData } from '../../data/scholars';
 import { Scholar } from '../../types';
 import { useTranslation } from 'react-i18next';
 
-interface HomePageProps {
-  params: {
-    lang: string; // Current language from URL parameters.
-  };
+ interface HomePageProps {
+  lang: string; // Current language from URL parameters.
 }
-
-const HomePage: FC<HomePageProps> = ({ params }) => {
-  const { lang } = params; // Destructure lang from params.
+const HomePage: FC<HomePageProps> = ({ lang }) => {
   const { t } = useTranslation('common'); // Hook for translations.
 
   // State for selected country filter, default is empty (no filter).
@@ -90,3 +86,5 @@ const HomePage: FC<HomePageProps> = ({ params }) => {
     </Layout>
   );
 }
+
+export default HomePage;

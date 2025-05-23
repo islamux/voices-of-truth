@@ -2,11 +2,11 @@
 "use client"; // Marks this component as a Client Component.
 
 import React, { useState, useEffect, useMemo, FC } from 'react';
-import Layout from '../../../components/Layout';
-import ScholarCard from '../../../components/ScholarCard';
-import FilterBar from '../../../components/FilterBar';
-import { scholars as allScholarsData } from '../../../data/scholars';
-import { Scholar } from '../../../types';
+import Layout from '../../components/Layout';
+import ScholarCard from '../../components/ScholarCard';
+import FilterBar from '../../components/FilterBar';
+import { scholars as allScholarsData } from '../../data/scholars';
+import { Scholar } from '../../types';
 import { useTranslation } from 'react-i18next';
 
 interface HomePageProps {

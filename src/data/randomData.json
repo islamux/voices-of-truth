@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Item One",
+      "value": 10
+    },
+    {
+      "id": 2,
+      "name": "Item Two",
+      "value": 20
+    },
+    {
+      "id": 3,
+      "name": "Item Three",
+      "value": 30
+    }
+  ]
+}

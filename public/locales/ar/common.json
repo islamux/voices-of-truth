@@ -1,0 +1,16 @@
+{
+  "appTitle": "أصوات الحق",
+  "filterByCountry": "التصفية حسب الدولة",
+  "filterByLanguage": "التصفية حسب اللغة",
+  "all": "الكل",
+  "noScholarsFound": "لم يتم العثور على علماء يطابقون معايير البحث.",
+  "headerTitle": "أصوات الحق",
+  "footerText": "© 2024 أصوات الحق. جميع الحقوق محفوظة.",
+  "language": "اللغة",
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+  "theme": "السمة",
+  "light": "فاتح",
+  "dark": "داكن",
+  "searchPlaceholder": "البحث بالاسم..."
+}

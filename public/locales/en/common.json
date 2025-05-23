@@ -1,0 +1,16 @@
+{
+  "appTitle": "Voices of Truth",
+  "filterByCountry": "Filter by Country",
+  "filterByLanguage": "Filter by Language",
+  "all": "All",
+  "noScholarsFound": "No scholars found matching your criteria.",
+  "headerTitle": "Voices of Truth",
+  "footerText": "© 2024 Voices of Truth. All rights reserved.",
+  "language": "Language",
+  "english": "English",
+  "arabic": "Arabic",
+  "theme": "Theme",
+  "light": "Light",
+  "dark": "Dark",
+  "searchPlaceholder": "Search by name..."
+}

@@ -1,6 +1,7 @@
 // src/components/ScholarCard.tsx
 "use client";
 
+import Image from 'next/image';
 import React from 'react';
 import { Scholar } from '../types';
 import { motion } from 'framer-motion';
@@ -57,11 +58,16 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar, currentLang }) => {
       transition={{ duration: 0.4, ease: "easeOut" }} // Animation timing and easing.
       whileHover={{ scale: 1.03, boxShadow: "0px 15px 25px rgba(0,0,0,0.15)" }} // Hover animation.
     >
-      <img 
+      <Image
         src={scholar.avatarUrl || '/avatars/default-avatar.png'} // Scholar's avatar or default.
         alt={`${name}'s avatar`}
-        className="w-28 h-28 rounded-full mx-auto object-cover border-2 border-gray-300 dark:border-gray-600 shadow-md mb-4" 
-        onError={(e) => (e.currentTarget.src = '/avatars/default-avatar.png')} // Fallback if image fails to load.
+        width={112} // w-28 = 28 * 4px = 112px
+        height={112} // h-28 = 28 * 4px = 112px
+        className="rounded-full mx-auto object-cover border-2 border-gray-300 dark:border-gray-600 shadow-md mb-4"
+        onError={(e) => {
+          e.currentTarget.src = '/avatars/default-avatar.png';
+        }} // Fallback if image fails to load.
+        unoptimized
       />
       <h3 className="text-lg sm:text-xl font-semibold text-[rgb(var(--foreground-rgb))] mb-1">{name}</h3>
       <p className="text-xs sm:text-sm text-[rgb(var(--muted-text-rgb))] mb-1">{country}</p>

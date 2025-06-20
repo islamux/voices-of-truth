@@ -2,7 +2,7 @@
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.x-blue?logo=next.js&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Web-blueviolet?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![License](https://img.shields.io/badge/License-GNU%20GPL-red?logo=gnu&style=flat-square)
 
 > **Voices of Truth** is a web app for browsing a directory of renowned scholars and preachers worldwide, supporting Arabic and English, built using Next.js, React, and Tailwind CSS.  
 > Built with ❤️ by [@islamux](https://github.com/islamux)

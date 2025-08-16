@@ -1,7 +1,7 @@
-// src/app/[lang]/page.tsx
-"use client"; // Marks this component as a Client Component.
+// src/app/page.tsx
+"use client";
 
-import React, { useState, useEffect, useMemo, FC } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Layout from '../components/Layout';
 import ScholarCard from '../components/ScholarCard';
 import FilterBar from '../components/FilterBar';
@@ -9,11 +9,9 @@ import { scholars as allScholarsData } from '../data/scholars';
 import { Scholar } from '../types';
 import { useTranslation } from 'react-i18next';
 
- interface HomePageProps {
-  lang: string; // Current language from URL parameters.
-}
-const HomePage: FC<HomePageProps> = ({ lang }) => {
-  const { t } = useTranslation('common'); // Hook for translations.
+const HomePage = () => {
+  const { t, i18n } = useTranslation('common');
+  const lang = i18n.language; // Get language from i18n instead of props
 
   // State for selected country filter, default is empty (no filter).
   const [selectedCountry, setSelectedCountry] = useState<string>('');

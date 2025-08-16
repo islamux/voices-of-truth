@@ -1,40 +1,66 @@
 # 📚 Voices of Truth - دليل العلماء والدعاة
 
-**Voices of Truth** هو تطبيق ويب مبني باستخدام Next.js و Tailwind CSS، يهدف إلى عرض دليل منظم للعلماء والدعاة حول العالم، مع معلومات مختصرة عن كل داعية تشمل الاسم، الدولة، اللغة، ومنصة التواصل الاجتماعي الخاصة به.
+![Next.js](https://img.shields.io/badge/Next.js-15.x-blue?logo=next.js&style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Web-blueviolet?style=flat-square)
+![License](https://img.shields.io/badge/License-GNU%20GPL-red?logo=gnu&style=flat-square)
+
+> **Voices of Truth** is a web app for browsing a directory of renowned scholars and preachers worldwide, supporting Arabic and English, built using Next.js, React, and Tailwind CSS.  
+> Built with ❤️ by [@islamux](https://github.com/islamux)
 
 ---
 
-## 🚀 الميزات الرئيسية (Key Features)
+## 🚀 Features
 
-- 🎨 واجهة استخدام جذابة وسهلة الاستخدام (Attractive and user-friendly UI)
-- 🌙 دعم الوضع الليلي والنهاري (Dark/Light mode support)
-- 📱 تصميم متجاوب بالكامل (Fully Responsive Design)
-- 🔤 دعم RTL للغة العربية واللغة الإنجليزية (RTL support for Arabic, LTR for English)
-- 🌍 تدويل باستخدام `react-i18next` مع القدرة على التبديل بين اللغتين (Internationalization with `react-i18next` and language switching)
-- 📍 عرض معلومات مختصرة ومنظمة عن كل داعية (Organized and concise scholar information)
-- 🔍 تصفية العلماء حسب الدولة واللغة (Filter scholars by country and language)
-- ✨ مؤثرات بصرية وحركية باستخدام `Framer Motion` (Animations with `Framer Motion`)
-- 🖼️ استخدام أيقونات من `react-icons` (Icons from `react-icons`)
-- 📝 استخدام بيانات محلية (JS module) كمصدر للبيانات (Uses local data (JS module) as data source)
+- 🎨 Beautiful, user-friendly interface
+- 🌙 Dark & Light mode support
+- 🌍 Internationalization with instant language switching (Arabic RTL & English LTR)
+- 📱 Fully responsive for all devices
+- 🔍 Filter scholars by country and language
+- ✨ Smooth animations with Framer Motion
+- 🖼️ Iconography with react-icons
+- 📝 Local (mock) data source for fast demo/development
 
 ---
 
-## 🛠️ التقنيات المستخدمة (Technologies Used)
+## 📷 Preview
 
-- [Next.js](https://nextjs.org/) (v15.1.8 or similar)
-- [React](https://reactjs.org/) (v19 or similar)
-- [Tailwind CSS](https://tailwindcss.com/) (v3.4.17 or similar)
-- [Framer Motion](https://www.framer.com/motion/) (v12.12.1 or similar)
-- [i18next](https://www.i18next.com/)
-- [react-i18next](https://react.i18next.com/)
-- [i18next-http-backend](https://github.com/i18next/i18next-http-backend)
-- [i18next-browser-languagedetector](https://github.com/i18next/i18next-browser-languageDetector)
-- [React Icons](https://react-icons.github.io/react-icons/) (v5.5.0 or similar)
-- TypeScript
+<!-- You can add a screenshot here if available
+![App Preview](public/preview.png)
+-->
 
 ---
 
-## 📂 بنية المشروع (Project Structure)
+## 📦 Requirements
+
+- Node.js 18+
+- npm or yarn
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## 🧪 How to Use
+
+```bash
+git clone https://github.com/islamux/voices-of-truth.git
+cd voices-of-truth
+
+# Install dependencies
+npm install
+
+# Run the development server
+npm run dev
+```
+
+Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
+
+---
+
+## 📂 File Structure
 
 ```
 voices-of-truth/
@@ -46,64 +72,63 @@ voices-of-truth/
 │   │   │   └── common.json
 │   │   └── en/
 │   │       └── common.json
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
+│   └── ... (SVG icons)
 ├── src/
 │   ├── app/
-│   │   └── [lang]/               # Dynamic routes for language
+│   │   └── [lang]/
 │   │       ├── favicon.ico
 │   │       ├── globals.css
-│   │       ├── layout.tsx        # Root layout for each language
-│   │       └── page.tsx          # Main page for scholar directory
+│   │       ├── layout.tsx
+│   │       └── page.tsx
 │   ├── components/
-│   │   ├── FilterBar.tsx         # Component for filtering scholars
-│   │   ├── I18nProviderClient.tsx # Client-side i18n provider
-│   │   ├── Layout.tsx            # Main layout component (header, footer, theme/lang switch)
-│   │   └── ScholarCard.tsx       # Component to display individual scholar info
+│   │   ├── FilterBar.tsx
+│   │   ├── I18nProviderClient.tsx
+│   │   ├── Layout.tsx
+│   │   └── ScholarCard.tsx
 │   ├── data/
-│   │   └── scholars.ts           # Sample data for scholars
+│   │   └── scholars.ts
 │   ├── lib/
-│   │   └── i18n.ts               # i18next configuration
+│   │   └── i18n.ts
 │   └── types/
-│       └── index.ts              # TypeScript type definitions (e.g., Scholar interface)
-├── .eslintrc.json
-├── next-i18next.config.js        # Configuration for next-i18next (used for i18n routing)
-├── next.config.ts
+│       └── index.ts
 ├── package.json
-├── postcss.config.mjs
+├── next.config.ts
 ├── README.md
-└── tsconfig.json
+└── ...
 ```
 
 ---
 
-## 🚀 تشغيل المشروع (Running the Project)
+## 🧠 How It Works
 
-1.  **تثبيت الاعتماديات (Install Dependencies):**
-    ```bash
-    npm install
-    ```
-    *ملاحظة: قد تواجه بعض المشاكل في تثبيت اعتماديات التدويل (`i18next` وملحقاته) بسبب قيود في بيئة التنفيذ. الكود الخاص بالتدويل موجود وجاهز.*
-    *(Note: You might encounter issues installing internationalization dependencies (`i18next` and related packages) due to limitations in some execution environments. The internationalization code itself is in place.)*
-
-2.  **تشغيل خادم التطوير (Run Development Server):**
-    ```bash
-    npm run dev
-    ```
-
-3.  افتح [http://localhost:3000/en](http://localhost:3000/en) أو [http://localhost:3000/ar](http://localhost:3000/ar) في متصفحك.
-    (Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.)
+- Uses local TypeScript data module (`src/data/scholars.ts`) to provide scholar info.
+- Internationalization is powered by `react-i18next` with language detection and local translation files.
+- Scholars are listed and filtered client-side, with dynamic language and theme switching.
+- Fully responsive and visually enhanced with Tailwind CSS and Framer Motion.
 
 ---
 
-## 📝 ملاحظات إضافية (Additional Notes)
+## 📜 License
 
--   تم استخدام بيانات وهمية للعلماء (`src/data/scholars.ts`) لأغراض العرض.
-    (Mock data for scholars (`src/data/scholars.ts`) is used for demonstration purposes.)
--   تم تضمين صور رمزية افتراضية. يمكنك استبدالها بصور حقيقية في `public/avatars/`.
-    (Default avatar images are included. You can replace them with actual images in `public/avatars/`.)
+This project is licensed under the **MIT License**.  
+Feel free to use and modify.  
+Read more: [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
 
-```
+---
+
+## ✨ Author
+
+**[@islamux](https://github.com/islamux)**  
+💻 Muslim Developer • Linux Terminal Lover • Open Source Enthusiast  
+🕊️ "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ" – الأنبياء 107  
+*Using technology to spread peace and benefit all of humanity.*
+
+---
+
+## ☁️ Future Ideas
+
+- Add a backend for real data and scholar profiles
+- User authentication for contributing new scholars
+- Integration with map providers to show scholar locations
+- Advanced filters and search
+- Add scholar audio/video lectures

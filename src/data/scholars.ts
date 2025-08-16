@@ -120,5 +120,17 @@ export const scholars: Scholar[] = [
       en: 'Scholar of Islam with a focus on Quranic interpretation and gender justice.',
       ar: 'باحثة في الإسلام مع التركيز على تفسير القرآن والعدالة بين الجنسين.'
     }
+  },
+  {
+    id: 'scholar-11',
+    name: { en: 'Moaz Elyan', ar: 'معاذ عليان' },
+    socialMedia: { platform: 'YouTube', link: 'https://www.youtube.com/@moazalian', icon: 'FaYoutube' },
+    country: { en: 'Egypt', ar: 'مصر' },
+    language: ['Arabic'],
+    avatarUrl: '/avatars/moaz_elyan.png',
+    bio: {
+      en: 'Egyptian preacher specialized in comparative religion.',
+      ar: 'داعية مصري متخصص في مقارنة الأديان.'
+    }
   }
 ];

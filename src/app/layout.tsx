@@ -10,12 +10,12 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
+  // The html and body tags will be added by the [locale] layout
+  // This is just a wrapper for global styles and metadata
   return (
-    <html>
-      <body>
-        {children}
-      </body>
+    <html suppressHydrationWarning>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

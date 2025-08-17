@@ -1,12 +1,12 @@
-// src/app/page.tsx
+// src/app/[locale]/page.tsx
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import Layout from '../components/Layout';
-import ScholarCard from '../components/ScholarCard';
-import FilterBar from '../components/FilterBar';
-import { scholars as allScholarsData } from '../data/scholars';
-import { Scholar } from '../types';
+import Layout from '../../components/Layout';
+import ScholarCard from '../../components/ScholarCard';
+import FilterBar from '../../components/FilterBar';
+import { scholars as allScholarsData } from '../../data/scholars';
+import { Scholar } from '../../types';
 import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {

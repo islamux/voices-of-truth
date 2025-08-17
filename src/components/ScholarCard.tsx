@@ -21,11 +21,10 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar, currentLang }) => {
   // Retrieves the localized bio, if available, falling back to English.
   const bio = scholar.bio && (scholar.bio[currentLang] || scholar.bio['en']);
 
-  // Renders the appropriate social media icon based on the scholar's data.
-  const renderSocialIcon = () => {
-    const iconName = scholar.socialMedia.icon; // Icon identifier from scholar data (e.g., "FaTwitter").
+  // Renders the appropriate social media icon based on the platform.
+  const renderSocialIcon = (platform: string, link: string, icon?: string) => {
     let iconElement; // Will hold the React icon component.
-    switch (iconName) { // Determines which icon component to use.
+    switch (icon) { // Determines which icon component to use.
       case 'FaTwitter': iconElement = <FaTwitter />; break;
       case 'FaYoutube': iconElement = <FaYoutube />; break;
       case 'FaFacebook': iconElement = <FaFacebook />; break;
@@ -35,16 +34,17 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar, currentLang }) => {
     }
     return (
       <a 
-        href={scholar.socialMedia.link} 
+        href={link} 
         target="_blank" // Open link in a new tab.
         rel="noopener noreferrer" // Security best practice for external links.
-        className="text-[rgb(var(--muted-text-rgb))] hover:text-[rgb(var(--foreground-rgb))] transition-colors"
-        aria-label={`${scholar.socialMedia.platform} link for ${name}`} // Accessibility label.
+        className="text-[rgb(var(--muted-text-rgb))] hover:text-[rgb(var(--foreground-rgb))] transition-colors mx-2"
+        aria-label={`${platform} link for ${name}`} // Accessibility label.
+        key={link} // Unique key for React list rendering
       >
         <IconContext.Provider value={{ size: "1.5em" }}> {/* Standardizes icon size. */}
           {iconElement}
         </IconContext.Provider>
-        <span className="sr-only">{scholar.socialMedia.platform}</span> {/* Screen reader text. */}
+        <span className="sr-only">{platform}</span> {/* Screen reader text. */}
       </a>
     );
   };
@@ -77,7 +77,9 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar, currentLang }) => {
       </p>
       {/* Social media link section, appears at the bottom of the card. */}
       <div className="mt-auto pt-3 border-t border-[rgb(var(--card-border-rgb))] w-full flex justify-center items-center">
-        {renderSocialIcon()}
+        {scholar.socialMedia.map((social) => 
+          renderSocialIcon(social.platform, social.link, social.icon)
+        )}
       </div>
     </motion.div>
   );

@@ -165,5 +165,55 @@ export const scholars: Scholar[] = [
       en: 'Educational videos in comparative religion and responding to doubts. Channel manager: Mahmoud Dawoud Mimo, presenter of "Qarar Izala" program on Safa channel.',
       ar: 'فيديوهات تعليمية متنوعة في مجال مقارنة الأديان والرد على الشبهات. مدير القناة: محمود داود ميمو، مقدم برنامج قرار إزالة على قناة صفا.'
     }
+  },
+  {
+    id: 'scholar-16',
+    name: { en: 'Moawad Alzahabey', ar: 'معوض توفيق الذهبي' },
+    socialMedia: [
+      { platform: 'Facebook', link: 'https://facebook.com/moawadt', icon: 'FaFacebook' },
+      { platform: 'Website', link: 'https://alzahabey.wordpress.com', icon: 'FaGlobe' },
+      { platform: 'Website', link: 'https://alzahabey.wordpress.co', icon: 'FaGlobe' },
+      { platform: 'YouTube', link: 'https://www.youtube.com/@ALZAHABEY', icon: 'FaYoutube' }
+    ],
+    country: { en: 'Egypt', ar: 'مصر' },
+    language: ['Arabic'],
+    avatarUrl: '/avatars/mu3awath.jpg',
+    bio: {
+      en: 'Islamic advocacy channel to respond to suspicions raised about the great Islam. My mission is to respond to the people of falsehood, demolish their falsehood, and show the truth with evidence and proof.',
+      ar: 'قناة إسلامية دعوية للرد على الشبهات المثارة حول الإسلام العظيم. مهمتى هي الرد على أهل البaطل وهدم باطلهم وإظهار الحق بالدليل والبرهان'
+    }
+  },
+  {
+    id: 'scholar-17',
+    name: { en: 'Captain Ahmed – Specialist in Comparative Religion', ar: 'الكابتن أحمد لمقارنة الأديان' },
+    socialMedia: [
+      { platform: 'TikTok', link: 'https://tiktok.com/@c.ahmed.h', icon: 'FaTiktok' },
+      { platform: 'YouTube', link: 'https://www.youtube.com/@C.Ahmed.h', icon: 'FaYoutube' }
+    ],
+    country: { en: 'Egypt', ar: 'مصر' },
+    language: ['Arabic'],
+    avatarUrl: '/avatars/kabtain-ahmad.jpg',
+    bio: {
+      en: 'Say, "O People of the Scripture, come to a word that is equitable between us and you - that we will not worship except Allah and not associate anything with Him and not take one another as lords instead of Allah." But if they turn away, then say, "Bear witness that we are Muslims [submitting to Him]."',
+      ar: 'قُلْ يَا أَهْلَ الْكِتَابِ تَعَالَوْا إِلَىٰ كَلِمَةٍ سَوَاءٍ bَيْنَنَا وَبَيْنَكُمْ أَلَّا نَعْبُدَ إِلَّا اللَّهَ وَلَا نُشْرِكَ بِهِ شَيْئًا وَلَا يَتَّخِذَ بَعْضُنَا بَعْضًا أَرْبَابًا مِّن دُونِ اللَّهِ ۚ فَإِن تَوَلَّوْا فَقُولُوا اشْهَدُوا بِأَنَّا مُسْلِمُونَ (64) آل عمران'
+    }
+  },
+  {
+    id: 'scholar-18',
+    name: { en: 'Sharief Almohawir', ar: 'شريف المحاور' },
+    socialMedia: [
+      { platform: 'Facebook', link: 'https://facebook.com/sherifelmasr', icon: 'FaFacebook' },
+      { platform: 'PayPal', link: 'https://paypal.com/paypalme/she642', icon: 'FaPaypal' },
+      { platform: 'TikTok', link: 'https://tiktok.com/@sherif_446', icon: 'FaTiktok' },
+      { platform: 'Telegram', link: 'https://t.me/SherifAlMo7awir', icon: 'FaTelegram' },
+      { platform: 'YouTube', link: 'https://www.youtube.com/@ShariefAlmohawir', icon: 'FaYoutube' }
+    ],
+    country: { en: 'Egypt', ar: 'مصر' },
+    language: ['Arabic'],
+    avatarUrl: '/avatars/sharif.jpg',
+    bio: {
+      en: 'An educational dialogue channel specializing in comparative religion and responding to suspicions raised about the great Islam. It also presents interesting and useful debates and dialogues, including discussions on social issues for Muslims in which its followers contribute with their diverse opinions.',
+      ar: 'قناة حوارية تعليمية متخصصة في مقارنة الأديان والرد على الشبهات التي تثار حول إلاسلام العظيم. كما تقدم مناظرات وحوارات شيقة ومفيدة، من ضمنها نقاشات حول الشؤون الإجتماعية الخاصة بالمسلمين والتي يساهم فيها متابعيها الذين يثرونها بآرائهم المتنوعة.'
+    }
   }
 ];

@@ -2,6 +2,7 @@
   "appTitle": "أصوات الحق",
   "filterByCountry": "التصفية حسب الدولة",
   "filterByLanguage": "التصفية حسب اللغة",
+  "filterByCategory": "التصفية حسب التصنيف",
   "all": "الكل",
   "noScholarsFound": "لم يتم العثور على علماء يطابقون معايير البحث.",
   "headerTitle": "أصوات الحق",
@@ -12,5 +13,13 @@
   "theme": "السمة",
   "light": "فاتح",
   "dark": "داكن",
-  "searchPlaceholder": "البحث بالاسم..."
+  "searchPlaceholder": "البحث بالاسم...",
+  "comparativeReligion": "مقارنة أديان",
+  "hadithStudies": "الحديث الشريف",
+  "contemporaryIslamicThought": "الفكر الإسلامي المعاصر",
+  "spiritualityEthics": "التزكية والأخلاق",
+  "dawah": "الدعوة",
+  "interfaithDialogue": "الحوار بين الأديان",
+  "quranStudies": "علوم القرآن",
+  "quranInterpretation": "تفسير القرآن"
 }

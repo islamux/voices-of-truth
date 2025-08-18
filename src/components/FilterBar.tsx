@@ -8,15 +8,19 @@ interface FilterBarProps {
   uniqueCountries: Array<{ value: string; label: string }>; // Array of unique countries for the filter dropdown.
                                                           // Each object has a 'value' (e.g., country code) and 'label' (display name).
   uniqueLanguages: string[]; // Array of unique languages for the filter dropdown.
+  uniqueCategories: Array<{ value: string; label: string }>; // Array of unique categories for the filter dropdown.
   onCountryChange: (country: string) => void; // Callback function when the selected country changes.
   onLanguageChange: (language: string) => void; // Callback function when the selected language changes.
+  onCategoryChange: (category: string) => void; // Callback function when the selected category changes.
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
   uniqueCountries,
   uniqueLanguages,
+  uniqueCategories,
   onCountryChange,
   onLanguageChange,
+  onCategoryChange,
 }) => {
   const { t } = useTranslation('common'); // Hook for translations.
 
@@ -52,6 +56,23 @@ const FilterBar: React.FC<FilterBarProps> = ({
           {uniqueLanguages.map((lang) => (
             <option key={lang} value={lang}>
               {lang}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="w-full sm:w-auto">
+        <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          {t('filterByCategory')}
+        </label>
+        <select
+          id="category-filter"
+          onChange={(e) => onCategoryChange(e.target.value)}
+          className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors"
+        >
+          <option value="">{t('all')}</option>
+          {uniqueCategories.map((category) => (
+            <option key={category.value} value={category.value}>
+              {category.label}
             </option>
           ))}
         </select>

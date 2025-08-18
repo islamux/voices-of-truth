@@ -2,6 +2,7 @@
   "appTitle": "Voices of Truth",
   "filterByCountry": "Filter by Country",
   "filterByLanguage": "Filter by Language",
+  "filterByCategory": "Filter by Category",
   "all": "All",
   "noScholarsFound": "No scholars found matching your criteria.",
   "headerTitle": "Voices of Truth",
@@ -12,5 +13,13 @@
   "theme": "Theme",
   "light": "Light",
   "dark": "Dark",
-  "searchPlaceholder": "Search by name..."
+  "searchPlaceholder": "Search by name...",
+  "comparativeReligion": "Comparative Religion",
+  "hadithStudies": "Hadith Studies",
+  "contemporaryIslamicThought": "Contemporary Islamic Thought",
+  "spiritualityEthics": "Spirituality & Ethics",
+  "dawah": "Da'wah",
+  "interfaithDialogue": "Interfaith Dialogue",
+  "quranStudies": "Quran Studies",
+  "quranInterpretation": "Quran Interpretation"
 }

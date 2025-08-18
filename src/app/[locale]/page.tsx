@@ -17,6 +17,8 @@ const HomePage = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   // State for selected language filter, default is empty.
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+  // State for selected category filter, default is empty.
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   // State for scholars to be displayed after filtering, initialized with all scholars.
   const [displayedScholars, setDisplayedScholars] = useState<Scholar[]>(allScholarsData);
 
@@ -47,7 +49,25 @@ const HomePage = () => {
     return Array.from(languagesSet).sort();
   }, []); // Calculates once as languages in data are static.
 
-  // Effect to filter scholars when selectedCountry or selectedLanguage changes.
+  // Memoized calculation of unique categories for the filter bar.
+  const uniqueCategories = useMemo(() => {
+    const categoriesMap = new Map<string, string>();
+    allScholarsData.forEach(scholar => {
+      if (scholar.category) {
+        // Use English category name as a key to ensure uniqueness
+        const categoryKey = scholar.category['en'] || scholar.category[Object.keys(scholar.category)[0]];
+        // Get the label in the current language, or fallback to English or the first available
+        const categoryLabel = scholar.category[lang] || scholar.category['en'] || scholar.category[Object.keys(scholar.category)[0]];
+        if (categoryKey && !categoriesMap.has(categoryKey)) {
+          categoriesMap.set(categoryKey, categoryLabel);
+        }
+      }
+    });
+    // Convert map to array and sort alphabetically by label
+    return Array.from(categoriesMap, ([value, label]) => ({ value, label })).sort((a,b) => a.label.localeCompare(b.label));
+  }, [lang]); // Recalculates if `lang` changes
+
+  // Effect to filter scholars when selectedCountry, selectedLanguage, or selectedCategory changes.
   useEffect(() => {
     let result = allScholarsData; // Start with all scholars.
     if (selectedCountry) {
@@ -58,16 +78,24 @@ const HomePage = () => {
       // Filter by language.
       result = result.filter(scholar => scholar.language.includes(selectedLanguage));
     }
+    if (selectedCategory) {
+      // Filter by category, using English name as the key for comparison.
+      result = result.filter(scholar => 
+        scholar.category && (scholar.category['en'] || scholar.category[Object.keys(scholar.category)[0]]) === selectedCategory
+      );
+    }
     setDisplayedScholars(result); // Update the list of scholars to display.
-  }, [selectedCountry, selectedLanguage]); // Recalculates if filter selections change.
+  }, [selectedCountry, selectedLanguage, selectedCategory]); // Recalculates if filter selections change.
 
   return (
     <Layout>
       <FilterBar
         uniqueCountries={uniqueCountries}
         uniqueLanguages={uniqueLanguages}
+        uniqueCategories={uniqueCategories}
         onCountryChange={setSelectedCountry}
         onLanguageChange={setSelectedLanguage}
+        onCategoryChange={setSelectedCategory}
         // currentLang prop removed as FilterBar now uses useTranslation
       />
       {displayedScholars.length > 0 ? (

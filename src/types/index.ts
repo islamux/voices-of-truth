@@ -10,5 +10,7 @@ export interface Scholar {
   language: string[]; // e.g., ["Arabic", "English"]
   avatarUrl: string; // e.g., "/avatars/scholar_avatar_1.png" (we'll handle actual images later)
   bio?: Record<string, string>; // Optional short bio
-  category?: Record<string, string>; // Optional category e.g., { en: "Comparative Religion", ar: "مقارنة أديان" }
+      category: {
+      [key: string]: string;
+    };
 }

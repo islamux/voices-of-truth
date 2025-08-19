@@ -1,38 +1,33 @@
-// src/components/I18nProviderClient.tsx
-"use client";
+'use client';
 
-import React, { ReactNode, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import i18nInstance from '../lib/i18n';
+import { createInstance } from 'i18next';
+import { initReactI18next } from 'react-i18next/initReactI18next';
+import { fallbackLng, supportedLngs, defaultNS } from '../lib/i18n';
 
-interface I18nProviderClientProps {
-  children: ReactNode;
+import { Resource } from 'i18next';
+
+export default function I18nProviderClient({
+  children,
+  locale,
+  resources
+}: {
+  children: React.ReactNode;
   locale: string;
+  resources: Resource;
+}) {
+  const i18n = createInstance();
+
+  i18n
+    .use(initReactI18next)
+    .init({
+      supportedLngs,
+      fallbackLng,
+      lng: locale,
+      ns: defaultNS,
+      defaultNS,
+      resources,
+    });
+
+  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
-
-const I18nProviderClient: React.FC<I18nProviderClientProps> = ({ children, locale }) => {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    // Ensure i18n is initialized before rendering children
-    const initI18n = async () => {
-      if (!i18nInstance.isInitialized) {
-        await i18nInstance.init();
-      }
-      if (locale && i18nInstance.language !== locale) {
-        await i18nInstance.changeLanguage(locale);
-      }
-      setIsReady(true);
-    };
-    
-    initI18n();
-  }, [locale]);
-
-  if (!isReady) {
-    return <div>Loading...</div>;
-  }
-
-  return <I18nextProvider i18n={i18nInstance}>{children}</I18nextProvider>;
-};
-
-export default I18nProviderClient;

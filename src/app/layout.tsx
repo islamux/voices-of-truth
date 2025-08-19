@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { dir } from "i18next";
 
 export const metadata: Metadata = {
   title: "Voices of Truth",
@@ -8,14 +9,18 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode;
+  params: {
+    locale: string;
+  };
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
-  // The html and body tags will be added by the [locale] layout
-  // This is just a wrapper for global styles and metadata
+export default function RootLayout({
+  children,
+  params: { locale },
+}: RootLayoutProps) {
   return (
-    <html suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+    <html lang={locale} dir={dir(locale)}>
+      <body>{children}</body>
     </html>
   );
 }

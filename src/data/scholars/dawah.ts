@@ -50,4 +50,20 @@ export const dawahScholars: Scholar[] = [
     },
     category: { en: 'Da\'wah', ar: 'الدعوة' }
   }
+  ,
+  {
+    id: 'scholar-99',
+    name: { en: 'Abdullah Rushdy', ar: 'عبد الله رشدي' },
+    socialMedia: [
+      { platform: 'YouTube', link: 'https://www.youtube.com/@abdullahrushdyarabic', icon: 'FaYoutube' }
+    ],
+    country: { en: 'Egypt', ar: 'مصر' },
+    language: ['Arabic'],
+    avatarUrl: '/avatars/rushdy.jpg',
+    bio: {
+      en: "Alternate channel of Sheikh Abdullah Rushdy.",
+      ar: 'القناة البديلة للشيخ عبدالله رشدي'
+    },
+    category: { en: 'Da\'wah', ar: 'الدعوة' }
+  }
 ];

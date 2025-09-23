@@ -108,6 +108,13 @@ voices-of-truth/
 
 ---
 
+## 📚 Detailed Guides
+
+- [How to Add Translation Feature to a Next.js Project](./TRANSLATION_TUTORIAL.md)
+- [How to Integrate Tailwind CSS and PostCSS in a Next.js Project](./TAILWIND_POSTCSS_TUTORIAL.md)
+
+---
+
 ## 📜 License
 
 This project is licensed under the **MIT License**.  

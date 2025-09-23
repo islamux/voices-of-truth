@@ -112,6 +112,7 @@ voices-of-truth/
 
 - [How to Add Translation Feature to a Next.js Project](./TRANSLATION_TUTORIAL.md)
 - [How to Integrate Tailwind CSS and PostCSS in a Next.js Project](./TAILWIND_POSTCSS_TUTORIAL.md)
+- [How to Implement Light/Dark Theme in Next.js with Tailwind CSS](./LIGHT_DARK_THEME_TUTORIAL.md)
 
 ---
 

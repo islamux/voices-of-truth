@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/License-GNU%20GPL-red?logo=gnu&style=flat-square)
 
 > **Voices of Truth** is a web app for browsing a directory of renowned scholars and preachers worldwide, supporting Arabic and English, built using Next.js, React, and Tailwind CSS.  
-> Built with ❤️ by [@islamux](https://github.com/islamux)
+> Built with ❤️ by [fathi733@gmail.com](mailto:fathi733@gmail.com)
 
 ---
 
@@ -117,9 +117,9 @@ voices-of-truth/
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.  
+This project is licensed under the **GNU GPL**.  
 Feel free to use and modify.  
-Read more: [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
+Read more: [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ---
 

@@ -3,53 +3,75 @@
 
 Based on the analysis of the project structure and the content of the key components, here are some suggestions for further breaking down the code into smaller, more manageable pieces.
 
-## 1. `HomePageClient.tsx`
+## 1. `HomePageClient.tsx` and `useScholars` Hook
 
-This component is the main entry point for the client-side of the home page. It likely handles data fetching, filtering, and rendering the list of scholars.
+**Update:** The logic for data fetching and filtering has been successfully extracted from `HomePageClient` into the `useScholars` custom hook, as originally suggested. This has significantly cleaned up the main page component, separating the presentation logic from the state management and business logic.
 
-**Suggestions:**
+The `HomePageClient` now simply calls the `useScholars` hook and passes the returned data and functions to the appropriate child components (`FilterBar` and `ScholarList`).
 
-*   **Extract Data Fetching and Filtering Logic into a Custom Hook:**
-    *   Create a custom hook, for example, `useScholars`, that encapsulates the logic for fetching the scholar data and filtering it based on the user's selections.
-    *   This hook would return the filtered list of scholars, the current filter state, and functions to update the filters.
-    *   This will make the `HomePageClient` component much cleaner and focused on rendering the UI.
+Here is the current implementation of the `useScholars` hook, which now manages state for multiple filters and derives unique values for the filter dropdowns:
 
-    **Example `useScholars.ts`:**
-    ```typescript
-    import { useState, useEffect } from 'react';
-    import { scholars } from '@/data/scholars';
-    import { Scholar } from '@/types';
+**`src/app/hooks/useScholars.ts`:**
+```typescript
+"use client";
 
-    export const useScholars = () => {
-      const [filteredScholars, setFilteredScholars] = useState<Scholar[]>(scholars);
-      const [filters, setFilters] = useState({ specialization: '', country: '' });
+import { scholars } from "@/data/scholars";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-      useEffect(() => {
-        // Logic to filter scholars based on filters
-        const newFilteredScholars = scholars.filter(scholar => {
-          // ... filtering logic
-        });
-        setFilteredScholars(newFilteredScholars);
-      }, [filters]);
+export const useScholars = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
 
-      return { filteredScholars, filters, setFilters };
-    };
-    ```
+  // 1. State for user's filter selections
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  // 2. Memoized logic to filter scholars when selections change
+  const filteredScholars = useMemo(() => {
+    return scholars.filter((scholar) => {
+      const countryMatch = !selectedCountry || (scholar.country[currentLang] || scholar.country['en']) === selectedCountry;
+      const languageMatch = !selectedLanguage || scholar.language.includes(selectedLanguage);
+      const categoryMatch = !selectedCategory || (scholar.category[currentLang] || scholar.category['en']) === selectedCategory;
+      return countryMatch && languageMatch && categoryMatch;
+    });
+  }, [selectedCountry, selectedLanguage, selectedCategory, currentLang]);
+
+  // 3. Memoized logic to get unique, translated values for filter dropdowns
+  const uniqueCountries = useMemo(() => { /* ... */ }, [currentLang]);
+  const uniqueCategories = useMemo(() => { /* ... */ }, [currentLang]);
+  // ...
+
+  // 4. Return everything the component needs
+  return {
+    filteredScholars,
+    uniqueCountries,
+    uniqueLanguages,
+    uniqueCategories,
+    onCountryChange: setSelectedCountry,
+    onLanguageChange: setSelectedLanguage,
+    onCategoryChange: setSelectedCategory,
+  };
+};
+```
 
 ## 2. `ScholarCard.tsx`
 
-This component is responsible for displaying a single scholar in the list.
+This component is responsible for displaying a single scholar in the list. It has been refactored to be more self-sufficient by using the `useTranslation` hook internally, removing the need for a `currentLang` prop.
 
-**Suggestions:**
+**Further Suggestions:**
 
 *   **Break Down into Smaller Components:**
-    *   If the `ScholarCard` component becomes more complex, it can be broken down into smaller components, each responsible for a specific part of the card.
-    *   This will make the code more readable and easier to maintain.
+    *   As the `ScholarCard` component evolves, consider breaking it down into smaller, more focused components. This will improve readability and maintainability.
 
     **Example Breakdown:**
-    *   `CardHeader.tsx`: Contains the scholar's avatar and name.
-    *   `CardBody.tsx`: Contains the scholar's specializations and a brief bio.
-    *   `CardFooter.tsx`: Contains social media links or other action buttons.
+    *   `ScholarAvatar.tsx`: (Already implemented) Manages the display of the scholar's image.
+    *   `ScholarInfo.tsx`: (Already implemented) Displays the scholar's name, country, bio, and languages.
+    *   `SocialMediaLinks.tsx`: (Already implemented) Renders the social media icons and links.
+
+    The card is already well-componentized, but keep this principle in mind if more complexity is added.
+
 
 ## 3. `FilterBar.tsx`
 
@@ -66,6 +88,7 @@ This component provides the UI for filtering the scholars.
     *   `CountryFilter.tsx`: A dropdown for filtering by country.
     *   `SearchInput.tsx`: A text input for searching by name.
 
+import { on } from "events";
 ## 4. Data Organization (`/data` directory)
 
 The data is already well-organized by specialization.

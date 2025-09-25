@@ -1,6 +1,8 @@
 
 import { getTranslation } from '../../lib/i18n';
 import I18nProviderClient from '../../components/I18nProviderClient';
+import ThemeProvider from '@/components/ThemeProvider';
+import Layout from '@/components/Layout';  //import the layout components
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -16,10 +18,15 @@ export default async function LocaleLayout({
 
   return (
     <I18nProviderClient
-      locale={locale}
-      resources={resources}
-    >
-      {children}
+    locale={locale}
+    resources={resources}
+  >
+    <ThemeProvider>
+    <Layout> {/*wrap children with the layout component*/}
+    {children}
+    </Layout>
+    </ThemeProvider>
+
     </I18nProviderClient>
   );
 }

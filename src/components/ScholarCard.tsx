@@ -12,12 +12,16 @@ import ScholarInfo from './ScholarInfo';
 import SocialMediaLinks from './SocialMediaLinks';
 import { setConfig } from 'next/config';
 
+import { useTranslation } from 'react-i18next';
+
 interface ScholarCardProps {
   scholar: Scholar; // The scholar data object.
-    currentLang: string; // The currently active language to display translated fields.
 }
 
-const ScholarCard: React.FC<ScholarCardProps> = ({ scholar, currentLang }) => {
+const ScholarCard: React.FC<ScholarCardProps> = ({ scholar }) => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
+
   // Retrieves the localized name, falling back to English if the current language's translation is not available.
   const name = scholar.name[currentLang] || scholar.name['en'];
   // Retrieves the localized country, falling back to English.

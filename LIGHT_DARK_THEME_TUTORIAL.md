@@ -1,10 +1,10 @@
 # 🌙 Implementing Light/Dark Theme in Next.js with Tailwind CSS
 
-This tutorial outlines the steps to implement a light and dark theme in a Next.js project using Tailwind CSS, leveraging both system preference and a manual toggle.
+This tutorial outlines the steps to implement a light and dark theme in a Next.js project using Tailwind CSS, leveraging a client-side provider and `localStorage` to persist user choice.
 
 ## 1. Configure Tailwind CSS for Dark Mode
 
-First, ensure your `tailwind.config.ts` is set up to use the `class` strategy for dark mode. This allows you to manually toggle the dark mode by adding or removing a `dark` class on the `<html>` element.
+First, ensure your `tailwind.config.ts` is set up to use the `class` strategy for dark mode. This allows you to manually toggle dark mode by adding or removing a `dark` class on the `<html>` element.
 
 ```typescript
 // tailwind.config.ts
@@ -18,13 +18,7 @@ const config: Config = {
   ],
   darkMode: 'class', // Enable dark mode based on the presence of a 'dark' class
   theme: {
-    extend: {
-      colors: {
-        // Optional: Define custom colors that can use CSS variables
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
-    },
+    extend: {},
   },
   plugins: [],
 };
@@ -33,7 +27,9 @@ export default config;
 
 ## 2. Define CSS Variables for Themes
 
-In your global CSS file (`src/app/globals.css`), define CSS variables for your colors. Use the `@media (prefers-color-scheme: dark)` media query to set different values for these variables based on the user's system preference.
+In your global CSS file (`src/app/globals.css`), you can define CSS variables for your colors. While this project uses Tailwind's `dark:` variants directly, using CSS variables is a powerful alternative for more complex theming.
+
+For this project, the key is that Tailwind will automatically apply `dark:` prefixed classes when the `dark` class is active on the `<html>` tag.
 
 ```css
 /* src/app/globals.css */
@@ -41,65 +37,44 @@ In your global CSS file (`src/app/globals.css`), define CSS variables for your c
 @tailwind components;
 @tailwind utilities;
 
+/* Example of how you might set color variables, though not strictly necessary for this implementation */
 :root {
-  /* Light theme colors */
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Dark theme colors */
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(var(--background-start-rgb));
 }
 ```
 
-## 3. Apply Theme Classes in Components
+## 3. Create the Theme Components
 
-Now you can use Tailwind CSS classes that respond to the `dark` class. For example, `bg-white` will be the default background, and `dark:bg-gray-900` will apply a dark gray background when the `dark` class is present on the `<html>` element.
+We will create two components: a `ThemeProvider` to hold the logic and a `ThemeSwitcher` for the UI.
 
-```tsx
-// Example: src/components/SomeComponent.tsx
-export default function SomeComponent() {
-  return (
-    <div className="bg-white text-black dark:bg-gray-900 dark:text-white p-4 rounded-lg">
-      This component adapts to the theme.
-    </div>
-  );
-}
-```
+### `ThemeProvider.tsx`
 
-## 4. Implement a Client-Side Theme Toggle (Optional)
-
-To allow users to manually switch themes, you'll need a client-side component that adds or removes the `dark` class from the `<html>` element. You can use React's `useState` and `useEffect` hooks to manage the theme state and persist it (e.g., in `localStorage`).
-
-Here's a conceptual example of a `ThemeSwitcher` component:
+This client component manages the theme state, checks for user preference in `localStorage` or system settings, and applies the `dark` class to the `<html>` element. It also renders the switcher button.
 
 ```tsx
-// src/components/ThemeSwitcher.tsx
-"use client"; // Mark as a client component
+// src/components/ThemeProvider.tsx
+'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 
-export default function ThemeSwitcher() {
+export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // Check for saved theme in localStorage or system preference
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -111,13 +86,11 @@ export default function ThemeSwitcher() {
   }, []);
 
   useEffect(() => {
-    // Apply or remove the 'dark' class on the html element
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-    // Save preference
     localStorage.setItem('theme', theme);
   }, [theme]);
 
@@ -126,52 +99,86 @@ export default function ThemeSwitcher() {
   };
 
   return (
-    <button onClick={toggleTheme} className="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
-      Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+    <div>
+      <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
+      {children}
+    </div>
+  );
+}
+```
+
+### `ThemeSwitcher.tsx`
+
+This component is the actual button the user interacts with. It displays a moon or sun icon depending on the current theme.
+
+```tsx
+// src/components/ThemeSwitcher.tsx
+'use client';
+
+import { FaSun, FaMoon } from 'react-icons/fa';
+
+interface ThemeSwitcherProps {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+export default function ThemeSwitcher({ theme, toggleTheme }: ThemeSwitcherProps) {
+  return (
+    <button
+      onClick={toggleTheme}
+      className="fixed bottom-5 right-5 z-50 p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-lg"
+      aria-label="Toggle theme"
+    >
+      {theme === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
     </button>
   );
 }
 ```
 
-You would then include this `ThemeSwitcher` component in your `layout.tsx` or any other client-side component where you want the toggle to appear.
+## 4. Integrate the ThemeProvider into the Layout
 
-## 5. Integrate ThemeSwitcher into your Layout
-
-To make the `ThemeSwitcher` available across your application, you can place it in your root `layout.tsx` or a shared component. Remember that `layout.tsx` in Next.js 13+ App Router is a Server Component by default, so you might need to wrap client components or pass props.
+To make the theme functionality available everywhere, wrap the content of your root layout with the `ThemeProvider`. In this project, we add it to `src/app/[locale]/layout.tsx`.
 
 ```tsx
-// src/app/layout.tsx (conceptual integration)
-import type { Metadata } from "next";
-import "./globals.css";
-import { dir } from "i18next";
-import ThemeSwitcher from '../components/ThemeSwitcher'; // Assuming you created this
+// src/app/[locale]/layout.tsx
+import { getTranslation } from '../../lib/i18n';
+import I18nProviderClient from '../../components/I18nProviderClient';
+import ThemeProvider from '@/components/ThemeProvider'; // Import the provider
 
-export const metadata: Metadata = {
-  title: "Voices of Truth",
-  description: "A directory of scholars and preachers.",
-};
+// ... (interface and other code)
 
-interface RootLayoutProps {
-  children: React.ReactNode;
-  params: {
-    locale: string;
-  };
-}
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = await Promise.resolve(params);
+  const { resources } = await getTranslation(locale);
 
-export default function RootLayout({
-  children,
-  params: { locale },
-}: RootLayoutProps) {
   return (
-    <html lang={locale} dir={dir(locale)}>
-      <body>
-        {/* Place your ThemeSwitcher here or within a client component */}
-        <ThemeSwitcher />
-        {children}
-      </body>
-    </html>
+    <I18nProviderClient locale={locale} resources={resources}>
+      {/* Wrap the children with ThemeProvider */}
+      <ThemeProvider>{children}</ThemeProvider>
+    </I18nProviderClient>
   );
 }
+
+// ... (generateStaticParams)
 ```
 
-By following these steps, you can effectively implement a light/dark theme in your Next.js application with Tailwind CSS, providing a great user experience.
+## 5. Apply Theme Classes in Components
+
+Now you can use Tailwind's `dark:` variants in any component. They will be applied automatically when the theme is set to dark.
+
+```tsx
+// Example: src/components/ScholarCard.tsx
+
+// ...
+  return (
+    <motion.div
+      className="border rounded-lg shadow-lg p-5 bg-white dark:bg-gray-900 text-black dark:text-white"
+      // ... (other props)
+    >
+      {/* ... component content ... */}
+    </motion.div>
+  );
+// ...
+```
+
+By following these steps, you have successfully implemented a persistent light/dark theme in your Next.js application with Tailwind CSS.

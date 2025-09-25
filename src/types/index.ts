@@ -1,16 +1,16 @@
 export interface Scholar {
-  id: string; // Using string for ID
-  name: Record<string, string>; // e.g., { en: "Scholar Name", ar: "اسم العالم" }
+  id: string; 
+  name: Record<string, string>;
   socialMedia: {
-    platform: string; // e.g., "Twitter", "YouTube"
+    platform: string; 
     link: string;
-    icon?: string; // Optional: e.g., name of a react-icon
-  }[]; // Array to support multiple social media platforms
-  country: Record<string, string>; // e.g., { en: "Saudi Arabia", ar: "المملكة العربية السعودية" }
-  language: string[]; // e.g., ["Arabic", "English"]
-  avatarUrl: string; // e.g., "/avatars/scholar_avatar_1.png" (we'll handle actual images later)
-  bio?: Record<string, string>; // Optional short bio
-      category: {
-      [key: string]: string;
-    };
+    icon?: string; 
+  }[]; 
+  country: Record<string, string>; 
+  language: string[]; 
+  avatarUrl: string; 
+  bio?: Record<string, string>; 
+  category: {
+    [key: string]: string;
+  };
 }

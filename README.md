@@ -33,12 +33,12 @@
 ## 📦 Requirements
 
 - Node.js 18+
-- npm or yarn
+- pnpm
 
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 ---
@@ -50,10 +50,10 @@ git clone https://github.com/islamux/voices-of-truth.git
 cd voices-of-truth
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run the development server
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
@@ -66,25 +66,20 @@ Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3
 voices-of-truth/
 ├── public/
 │   ├── avatars/
-│   │   └── default-avatar.png
-│   ├── locales/
-│   │   ├── ar/
-│   │   │   └── common.json
-│   │   └── en/
-│   │       └── common.json
-│   └── ... (SVG icons)
+│   └── locales/
 ├── src/
 │   ├── app/
-│   │   └── [lang]/
-│   │       ├── favicon.ico
-│   │       ├── globals.css
-│   │       ├── layout.tsx
-│   │       └── page.tsx
+│   │   ├── [locale]/
+│   │   │   ├── HomePageClient.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   └── hooks/
+│   │       └── useScholars.ts
 │   ├── components/
 │   │   ├── FilterBar.tsx
-│   │   ├── I18nProviderClient.tsx
 │   │   ├── Layout.tsx
-│   │   └── ScholarCard.tsx
+│   │   ├── ScholarCard.tsx
+│   │   └── ... (and other sub-components)
 │   ├── data/
 │   │   └── scholars.ts
 │   ├── lib/
@@ -92,8 +87,7 @@ voices-of-truth/
 │   └── types/
 │       └── index.ts
 ├── package.json
-├── next.config.ts
-├── README.md
+├── TUTORIAL.md
 └── ...
 ```
 
@@ -101,7 +95,8 @@ voices-of-truth/
 
 ## 🧠 How It Works
 
-- Uses local TypeScript data module (`src/data/scholars.ts`) to provide scholar info.
+- Uses a custom React Hook (`useScholars`) to manage all filtering logic and state.
+- Separates concerns between logic (hooks) and presentation (components).
 - Internationalization is powered by `react-i18next` with language detection and local translation files.
 - Scholars are listed and filtered client-side, with dynamic language and theme switching.
 - Fully responsive and visually enhanced with Tailwind CSS and Framer Motion.

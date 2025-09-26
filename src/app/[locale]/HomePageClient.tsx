@@ -15,7 +15,9 @@ const HomePageClient = () => {
     uniqueCategories,
     onCountryChange,
     onLanguageChange,
-    onCategoryChange
+    onCategoryChange,
+    onSearchChange,
+
   } = useScholars();
 
   return (
@@ -30,6 +32,7 @@ const HomePageClient = () => {
     onCountryChange={onCountryChange}
     onLanguageChange={onLanguageChange}
     onCategoryChange={onCategoryChange} 
+    onSearchChange={onSearchChange}
     />
 
     <ScholarList scholars={filteredScholars} />

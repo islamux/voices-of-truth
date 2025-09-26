@@ -6,11 +6,11 @@ import FilterDropdown from "./FilterDropdown"
 
 interface CategoryFilterProps{
   uniqueCategories: Array<{value: string, label: string}>
-    onCategoryChangee: (category: string)=> void;
+    onCategoryChange: (category: string)=> void;
 }
 
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({uniqueCategories, onCategoryChangee})=> {
+const CategoryFilter: React.FC<CategoryFilterProps> = ({uniqueCategories, onCategoryChange})=> {
 
   const { t } = useTranslation('common');
 
@@ -19,7 +19,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({uniqueCategories, onCate
     label={t('filterByCategory')}
     filterKey="category"
     options={uniqueCategories}
-    onChange={onCategoryChangee}
+    onChange={onCategoryChange}
     />
   );
 };

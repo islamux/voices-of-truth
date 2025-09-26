@@ -16,6 +16,7 @@
 - 🌍 Internationalization with instant language switching (Arabic RTL & English LTR)
 - 📱 Fully responsive for all devices
 - 🔍 Filter scholars by country and language
+- 🔍 Search scholars by name
 - ✨ Smooth animations with Framer Motion
 - 🖼️ Iconography with react-icons
 - 📝 Local (mock) data source for fast demo/development

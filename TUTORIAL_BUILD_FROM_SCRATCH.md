@@ -187,6 +187,7 @@ export const useScholars = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // 2. Memoized logic to filter scholars when selections change
   const filteredScholars = useMemo(() => {
@@ -194,7 +195,8 @@ export const useScholars = () => {
       const countryMatch = !selectedCountry || (scholar.country[currentLang] || scholar.country['en']) === selectedCountry;
       const languageMatch = !selectedLanguage || scholar.language.includes(selectedLanguage);
       const categoryMatch = !selectedCategory || (scholar.category[currentLang] || scholar.category['en']) === selectedCategory;
-      return countryMatch && languageMatch && categoryMatch;
+      const searchMatch = !searchTerm || (scholar.name[currentLang] || scholar.name['en']).toLowerCase().includes(searchTerm.toLowerCase());
+      return countryMatch && languageMatch && categoryMatch && searchMatch;
     });
   }, [selectedCountry, selectedLanguage, selectedCategory, currentLang]);
 
@@ -212,6 +214,7 @@ export const useScholars = () => {
     onCountryChange: setSelectedCountry,
     onLanguageChange: setSelectedLanguage,
     onCategoryChange: setSelectedCategory,
+    onSearchChange: setSearchTerm,
   };
 };
 ```
@@ -239,7 +242,8 @@ const HomePageClient = () => {
     uniqueCategories,
     onCountryChange,
     onLanguageChange,
-    onCategoryChange
+    onCategoryChange,
+    onSearchChange
   } = useScholars();
 
   // 2. Pass the data down to the presentational components
@@ -254,6 +258,7 @@ const HomePageClient = () => {
         onCountryChange={onCountryChange}
         onLanguageChange={onLanguageChange}
         onCategoryChange={onCategoryChange}
+        onSearchChange={onSearchChange}
       />
 
       <ScholarList scholars={filteredScholars} />

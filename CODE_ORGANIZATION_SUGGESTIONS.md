@@ -16,6 +16,8 @@ Here is the current implementation of the `useScholars` hook, which now manages 
 "use client";
 
 import { scholars } from "@/data/scholars";
+import { countries } from "@/data/countries";
+import { specializations } from "@/data/specializations";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -27,21 +29,66 @@ export const useScholars = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // 2. Memoized logic to filter scholars when selections change
   const filteredScholars = useMemo(() => {
-    return scholars.filter((scholar) => {
-      const countryMatch = !selectedCountry || (scholar.country[currentLang] || scholar.country['en']) === selectedCountry;
-      const languageMatch = !selectedLanguage || scholar.language.includes(selectedLanguage);
-      const categoryMatch = !selectedCategory || (scholar.category[currentLang] || scholar.category['en']) === selectedCategory;
-      return countryMatch && languageMatch && categoryMatch;
-    });
-  }, [selectedCountry, selectedLanguage, selectedCategory, currentLang]);
+    return scholars
+      .map((scholar) => {
+        const country = countries.find((c) => c.id === scholar.countryId);
+        const category = specializations.find(
+          (s) => s.id === scholar.categoryId
+        );
+
+        return {
+          ...scholar,
+          country: country
+            ? { en: country.en, ar: country.ar }
+            : { en: "", ar: "" },
+          category: category
+            ? { en: category.en, ar: category.ar }
+            : { en: "", ar: "" },
+        };
+      })
+      .filter((scholar) => {
+        const countryMatch =
+          !selectedCountry || scholar.country.en === selectedCountry;
+        const languageMatch =
+          !selectedLanguage || scholar.language.includes(selectedLanguage);
+        const categoryMatch =
+          !selectedCategory || scholar.category.en === selectedCategory;
+        const searchMatch =
+          !searchTerm ||
+          Object.values(scholar.name).some((name) =>
+            name.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        return countryMatch && languageMatch && categoryMatch && searchMatch;
+      });
+  }, [selectedCountry, selectedLanguage, selectedCategory, searchTerm]);
 
   // 3. Memoized logic to get unique, translated values for filter dropdowns
-  const uniqueCountries = useMemo(() => { /* ... */ }, [currentLang]);
-  const uniqueCategories = useMemo(() => { /* ... */ }, [currentLang]);
-  // ...
+  const uniqueCountries = useMemo(() => {
+    return countries
+      .map((country) => ({
+        value: country.en,
+        label: country[currentLang] || country["en"],
+      }))
+      .filter((country) => country.value);
+  }, [currentLang]);
+
+  const uniqueLanguages = useMemo(() => {
+    const allLanguages = scholars.flatMap((scholar) => scholar.language);
+    return [...new Set(allLanguages)];
+  }, []);
+
+  const uniqueCategories = useMemo(() => {
+    return specializations
+      .map((category) => ({
+        value: category.en,
+        label: category[currentLang] || category["en"],
+      }))
+      .filter((category) => category.value);
+  }, [currentLang]);
 
   // 4. Return everything the component needs
   return {
@@ -52,6 +99,7 @@ export const useScholars = () => {
     onCountryChange: setSelectedCountry,
     onLanguageChange: setSelectedLanguage,
     onCategoryChange: setSelectedCategory,
+    onSearchChange: setSearchTerm,
   };
 };
 ```
@@ -77,27 +125,24 @@ This component is responsible for displaying a single scholar in the list. It ha
 
 This component provides the UI for filtering the scholars.
 
-**Suggestions:**
+**Update:** The `FilterBar` component has been successfully broken down into smaller, more focused components for each filter control. This makes the `FilterBar` component more modular and easier to extend with new filters.
 
-*   **Create Separate Components for Each Filter:**
-    *   If the filter bar contains multiple filter controls (e.g., by specialization, by country, by name), each of these can be extracted into its own component.
-    *   This will make the `FilterBar` component more modular and easier to extend with new filters.
-
-    **Example Breakdown:**
-    *   `SpecializationFilter.tsx`: A dropdown or a list of checkboxes for filtering by specialization.
-    *   `CountryFilter.tsx`: A dropdown for filtering by country.
-    *   `SearchInput.tsx`: A text input for searching by name.
+**Example Breakdown:**
+*   `CountryFilter.tsx`: A dropdown for filtering by country.
+*   `LanguageFilter.tsx`: A dropdown for filtering by language.
+*   `CategoryFilter.tsx`: A dropdown for filtering by category.
+*   `SearchInput.tsx`: A text input for searching by name.
 
 import { on } from "events";
 ## 4. Data Organization (`/data` directory)
 
-The data is already well-organized by specialization.
+The data is now more structured and scalable.
 
-**Suggestions:**
+**Update:** The data has been organized into separate files for scholars, countries, and specializations, and they are linked by ID. This makes the data easier to manage and query.
 
-*   **Consider a More Scalable Data Structure:**
-    *   For a larger dataset, consider using a more database-like structure, where you have separate files for scholars, specializations, and countries, and then link them by ID.
-    *   This would make the data easier to manage and query.
+*   `scholars.ts`: Contains the main list of scholars, with `countryId` and `categoryId` to link to the other data files.
+*   `countries.ts`: A list of countries with their `id`, `en`, and `ar` names.
+*   `specializations.ts`: A list of specializations with their `id`, `en`, and `ar` names.
 
 ## General Architectural Suggestions
 

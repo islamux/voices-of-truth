@@ -107,9 +107,14 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar }) => {
   const { i18n } = useTranslation(); // Use the hook to get language info
   const currentLang = i18n.language; // Get the current language
 
+  if (!scholar.name) {
+    console.error("Scholar with missing name:", scholar);
+    return null;
+  }
+
   // Now, the component gets the language by itself!
   const name = scholar.name[currentLang] || scholar.name['en'];
-  const country = scholar.country[currentLang] || scholar.country['en'];
+  const country = scholar.country[currentLang] || scholar.country.en;
   const bio = scholar.bio && (scholar.bio[currentLang] || scholar.bio['en']);
 
   return (
@@ -176,6 +181,8 @@ A custom hook is just a JavaScript function whose name starts with "use". It let
 "use client";
 
 import { scholars } from "@/data/scholars";
+import { countries } from "@/data/countries";
+import { specializations } from "@/data/specializations";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -191,19 +198,62 @@ export const useScholars = () => {
 
   // 2. Memoized logic to filter scholars when selections change
   const filteredScholars = useMemo(() => {
-    return scholars.filter((scholar) => {
-      const countryMatch = !selectedCountry || (scholar.country[currentLang] || scholar.country['en']) === selectedCountry;
-      const languageMatch = !selectedLanguage || scholar.language.includes(selectedLanguage);
-      const categoryMatch = !selectedCategory || (scholar.category[currentLang] || scholar.category['en']) === selectedCategory;
-      const searchMatch = !searchTerm || (scholar.name[currentLang] || scholar.name['en']).toLowerCase().includes(searchTerm.toLowerCase());
-      return countryMatch && languageMatch && categoryMatch && searchMatch;
-    });
-  }, [selectedCountry, selectedLanguage, selectedCategory, currentLang]);
+    return scholars
+      .map((scholar) => {
+        const country = countries.find((c) => c.id === scholar.countryId);
+        const category = specializations.find(
+          (s) => s.id === scholar.categoryId
+        );
+
+        return {
+          ...scholar,
+          country: country
+            ? { en: country.en, ar: country.ar }
+            : { en: "", ar: "" },
+          category: category
+            ? { en: category.en, ar: category.ar }
+            : { en: "", ar: "" },
+        };
+      })
+      .filter((scholar) => {
+        const countryMatch =
+          !selectedCountry || scholar.country.en === selectedCountry;
+        const languageMatch =
+          !selectedLanguage || scholar.language.includes(selectedLanguage);
+        const categoryMatch =
+          !selectedCategory || scholar.category.en === selectedCategory;
+        const searchMatch =
+          !searchTerm ||
+          Object.values(scholar.name).some((name) =>
+            name.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        return countryMatch && languageMatch && categoryMatch && searchMatch;
+      });
+  }, [selectedCountry, selectedLanguage, selectedCategory, searchTerm]);
 
   // 3. Memoized logic to get unique, translated values for filter dropdowns
-  const uniqueCountries = useMemo(() => { /* ... */ }, [currentLang]);
-  const uniqueCategories = useMemo(() => { /* ... */ }, [currentLang]);
-  // ...
+  const uniqueCountries = useMemo(() => {
+    return countries
+      .map((country) => ({
+        value: country.en,
+        label: country[currentLang] || country["en"],
+      }))
+      .filter((country) => country.value);
+  }, [currentLang]);
+
+  const uniqueLanguages = useMemo(() => {
+    const allLanguages = scholars.flatMap((scholar) => scholar.language);
+    return [...new Set(allLanguages)];
+  }, []);
+
+  const uniqueCategories = useMemo(() => {
+    return specializations
+      .map((category) => ({
+        value: category.en,
+        label: category[currentLang] || category["en"],
+      }))
+      .filter((category) => category.value);
+  }, [currentLang]);
 
   // 4. Return everything the component needs
   return {

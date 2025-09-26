@@ -1,5 +1,3 @@
-import { scholars } from "@/data/scholars";
-import { exportPages } from "next/dist/export/worker";
 import Image from "next/image";
 import React from "react";
 

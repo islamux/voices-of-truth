@@ -1,16 +1,12 @@
 // src/components/ScholarCard.tsx
 "use client";
 
-import Image from 'next/image';
 import React from 'react';
 import { Scholar } from '../types';
-import { motion, scale } from 'framer-motion';
-import { FaTwitter, FaYoutube, FaFacebook, FaInstagram, FaTelegram, FaLink } from 'react-icons/fa';
-import { IconContext } from "react-icons";
+import { motion } from 'framer-motion';
 import ScholarAvatar from './ScholarAvatar';
 import ScholarInfo from './ScholarInfo';
 import SocialMediaLinks from './SocialMediaLinks';
-import { setConfig } from 'next/config';
 
 import { useTranslation } from 'react-i18next';
 
@@ -22,10 +18,14 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar }) => {
   const { i18n } = useTranslation();
   const currentLang = i18n.language;
 
+  if (!scholar.name) {
+    console.error("Scholar with missing name:", scholar);
+    return null;
+  }
   // Retrieves the localized name, falling back to English if the current language's translation is not available.
   const name = scholar.name[currentLang] || scholar.name['en'];
   // Retrieves the localized country, falling back to English.
-  const country = scholar.country[currentLang] || scholar.country['en'];
+  const country = scholar.country[currentLang] || scholar.country.en;
   // Retrieves the localized bio, if available, falling back to English.
   const bio = scholar.bio && (scholar.bio[currentLang] || scholar.bio['en']);
 

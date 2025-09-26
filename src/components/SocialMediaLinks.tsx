@@ -1,10 +1,7 @@
 import React from "react";
 import { FaTwitter, FaYoutube, FaFacebook, FaInstagram, FaTelegram, FaLink } from "react-icons/fa";
-import { IconBase, IconContext } from "react-icons";
+import {  IconContext } from "react-icons";
 import { Scholar } from "@/types";
-import { link } from "fs";
-import { platform } from "os";
-import { defaultHead } from "next/head";
 
 interface SocialMediaLinksProps{
   socialMedia: Scholar['socialMedia'];

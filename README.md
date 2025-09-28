@@ -34,30 +34,37 @@
 ## 📦 Requirements
 
 - Node.js 18+
-- pnpm
+- pnpm (preferred package manager)
 
-Install dependencies:
-
+If you don't have pnpm installed, you can install it globally:
 ```bash
-pnpm install
+npm install -g pnpm
 ```
 
 ---
 
 ## 🧪 How to Use
 
+First, clone the repository and navigate into the project directory:
+
 ```bash
 git clone https://github.com/islamux/voices-of-truth.git
 cd voices-of-truth
-
-# Install dependencies
-pnpm install
-
-# Run the development server
-pnpm dev
 ```
 
-Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
+Then, install the dependencies using pnpm:
+
+```bash
+pnpm install
+```
+
+Finally, you can run the following scripts:
+
+*   **`pnpm dev`**: Runs the development server with Turbopack. Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
+*   **`pnpm build`**: Builds the application for production.
+*   **`pnpm start`**: Starts the production server.
+*   **`pnpm lint`**: Runs ESLint to check for code quality issues.
+
 
 ---
 

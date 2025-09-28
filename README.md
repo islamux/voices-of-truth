@@ -1,11 +1,11 @@
 # 📚 Voices of Truth - دليل العلماء والدعاة
 
-![Next.js](https://img.shields.io/badge/Next.js-15.x-blue?logo=next.js&style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-14.x-blue?logo=next.js&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Web-blueviolet?style=flat-square)
 ![License](https://img.shields.io/badge/License-GNU%20GPL-red?logo=gnu&style=flat-square)
 
 > **Voices of Truth** is a web app for browsing a directory of renowned scholars and preachers worldwide, supporting Arabic and English, built using Next.js, React, and Tailwind CSS.  
-> Built with ❤️ by [fathi733@gmail.com](mailto:fathi733@gmail.com)
+> Built with ❤️ by [islamux](mailto:fathi733@gmail.coom)
 
 ---
 
@@ -71,7 +71,7 @@ Finally, you can run the following scripts:
 ## 📂 File Structure
 
 ```
-voices-of-truth/
+vocies-of-truth/
 ├── public/
 │   ├── avatars/
 │   └── locales/
@@ -81,9 +81,10 @@ voices-of-truth/
 │   │   │   ├── HomePageClient.tsx
 │   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
-│   │   └── hooks/
-│   │       └── useScholars.ts
+│   │   └── ...
 │   ├── components/
+│   │   ├── filters/
+│   │   │   └── ...
 │   │   ├── FilterBar.tsx
 │   │   ├── Layout.tsx
 │   │   ├── ScholarCard.tsx
@@ -92,10 +93,12 @@ voices-of-truth/
 │   │   └── scholars.ts
 │   ├── lib/
 │   │   └── i18n.ts
+│   ├── middleware.ts
 │   └── types/
 │       └── index.ts
+├── docs/
+│   └── ...
 ├── package.json
-├── TUTORIAL.md
 └── ...
 ```
 
@@ -103,19 +106,18 @@ voices-of-truth/
 
 ## 🧠 How It Works
 
-- Uses a custom React Hook (`useScholars`) to manage all filtering logic and state.
-- Separates concerns between logic (hooks) and presentation (components).
+- Separates concerns between logic (server-side filtering) and presentation (components).
 - Internationalization is powered by `react-i18next` with language detection and local translation files.
-- Scholars are listed and filtered client-side, with dynamic language and theme switching.
+- Scholars are listed and filtered server-side, with dynamic language and theme switching.
 - Fully responsive and visually enhanced with Tailwind CSS and Framer Motion.
 
 ---
 
 ## 📚 Detailed Guides
 
-- [How to Add Translation Feature to a Next.js Project](./TRANSLATION_TUTORIAL.md)
-- [How to Integrate Tailwind CSS and PostCSS in a Next.js Project](./TAILWIND_POSTCSS_TUTORIAL.md)
-- [How to Implement Light/Dark Theme in Next.js with Tailwind CSS](./LIGHT_DARK_THEME_TUTORIAL.md)
+- [How to Add Translation Feature to a Next.js Project](./docs/04_FEATURE_TRANSLATION.md)
+- [How to Integrate Tailwind CSS and PostCSS in a Next.js Project](./docs/03_STYLING_GUIDE.md)
+- [How to Implement Light/Dark Theme in Next.js with Tailwind CSS](./docs/03_STYLING_GUIDE.md)
 
 ---
 

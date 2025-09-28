@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const islamicThoughtScholars: Scholar[] = [
   {
-    id: 'scholar-22',
+    id: 22,
     name: { en: 'Dr. Tareq AlSuwaidan', ar: 'د. طارق السويدان' },
     socialMedia: [
         { platform: 'Website', link: 'https://suwaidan.com', icon: 'FaGlobe' },

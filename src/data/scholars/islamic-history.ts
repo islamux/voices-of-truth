@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const islamicHistoryScholars: Scholar[] = [
   {
-    id: 'scholar-23',
+    id: 23,
     name: { en: 'Dr. Ragheb Al-Sergany', ar: 'الدكتور راغب السرجاني' },
     socialMedia: [
       { platform: 'WhatsApp', link: 'https://whatsapp.com/channel/0029VakB3LP4CrfgSgWFAl47', icon: 'FaWhatsapp' },

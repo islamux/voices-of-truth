@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const quranInterpretationScholars: Scholar[] = [
   {
-    id: 'scholar-10',
+    id: 10,
     name: { en: 'Dr. Amina Wadud', ar: 'د. أمينة ودود' },
     socialMedia: [{ platform: 'Twitter', link: 'https://twitter.com/amina_wadud', icon: 'FaTwitter' }],
     country: { en: 'United States', ar: 'الولايات المتحدة' },

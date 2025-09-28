@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const quranStudiesScholars: Scholar[] = [
   {
-    id: 'scholar-9',
+    id: 9,
     name: { en: 'Nouman Ali Khan', ar: 'نعمان علي خان' },
     socialMedia: [{ platform: 'YouTube', link: 'https://youtube.com/bayyinah', icon: 'FaYoutube' }],
     country: { en: 'United States', ar: 'الولايات المتحدة' },
@@ -15,7 +15,7 @@ export const quranStudiesScholars: Scholar[] = [
     category: { en: 'Quran Studies', ar: 'علوم القرآن' }
   },
   {
-    id: 'scholar-27',
+    id: 27,
     name: { en: 'Dr. Ayman Swaid', ar: 'الدكتور أيمن سويد' },
     socialMedia: [
       { platform: 'Facebook', link: 'https://facebook.com/Dr.AymanSwaid', icon: 'FaFacebook' },

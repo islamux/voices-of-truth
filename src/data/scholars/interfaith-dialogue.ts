@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const interfaithDialogueScholars: Scholar[] = [
   {
-    id: 'scholar-7',
+    id: 7,
     name: { en: 'Dr. Ingrid Mattson', ar: 'د. إنغريد ماتسون' },
     socialMedia: [{ platform: 'Twitter', link: 'https://twitter.com/ingridmattson', icon: 'FaTwitter' }],
     country: { en: 'Canada', ar: 'كندا' },
@@ -15,7 +15,7 @@ export const interfaithDialogueScholars: Scholar[] = [
     category: { en: 'Interfaith Dialogue', ar: 'الحوار بين الأديان' }
   },
   {
-    id: 'scholar-26',
+    id: 26,
     name: { en: 'Waleed Ismail', ar: 'وليد إسماعيل الدافع' },
     socialMedia: [
       { platform: 'TikTok', link: 'https://tiktok.com/@waleedismail1975', icon: 'FaTiktok' },

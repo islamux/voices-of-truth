@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const spiritualityEthicsScholars: Scholar[] = [
   {
-    id: 'scholar-5',
+    id: 5,
     name: { en: 'Yasmin Mogahed', ar: 'ياسمين مجاهد' },
     socialMedia: [{ platform: 'Instagram', link: 'https://instagram.com/yasminmogahed', icon: 'FaInstagram' }],
     country: { en: 'United States', ar: 'الولايات المتحدة' },

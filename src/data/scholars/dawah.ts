@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const dawahScholars: Scholar[] = [
   {
-    id: 'scholar-6',
+    id: 6,
     name: { en: 'Mufti Menk', ar: 'مفتي منك' },
     socialMedia: [{ platform: 'YouTube', link: 'https://youtube.com/muftimenk', icon: 'FaYoutube' }],
     country: { en: 'Zimbabwe', ar: 'زيمبابوي' },
@@ -15,7 +15,7 @@ export const dawahScholars: Scholar[] = [
     category: { en: 'Da\'wah', ar: 'الدعوة' }
   },
   {
-    id: 'scholar-19',
+    id: 19,
     name: { en: 'Dr. Mahmoud Elmasry', ar: 'د. محمود المصري' },
     socialMedia: [
       { platform: 'YouTube', link: 'https://youtube.com/channel/UCoxabeyx-KBuLth-cFgvwNw', icon: 'FaYoutube' },
@@ -32,7 +32,7 @@ export const dawahScholars: Scholar[] = [
     category: { en: 'Da\'wah', ar: 'الدعوة' }
   },
   {
-    id: 'scholar-21',
+    id: 21,
     name: { en: 'Sheikh Muhammad Hussein Yacoub', ar: 'الشيخ محمد حسين يعقوب' },
     socialMedia: [
       { platform: 'Website', link: 'https://yaqob.com', icon: 'FaGlobe' },
@@ -52,7 +52,7 @@ export const dawahScholars: Scholar[] = [
   }
   ,
   {
-    id: 'scholar-99',
+    id: 99,
     name: { en: 'Abdullah Rushdy', ar: 'عبد الله رشدي' },
     socialMedia: [
       { platform: 'YouTube', link: 'https://www.youtube.com/@abdullahrushdyarabic', icon: 'FaYoutube' }

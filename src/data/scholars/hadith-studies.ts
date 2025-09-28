@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const hadithStudiesScholars: Scholar[] = [
   {
-    id: 'scholar-3',
+    id: 3,
     name: { en: 'Imam Zaid Shakir', ar: 'إمام زيد شاكر' },
     socialMedia: [{ platform: 'Facebook', link: 'https://facebook.com/imamzaidshakir', icon: 'FaFacebook' }],
     country: { en: 'United States', ar: 'الولايات المتحدة' },
@@ -15,7 +15,7 @@ export const hadithStudiesScholars: Scholar[] = [
     category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
   },
   {
-    id: 'scholar-8',
+    id: 8,
     name: { en: 'Hamza Yusuf', ar: 'حمزة يوسف' },
     socialMedia: [{ platform: 'Facebook', link: 'https://facebook.com/hamzayusuf', icon: 'FaFacebook' }],
     country: { en: 'United States', ar: 'الولايات المتحدة' },
@@ -28,7 +28,7 @@ export const hadithStudiesScholars: Scholar[] = [
     category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
   },
   {
-    id: 'scholar-20',
+    id: 20,
     name: { en: 'Sheikh Abu Ishaq Al-Huwayni', ar: 'الشيخ أبو إسحاق الحويني' },
     socialMedia: [
       { platform: 'Website', link: 'https://alheweny.me', icon: 'FaGlobe' },
@@ -50,7 +50,7 @@ export const hadithStudiesScholars: Scholar[] = [
     category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
   },
   {
-    id: 'scholar-24',
+    id: 24,
     name: { en: 'Sheikh Muhammad Nasiruddin al-Albani', ar: 'فضيلة الشيخ محمد ناصر الدين الألباني' },
     socialMedia: [
       { platform: 'Android', link: 'https://play.google.com/store/apps/details?id=com.q8coders.android.sheks', icon: 'FaAndroid' },

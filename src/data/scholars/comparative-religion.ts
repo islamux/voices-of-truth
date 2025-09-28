@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const comparativeReligionScholars: Scholar[] = [
   {
-    id: 'scholar-11',
+    id: 11,
     name: { en: 'Moaz Alian', ar: 'معاذ عليان' },
     socialMedia: [
         { platform: 'Facebook', link: 'https://facebook.com/MoazElian2', icon: 'FaFacebook' },
@@ -20,7 +20,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-12',
+    id: 12,
     name: { en: 'Zain Khairallah', ar: 'زين خير الله' },
     socialMedia: [
         { platform: 'YouTube', link: 'https://www.youtube.com/@Zaink-r8q', icon: 'FaYoutube' },
@@ -36,7 +36,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-13',
+    id: 13,
     name: { en: 'Al-Nour Al-Tariq', ar: 'النور الطارق' },
     socialMedia: [{ platform: 'YouTube', link: 'https://www.youtube.com/channel/UClZCHqcnJW3YAVo63eQOnqw', icon: 'FaYoutube' }],
     country: { en: 'Egypt', ar: 'مصر' },
@@ -49,7 +49,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-14',
+    id: 14,
     name: { en: 'Dr. Munqith Al-Saqqar', ar: 'د. منقذ السقار' },
     socialMedia: [
       { platform: 'YouTube', link: 'https://www.youtube.com/@MongizAlsaqqar', icon: 'FaYoutube' },
@@ -66,7 +66,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-15',
+    id: 15,
     name: { en: 'Mahmoud Dawoud', ar: 'محمود داود' },
     socialMedia: [
       { platform: 'YouTube', link: 'https://www.youtube.com/@mdawoud1', icon: 'FaYoutube' },
@@ -84,7 +84,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-16',
+    id: 16,
     name: { en: 'Moawad Alzahabey', ar: 'معوض توفيق الذهبي' },
     socialMedia: [
       { platform: 'Facebook', link: 'https://facebook.com/moawadt', icon: 'FaFacebook' },
@@ -102,7 +102,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-17',
+    id: 17,
     name: { en: 'Captain Ahmed – Specialist in Comparative Religion', ar: 'الكابتن أحمد لمقارنة الأديان' },
     socialMedia: [
       { platform: 'TikTok', link: 'https://tiktok.com/@c.ahmed.h', icon: 'FaTiktok' },
@@ -118,7 +118,7 @@ export const comparativeReligionScholars: Scholar[] = [
     category: { en: 'Comparative Religion', ar: 'مقارنة أديان' }
   },
   {
-    id: 'scholar-18',
+    id: 18,
     name: { en: 'Sharief Almohawir', ar: 'شريف المحاور' },
     socialMedia: [
       { platform: 'Facebook', link: 'https://facebook.com/sherifelmasr', icon: 'FaFacebook' },

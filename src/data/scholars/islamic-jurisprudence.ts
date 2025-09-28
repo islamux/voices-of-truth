@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const islamicJurisprudenceScholars: Scholar[] = [
   {
-    id: 'scholar-25',
+    id: 25,
     name: { en: 'Cheikh Mohamed El Hassan Ould Dedew', ar: 'محمد الحسن الددو' },
     socialMedia: [
       { platform: 'Website', link: 'https://dedewnet.com', icon: 'FaGlobe' },

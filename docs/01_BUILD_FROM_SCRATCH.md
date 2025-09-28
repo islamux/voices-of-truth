@@ -129,43 +129,54 @@ In Next.js 15, the `searchParams` object in Server Components is **asynchronous*
 
 ---
 
-## Step 5: The "Dumb" Client Component
+## Step 5: The Stateful Client Component
 
-With the filtering logic on the server, our `HomePageClient.tsx` becomes a "dumb" component. It simply receives data as props and renders the UI. It doesn't know how the data was filtered; it just displays what it's given.
+While the heavy lifting of filtering happens on the server, the `HomePageClient.tsx` component is the "brain" of the user interaction. It's a **stateful Client Component** responsible for managing the user's filter selections and telling the server when to re-filter the data.
+
+Here’s how it works:
 
 ```tsx
 // src/app/[locale]/HomePageClient.tsx
 "use client";
 
-import { Scholar } from "@/types";
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import FilterBar from "@/components/FilterBar";
 import ScholarList from "@/components/ScholarList";
+import { Scholar } from "@/types";
 
-interface HomePageClientProps {
-  scholars: Scholar[];
-  uniqueCountries: { value: string; label: string }[];
-  uniqueCategories: { value: string; label: string }[];
-  uniqueLanguages: string[];
-}
+// ... (interface definition) ...
 
-const HomePageClient = ({
-  scholars,
-  uniqueCountries,
-  uniqueCategories,
-  uniqueLanguages,
-}: HomePageClientProps) => {
-  // This component no longer has any filtering logic!
-  // It just receives props and renders UI.
+const HomePageClient = ({ scholars, ... }: HomePageClientProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // 1. State Management: Initialize state from URL search params.
+  const [category, setCategory] = useState(searchParams.get('category') || '');
+  // ... (state for other filters: searchQuery, country, lang)
+
+  // 2. URL Syncing: This effect watches for changes in the filter state.
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams();
+    if (category) newSearchParams.set('category', category);
+    // ... (set other params if they exist)
+
+    // 3. Trigger Re-render: Push the new URL to the router.
+    // This tells Next.js to re-render the server component with new searchParams.
+    router.push(`?${newSearchParams.toString()}`);
+  }, [category, router, /* other state variables */]);
+
+  // 4. Event Handlers: These functions update the state when a user interacts with the FilterBar.
+  const handleCategoryChange = (selectedCategory: string) => setCategory(selectedCategory);
+
   return (
     <div className="container ...">
       <h1 className='text-4xl ...'>Voices of Truth</h1>
 
       <FilterBar
-        uniqueCountries={uniqueCountries}
-        uniqueLanguages={uniqueLanguages}
-        uniqueCategories={uniqueCategories}
-        // Note: The filter bar now needs to update the URL
-        // to trigger a new server-side render with new searchParams.
+        // ... (pass down unique values for dropdowns)
+        onCategoryChange={handleCategoryChange}
+        // ... (pass other change handlers)
       />
 
       <ScholarList scholars={scholars} />
@@ -176,9 +187,14 @@ const HomePageClient = ({
 export default HomePageClient;
 ```
 
-**Key Concept: Server vs. Client Components**
-*   **Server Components (`page.tsx`):** Run on the server. Good for data fetching, accessing databases, and keeping sensitive logic off the client.
-*   **Client Components (`HomePageClient.tsx`):** Run on the client (the browser). Needed for interactivity, state, and browser-only APIs.
+**Key Concept: The Client-Server Interaction Loop**
+1.  **User Action:** The user selects a category in the `FilterBar`.
+2.  **State Update:** The `onCategoryChange` callback fires, calling `setCategory()`.
+3.  **Effect Triggered:** The `useEffect` hook detects a change in the `category` state.
+4.  **URL Update:** `router.push()` changes the URL (e.g., to `/?category=islamic-thought`).
+5.  **Server Reruns:** Next.js detects the URL change and re-renders the Server Component (`page.tsx`) with the new `searchParams`.
+6.  **New Data:** The server filters the data and passes the new, smaller list down to `HomePageClient`.
+7.  **UI Update:** The client re-renders with the new `scholars` prop.
 
 ---
 
@@ -187,10 +203,8 @@ export default HomePageClient;
 You now have a complete overview of how "Voices of Truth" is built with a modern, server-centric architecture. You've seen how we:
 1.  Define data structures with TypeScript.
 2.  Perform data filtering on the server using Server Components.
-3.  Handle asynchronous `searchParams` in Next.js 15.
-4.  Pass data down to "dumb" Client Components for rendering.
+3.  Use a **stateful Client Component** to manage user input.
+4.  Use `useState`, `useEffect`, and `useRouter` to create a reactive loop where client-side actions trigger server-side data filtering.
 
 **Your next task:**
-Explore the `FilterBar` component. How does it update the URL when a filter is changed? (Hint: Look for `useRouter` or `window.location`). Understanding this is key to seeing how the client tells the server to re-filter the data.
-
-Good luck!
+Explore the `FilterBar` and its child components (`CategoryFilter`, etc.). See how the `onCategoryChange` prop is passed down and connected to the `<select>` element's `onChange` event. This is the final link in the chain from a user's click to a full data refresh.

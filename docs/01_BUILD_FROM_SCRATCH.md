@@ -2,7 +2,55 @@
 
 Welcome, junior developer! This document is your guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
 
-We'll focus on the "how" and "why" of the code, not the initial project setup.
+Let's start by setting up our Next.js project.
+
+### 1. Create a New Next.js Project
+
+We'll use `pnpm` to create a new Next.js project with TypeScript, ESLint, and Tailwind CSS configured.
+
+```bash
+pnpm create next-app voices-of-truth --typescript --eslint --tailwind --app --src-dir --use-pnpm
+```
+
+This command will:
+*   `voices-of-truth`: Name your project directory.
+*   `--typescript`: Configure TypeScript.
+*   `--eslint`: Configure ESLint.
+*   `--tailwind`: Configure Tailwind CSS.
+*   `--app`: Use the App Router (recommended for Next.js 13+).
+*   `--src-dir`: Create an `src/` directory.
+*   `--use-pnpm`: Use pnpm as the package manager.
+
+Navigate into your new project:
+```bash
+cd voices-of-truth
+```
+
+### 2. Install Internationalization Libraries
+
+We'll be using `i18next` and `react-i18next` for internationalization. Install them:
+
+```bash
+pnpm add i18next react-i18next
+```
+
+### 3. Initial Project Structure
+
+After setup, your project structure will look similar to this:
+```
+/
+├── public/             # Static assets (images, fonts, translation files)
+│   └── ...
+├── src/                # Our main application source code
+│   ├── app/            # Next.js App Router pages and layouts
+│   │   └── ...
+│   ├── ...
+├── next.config.mjs     # Next.js configuration
+├── tailwind.config.ts  # Tailwind CSS configuration
+├── tsconfig.json       # TypeScript configuration
+├── package.json        # Project dependencies and scripts
+└── pnpm-lock.yaml      # pnpm lock file
+```
 
 **Our Tech Stack:**
 *   **Framework:** Next.js 15+ (with App Router)

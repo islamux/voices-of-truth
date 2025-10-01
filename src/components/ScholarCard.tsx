@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import { Scholar } from '../types';
+import { Country, Scholar } from '../types';
 import { motion } from 'framer-motion';
 import ScholarAvatar from './ScholarAvatar';
 import ScholarInfo from './ScholarInfo';
@@ -12,9 +12,10 @@ import { useTranslation } from 'react-i18next';
 
 interface ScholarCardProps {
   scholar: Scholar; // The scholar data object.
+    countries: Country[];
 }
 
-const ScholarCard: React.FC<ScholarCardProps> = ({ scholar }) => {
+const ScholarCard: React.FC<ScholarCardProps> = ({ scholar , countries}) => {
   const { i18n } = useTranslation();
   const currentLang = i18n.language;
 
@@ -25,9 +26,13 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar }) => {
   // Retrieves the localized name, falling back to English if the current language's translation is not available.
   const name = scholar.name[currentLang] || scholar.name['en'];
   // Retrieves the localized country, falling back to English.
-  const country = scholar.country[currentLang] || scholar.country.en;
+
+  const countryObject = countries.find(c=> c.id === scholar.countryId);
+
+  const country = countryObject ? (currentLang === 'ar' ? countryObject.ar : countryObject.en) : '';
+
   // Retrieves the localized bio, if available, falling back to English.
-  const bio = scholar.bio && (scholar.bio[currentLang] || scholar.bio['en']);
+  const bio = scholar.bio ? (currentLang === 'ar' ? scholar.bio.ar : scholar.bio.en) : undefined;
 
   // Main card component rendering.
   return (

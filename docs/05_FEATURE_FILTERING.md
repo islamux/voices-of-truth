@@ -29,49 +29,67 @@ The user interacts with a dropdown menu. This UI is built from a chain of compon
 
 When the user selects a new category, `FilterDropdown`'s `onChange` calls the `onCategoryChange` function that was passed all the way from `HomePageClient.tsx`.
 
-### Step 2: Updating the State and URL (Client-Side)
+### Step 2: Updating the URL (Client-Side)
 
-The main client-side logic lives in **`src/app/[locale]/HomePageClient.tsx`**.
+The main client-side logic lives in **`src/app/[locale]/HomePageClient.tsx`**. This component is responsible for reacting to user input and updating the URL.
 
-1.  **State Management**: It uses `useState` to keep track of the currently selected filter values.
-    ```typescript
-    // src/app/[locale]/HomePageClient.tsx
-    const [category, setCategory] = useState(searchParams.get('category') || '');
-    ```
+```tsx
+// src/app/[locale]/HomePageClient.tsx
+"use client";
 
-2.  **Event Handlers**: It defines functions like `handleCategoryChange` that update this state. These are the functions passed down to the filter components.
-    ```typescript
-    // src/app/[locale]/HomePageClient.tsx
-    const handleCategoryChange = (selectedCategory: string) => setCategory(selectedCategory);
-    ```
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
+// ... other imports
 
-3.  **Syncing with URL**: A `useEffect` hook watches for changes in any of the filter state variables. When a change is detected, it constructs a new URL query string and uses the Next.js `useRouter` to push this new URL.
-    ```typescript
-    // src/app/[locale]/HomePageClient.tsx
-    useEffect(() => {
-      const newSearchParams = new URLSearchParams();
-      if (category) newSearchParams.set('category', category);
-      // ... (other filters)
-      router.push(`?${newSearchParams.toString()}`);
-    }, [searchQuery, country, lang, category, router]);
-    ```
-    This is the key step! Changing the URL triggers the server-side part of the process.
+const HomePageClient: React.FC<HomePageClientProps> = ({...}) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // 1. Define a callback to handle all filter changes.
+  const handleFilterChange = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
+      // 2. Push the new URL to the router.
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
+
+  // 3. Pass the handler to the FilterBar.
+  return (
+    <div className="space-y-8">
+      <FilterBar
+        onCategoryChange={(category) => handleFilterChange("category", category)}
+        // ... other handlers
+      />
+      {/* ... */}
+    </div>
+  );
+};
+```
+This is the key step! Calling `router.push()` with a new URL triggers the server-side part of the process.
 
 ### Step 3: The Server Reacts (Server-Side)
 
 The main page component, **`src/app/[locale]/page.tsx`**, is a **Server Component**. It runs on the server every time the page is requested.
 
 1.  **Reading the URL**: It receives `searchParams` as a prop, which contains the filter values from the URL.
-    ```typescript
+    ```tsx
     // src/app/[locale]/page.tsx
-    export default async function HomePage({ params, searchParams }: HomePageProps) {
+    export default async function HomePage({ searchParams }: HomePageProps) {
       const { query, country, lang, category } = await searchParams;
       // ...
     }
     ```
 
 2.  **Filtering the Data**: It then uses this information to filter the main `scholars` array directly on the server.
-    ```typescript
+    ```tsx
     // src/app/[locale]/page.tsx
     const filteredScholars = scholars.filter(scholar => {
       // ... filtering logic for search, country, lang ...
@@ -87,7 +105,7 @@ The main page component, **`src/app/[locale]/page.tsx`**, is a **Server Componen
 
 Finally, the server component passes the filtered data down to the client component for rendering.
 
-```typescript
+```tsx
 // src/app/[locale]/page.tsx
 export default async function HomePage(...) {
   // ... filtering happens above ...
@@ -114,5 +132,5 @@ This "URL as State" pattern combined with Server-Side Filtering is a modern and 
 -   **Shareable URLs**: Since the filter state is in the URL, users can bookmark or share links to specific filtered views.
 -   **Clean Architecture**: It creates a clear separation of concerns:
     -   **Server (`page.tsx`)**: Data fetching and filtering.
-    -   **Client (`HomePageClient.tsx`)**: UI state management and user interaction.
+    -   **Client (`HomePageClient.tsx`)**: UI interaction and URL management.
     -   **UI Components (`Filter*.tsx`)**: Reusable and focused on presentation.

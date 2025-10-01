@@ -14,15 +14,17 @@ import { Scholar, Country, Specialization } from '@/types';
 
 // Define the props for the page, including searchParams.
 interface HomePageProps {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 /**
   * This is the main page. It's now a server component that handles
   * data fetching and filtering.
   * */
-  export default async function HomePage({ params, searchParams }: HomePageProps) {
+  export default async function HomePage({ searchParams }: HomePageProps) {
+
+    // const {locale} = await params;
     const { query, country, lang, category } = await searchParams;
 
     const searchQuery = (query || '').toString().toLowerCase();
@@ -40,7 +42,7 @@ interface HomePageProps {
       const countryId = country ? countries.find(c => c.en === country)?.id : undefined;
       const matchCountry = country ? scholar.countryId === countryId : true;
 
-      const matchesLang = lang ? scholar.language.includes(lang) : true;
+      const matchesLang = lang ? scholar.language.includes(lang as string) : true;
 
       const categoryId = category ? specializations.find(s => s.en === category)?.id : undefined;
       const matchesCategory = category ? scholar.categoryId === categoryId : true;
@@ -67,6 +69,9 @@ interface HomePageProps {
       uniqueCountries={uniqueCountries}
       uniqueCategories={uniqueCategories}
       uniqueLanguages={uniqueLanguages}
+      countries={countries}
       />
     );
   }
+
+

@@ -1,5 +1,7 @@
 # Tutorial: Implementing "Add to Favorites" (Updated for Server-Side Filtering)
 
+> **Note:** This document describes a proposed feature. The code is provided as a guide for implementation and is not yet part of the main codebase.
+
 This guide walks you through adding a "Favorites" feature that is compatible with our project's server-side filtering architecture. We will use a **hybrid filtering model**.
 
 **The Architecture:**

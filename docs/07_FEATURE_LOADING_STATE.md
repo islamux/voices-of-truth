@@ -1,5 +1,7 @@
 # Tutorial: Implementing a Loading State
 
+> **Note:** This document describes a proposed feature. The code is provided as a guide for implementation and is not yet part of the main codebase. The `useScholars` hook mentioned here has been refactored; the core logic now resides in the `src/app/[locale]/page.tsx` server component.
+
 This guide explains how to add a loading indicator to the application. This improves user experience by showing that content is being prepared, especially if data processing takes a noticeable amount of time or if you switch to fetching data from an API in the future.
 
 ## Step 1: Introduce a Loading State in `useScholars` Hook

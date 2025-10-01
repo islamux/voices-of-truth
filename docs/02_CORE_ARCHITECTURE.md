@@ -51,30 +51,48 @@ You **must** use a Client Component if it uses any of the following:
 *   **Interactivity and Event Listeners:** `onClick()`, `onChange()`, etc.
 *   **State and Lifecycle Hooks:** `useState()`, `useEffect()`, `useReducer()`, etc.
 *   **Browser-only APIs:** `window`, `localStorage`, `navigator`.
-*   **Custom Hooks** that depend on any of the above (like your `useScholars` hook).
+*   **Custom Hooks** that depend on state or effects.
 
 **How to use them in this project?**
 You declare a Client Component by placing the `"use client"` directive at the very top of the file.
 
 **Example:** `src/app/[locale]/HomePageClient.tsx`
-This is a perfect example of a Client Component. It needs to manage the state of the filters and handle user input, so it must be a Client Component.
+This is a perfect example of a Client Component. It needs to handle user input from the filters, so it must be a Client Component.
 
 ```tsx
 // src/app/[locale]/HomePageClient.tsx
 "use client"; // This directive makes it a Client Component
 
-import { useScholars } from "@/app/hooks/useScholars";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 import FilterBar from "@/components/FilterBar";
 import ScholarList from "@/components/ScholarList";
 
-export default function HomePageClient() {
-  // It uses a custom hook with useState and useMemo, so it must be a client component.
-  const { filteredScholars, ... } = useScholars();
+// This component receives the already-filtered scholars from its parent Server Component.
+export default function HomePageClient({ scholars, uniqueCountries, ... }) {
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // It uses hooks to interact with the router and manage URL updates.
+  const handleFilterChange = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
 
   return (
     <div>
-      <FilterBar ... />
-      <ScholarList ... />
+      <FilterBar onCountryChange={(country) => handleFilterChange("country", country)} ... />
+      <ScholarList scholars={scholars} ... />
     </div>
   );
 }

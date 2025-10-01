@@ -91,14 +91,30 @@ Before we build anything, we need to define the shape of our data. What informat
 ```typescript
 // src/types/index.ts
 export interface Scholar {
-  id: string;
+  id: number;
   name: Record<string, string>; // e.g., { en: "Name", ar: "الاسم" }
-  socialMedia: { /* ... */ }[];
+  socialMedia: {
+    platform: string;
+    link: string;
+    icon?: string;
+  }[];
   countryId: number;
+  categoryId: number;
   language: string[];
   avatarUrl: string;
   bio?: Record<string, string>;
-  categoryId: number;
+}
+
+export interface Country {
+  id: number;
+  en: string;
+  ar: string;
+}
+
+export interface Specialization {
+  id: number;
+  en: string;
+  ar: string;
 }
 ```
 **Why `Record<string, string>`?** This is a simple and effective way to support multiple languages for a single field. The `key` is the language code (e.g., 'en', 'ar'), and the `value` is the translated text.
@@ -177,9 +193,9 @@ In Next.js 15, the `searchParams` object in Server Components is **asynchronous*
 
 ---
 
-## Step 5: The Stateful Client Component
+## Step 5: The Interactive Client Component
 
-While the heavy lifting of filtering happens on the server, the `HomePageClient.tsx` component is the "brain" of the user interaction. It's a **stateful Client Component** responsible for managing the user's filter selections and telling the server when to re-filter the data.
+While the server handles filtering, the `HomePageClient.tsx` component is responsible for managing user interaction and telling the server when to re-filter the data.
 
 Here’s how it works:
 
@@ -187,47 +203,51 @@ Here’s how it works:
 // src/app/[locale]/HomePageClient.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 import FilterBar from "@/components/FilterBar";
 import ScholarList from "@/components/ScholarList";
-import { Scholar } from "@/types";
+// ... other imports
 
 // ... (interface definition) ...
 
-const HomePageClient = ({ scholars, ... }: HomePageClientProps) => {
+const HomePageClient: React.FC<HomePageClientProps> = ({
+  scholars,
+  uniqueCountries,
+  // ... other props
+}) => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // 1. State Management: Initialize state from URL search params.
-  const [category, setCategory] = useState(searchParams.get('category') || '');
-  // ... (state for other filters: searchQuery, country, lang)
+  // 1. Define a callback to handle filter changes
+  const handleFilterChange = useCallback(
+    (name: string, value: string) => {
+      // Create a mutable copy of the current search params
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
+      // 2. Trigger Re-render: Push the new URL to the router.
+      // This tells Next.js to re-render the server component with new searchParams.
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
 
-  // 2. URL Syncing: This effect watches for changes in the filter state.
-  useEffect(() => {
-    const newSearchParams = new URLSearchParams();
-    if (category) newSearchParams.set('category', category);
-    // ... (set other params if they exist)
-
-    // 3. Trigger Re-render: Push the new URL to the router.
-    // This tells Next.js to re-render the server component with new searchParams.
-    router.push(`?${newSearchParams.toString()}`);
-  }, [category, router, /* other state variables */]);
-
-  // 4. Event Handlers: These functions update the state when a user interacts with the FilterBar.
-  const handleCategoryChange = (selectedCategory: string) => setCategory(selectedCategory);
-
+  // 3. Pass the handler down to the FilterBar
   return (
-    <div className="container ...">
-      <h1 className='text-4xl ...'>Voices of Truth</h1>
-
+    <div className="space-y-8">
       <FilterBar
-        // ... (pass down unique values for dropdowns)
-        onCategoryChange={handleCategoryChange}
-        // ... (pass other change handlers)
+        uniqueCountries={uniqueCountries}
+        // ... other props
+        onCountryChange={(country) => handleFilterChange("country", country)}
+        onCategoryChange={(category) => handleFilterChange("category", category)}
+        // ... other handlers
       />
-
-      <ScholarList scholars={scholars} />
+      <ScholarList scholars={scholars} countries={countries} />
     </div>
   );
 };
@@ -237,12 +257,11 @@ export default HomePageClient;
 
 **Key Concept: The Client-Server Interaction Loop**
 1.  **User Action:** The user selects a category in the `FilterBar`.
-2.  **State Update:** The `onCategoryChange` callback fires, calling `setCategory()`.
-3.  **Effect Triggered:** The `useEffect` hook detects a change in the `category` state.
-4.  **URL Update:** `router.push()` changes the URL (e.g., to `/?category=islamic-thought`).
-5.  **Server Reruns:** Next.js detects the URL change and re-renders the Server Component (`page.tsx`) with the new `searchParams`.
-6.  **New Data:** The server filters the data and passes the new, smaller list down to `HomePageClient`.
-7.  **UI Update:** The client re-renders with the new `scholars` prop.
+2.  **Event Handler:** The `onCategoryChange` callback fires, calling `handleFilterChange('category', 'islamic-thought')`.
+3.  **URL Update:** `handleFilterChange` constructs the new URL query string and `router.push()` changes the URL (e.g., to `/en?category=islamic-thought`).
+4.  **Server Reruns:** Next.js detects the URL change and re-renders the Server Component (`page.tsx`) with the new `searchParams`.
+5.  **New Data:** The server filters the data and passes the new, smaller list down to `HomePageClient`.
+6.  **UI Update:** The client re-renders with the new `scholars` prop.
 
 ---
 

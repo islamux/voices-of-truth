@@ -173,30 +173,27 @@ import Layout from '@/components/Layout';
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export default async function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: LocaleLayoutProps) {
+  const { locale } = await params;
   const { resources } = await getTranslation(locale);
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <body>
-        <I18nProviderClient
-          locale={locale}
-          resources={resources}
-        >
-          <ThemeProvider>
-            <Layout>
-              {children}
-            </Layout>
-          </ThemeProvider>
-        </I18nProviderClient>
-      </body>
-    </html>
+    <I18nProviderClient
+      locale={locale}
+      resources={resources}
+    >
+      <ThemeProvider>
+        <Layout>
+          {children}
+        </Layout>
+      </ThemeProvider>
+    </I18nProviderClient>
   );
 }
 
@@ -207,7 +204,6 @@ export async function generateStaticParams() {
 ```
 *   **`getTranslation(locale)`**: This server-side function fetches the translation JSON for the current locale.
 *   **Provider Nesting**: The `I18nProviderClient` wraps all other providers and the main `Layout`, ensuring translations are available everywhere.
-*   **`<html>` tag**: The `lang` and `dir` attributes are set here for accessibility and correct text direction (LTR/RTL).
 
 ## 6. Using Translations in Client Components
 

@@ -5,27 +5,27 @@ export const hadithStudiesScholars: Scholar[] = [
     id: 3,
     name: { en: 'Imam Zaid Shakir', ar: 'إمام زيد شاكر' },
     socialMedia: [{ platform: 'Facebook', link: 'https://facebook.com/imamzaidshakir', icon: 'FaFacebook' }],
-    country: { en: 'United States', ar: 'الولايات المتحدة' },
+    countryId: 6,
     language: ['English'],
     avatarUrl: '/avatars/zaid_shakir.png',
     bio: {
       en: 'Co-founder of Zaytuna College, a liberal arts college in Berkeley, California.',
       ar: 'أحد مؤسسي كلية الزيتونة ، وهي كلية فنون ليبرالية في بيركلي ، كاليفورنيا.'
     },
-    category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
+    categoryId: 4
   },
   {
     id: 8,
     name: { en: 'Hamza Yusuf', ar: 'حمزة يوسف' },
     socialMedia: [{ platform: 'Facebook', link: 'https://facebook.com/hamzayusuf', icon: 'FaFacebook' }],
-    country: { en: 'United States', ar: 'الولايات المتحدة' },
+    countryId: 6,
     language: ['English', 'Arabic'],
     avatarUrl: '/avatars/hamza_yusuf.png',
     bio: {
       en: 'President of Zaytuna College and a leading proponent of classical Islamic learning.',
       ar: 'رئيس كلية الزيتونة ومن أبرز دعاة التعلم الإسلامي الكلاسيكي.'
     },
-    category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
+    categoryId: 4
   },
   {
     id: 20,
@@ -40,14 +40,14 @@ export const hadithStudiesScholars: Scholar[] = [
       { platform: 'SoundCloud', link: 'https://soundcloud.com/alheweny-official', icon: 'FaSoundcloud' },
       { platform: 'WhatsApp', link: 'https://whatsapp.com/channel/0029Va1AYFbDOQIY2diIxl3y', icon: 'FaWhatsapp' }
     ],
-    country: { en: 'Egypt', ar: 'مصر' },
+    countryId: 1,
     language: ['Arabic'],
     avatarUrl: '/avatars/hwaini.jpg',
     bio: {
       en: 'Prominent Egyptian scholar specializing in Hadith sciences and Islamic jurisprudence. Known for his deep knowledge of prophetic traditions and authentic narrations.',
       ar: 'عالم مصري بارز متخصص في علوم الحديث والفقه الإسلامي. معروف بعلمه العميق في الأحاديث النبوية والروايات الصحيحة.'
     },
-    category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
+    categoryId: 4
   },
   {
     id: 24,
@@ -62,13 +62,13 @@ export const hadithStudiesScholars: Scholar[] = [
       { platform: 'SoundCloud', link: 'https://soundcloud.com/sheikhalalbany', icon: 'FaSoundcloud' },
       { platform: 'YouTube', link: 'https://www.youtube.com/@SheikhAlalbany', icon: 'FaYoutube' }
     ],
-    country: { en: 'Syria', ar: 'سوريا' },
+    countryId: 7,
     language: ['Arabic'],
     avatarUrl: '/avatars/albani.jpg',
     bio: {
       en: 'The channel of Sheikh Al-Albani, affiliated with the Senior Scholars Project. The project started in 2013 and is ongoing. Special thanks to everyone who contributed to the success of this project. Your feedback is welcome.',
       ar: 'قناة الشيخ الالباني التابعة لمشروع كبار العلماء : تم البدء بالمشروع منذ عام 2013 ومستمرون حتى الانتهاء أن شاء الله. شكر خاص لأصحاب الأيادي البيضاء وكل شخص ساهم في إنجاح هذا المشروع . ملاحظتكم تسعدنا وتفرحنا وهي أساس لنجاح المشروع'
     },
-    category: { en: 'Hadith Studies', ar: 'الحديث الشريف' }
+    categoryId: 4
   }
 ];

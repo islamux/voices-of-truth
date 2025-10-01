@@ -15,13 +15,13 @@ export const islamicJurisprudenceScholars: Scholar[] = [
       { platform: 'TikTok', link: 'https://tiktok.com/@mohamedeldedew', icon: 'FaTiktok' },
       { platform: 'YouTube', link: 'https://www.youtube.com/@dedewiat', icon: 'FaYoutube' }
     ],
-    country: { en: 'Morocco', ar: 'المغرب' },
+    countryId: 9,
     language: ['Arabic'],
     avatarUrl: '/avatars/dadu.jpg',
     bio: {
       en: 'The official channel of Cheikh Mohamed El Hassan Ould Dedew.',
       ar: 'القناة الرسمية لفضيلة الشيخ محمد الحسن الددو.'
     },
-    category: { en: 'Islamic Jurisprudence', ar: 'الفقه الإسلامي' }
+    categoryId: 7
   }
 ];

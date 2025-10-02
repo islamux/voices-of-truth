@@ -22,9 +22,9 @@ interface HomePageProps {
   * This is the main page. It's now a server component that handles
   * data fetching and filtering.
   * */
-  export default async function HomePage({ searchParams }: HomePageProps) {
+  export default async function HomePage({ params,searchParams }: HomePageProps) {
 
-    // const {locale} = await params;
+    const {locale} = await params;
     const { query, country, lang, category } = await searchParams;
 
     const searchQuery = (query || '').toString().toLowerCase();
@@ -39,12 +39,12 @@ interface HomePageProps {
         : true;
 
       // Add logic for country, lang, category filters here
-      const countryId = country ? countries.find(c => c.en === country)?.id : undefined;
+      const countryId = country ? countries.find(c => c.name.en === country)?.id : undefined;
       const matchCountry = country ? scholar.countryId === countryId : true;
 
       const matchesLang = lang ? scholar.language.includes(lang as string) : true;
 
-      const categoryId = category ? specializations.find(s => s.en === category)?.id : undefined;
+      const categoryId = category ? specializations.find(s => s.name.en === category)?.id : undefined;
       const matchesCategory = category ? scholar.categoryId === categoryId : true;
 
       return matchSearch && matchCountry && matchesLang && matchesCategory;
@@ -54,12 +54,18 @@ interface HomePageProps {
     const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
       .map(id => countries.find(c => c.id === id))
       .filter((country): country is Country => country !== undefined)
-      .map(country => ({ value: country.en, label: country.en }));
+      .map(country => ({ 
+        value: country.name.en,
+        label: country.name[locale] || country.name.en,
+      }));
 
     const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
       .map(id => specializations.find(s => s.id === id))
       .filter((specialization): specialization is Specialization => specialization !== undefined)
-      .map(specialization => ({ value: specialization.en, label: specialization.en }));
+      .map(specialization => ({
+        value: specialization.name.en,
+        label: specialization.name[locale] || specialization.name.en,
+      }));
     const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
 
     // 4.  Pass the filterd data to the client component.
@@ -73,5 +79,3 @@ interface HomePageProps {
       />
     );
   }
-
-

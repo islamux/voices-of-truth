@@ -1,15 +1,11 @@
 export interface Country {
   id: number;
-  en: string;
-  ar: string;
-  [key: string]: string | number;
+  name : Record<string, string>;
 }
 
 export interface Specialization {
   id: number;
-  en: string;
-  ar: string;
-  [key: string]: string | number;
+  name: Record<string, string>;
 }
 
 export interface Scholar {

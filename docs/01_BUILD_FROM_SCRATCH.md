@@ -107,14 +107,12 @@ export interface Scholar {
 
 export interface Country {
   id: number;
-  en: string;
-  ar: string;
+  name: Record<string, string>; // e.g., { en: "Egypt", ar: "مصر" }
 }
 
 export interface Specialization {
   id: number;
-  en: string;
-  ar: string;
+  name: Record<string, string>; // e.g., { en: "Comparative Religion", ar: "مقارنة أديان" }
 }
 ```
 **Why `Record<string, string>`?** This is a simple and effective way to support multiple languages for a single field. The `key` is the language code (e.g., 'en', 'ar'), and the `value` is the translated text.

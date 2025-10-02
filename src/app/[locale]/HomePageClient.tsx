@@ -1,43 +1,58 @@
 // src/app/[locale]/HomePageClient.tsx
 "use client";
 
-import { useScholars } from "../hooks/useScholars";
+import { usePathname,useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 import FilterBar from "@/components/FilterBar";
 import ScholarList from "@/components/ScholarList";
+import { Country, Scholar } from "@/types";
 
-const HomePageClient = () => {
 
-  // All the complex logic is now inside our custom hook!
-  const {
-    filteredScholars,
-    uniqueCountries,
-    uniqueLanguages,
-    uniqueCategories,
-    onCountryChange,
-    onLanguageChange,
-    onCategoryChange,
-    onSearchChange,
+interface HomePageClientProps {
+  scholars: Scholar[];
+  uniqueCountries: { value: string; label: string }[];
+  uniqueCategories: { value: string; label: string }[];
+  uniqueLanguages: string[];
+  countries: Country[];
+}
 
-  } = useScholars();
+const HomePageClient: React.FC<HomePageClientProps> = ({
+  scholars,
+  uniqueCountries,
+  uniqueCategories,
+  uniqueLanguages,
+  countries
+}) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const handleFilterChange = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
 
   return (
-    <div className="container max-auto px-4 py-8">
-    <h1 className='text-4xl font-bold text-center mb-8'>Voices of Truth</h1>
-
-    {/* Pass all the required props to FilterBar*/}
-    <FilterBar 
+    <div className="space-y-8">
+    <FilterBar
     uniqueCountries={uniqueCountries}
-    uniqueLanguages={uniqueLanguages}
     uniqueCategories={uniqueCategories}
-    onCountryChange={onCountryChange}
-    onLanguageChange={onLanguageChange}
-    onCategoryChange={onCategoryChange} 
-    onSearchChange={onSearchChange}
+    uniqueLanguages={uniqueLanguages}
+    onCountryChange={(country) => handleFilterChange("country", country)}
+    onLanguageChange={(language) => handleFilterChange("lang", language)}
+    onCategoryChange={(category) => handleFilterChange("category", category)}
+    onSearchChange={(term) => handleFilterChange("query", term)}
     />
-
-    <ScholarList scholars={filteredScholars} />
+    <ScholarList scholars={scholars} countries={countries} />
     </div>
-  ) ;
-};
+  );
 
+};
 export default HomePageClient;

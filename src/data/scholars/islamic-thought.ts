@@ -2,7 +2,7 @@ import { Scholar } from '../../types';
 
 export const islamicThoughtScholars: Scholar[] = [
   {
-    id: 'scholar-22',
+    id: 22,
     name: { en: 'Dr. Tareq AlSuwaidan', ar: 'د. طارق السويدان' },
     socialMedia: [
         { platform: 'Website', link: 'https://suwaidan.com', icon: 'FaGlobe' },
@@ -16,13 +16,13 @@ export const islamicThoughtScholars: Scholar[] = [
         { platform: 'Android', link: 'https://play.google.com/store/apps/dev?id=4773038490070940699', icon: 'FaAndroid' },
         { platform: 'iOS', link: 'https://apps.apple.com/us/developer/ebdaa-fikry/id523487499', icon: 'FaApple' }
     ],
-    country: { en: 'Kuwait', ar: 'الكويت' },
+    countryId: 10,
     language: ['Arabic', 'English'],
     avatarUrl: '/avatars/tariq.jpg',
     bio: {
       en: 'Interested in Islamic thought and leadership and administrative training, aiming for human happiness in this world and the hereafter. The official channel of Dr. Tareq AlSuwaidan.',
       ar: 'مهتم بالفكر الإسلامي والتدريب القيادي والإداري ، يهدف لسعادة الإنسان في الدنيا والآخرة.\n\nالقناة الرسمية للدكتور طارق السويدان'
     },
-    category: { en: 'Islamic Thought', ar: 'الفكر الإسلامي' }
+    categoryId: 8
   }
 ];

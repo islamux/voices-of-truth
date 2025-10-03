@@ -1,275 +1,252 @@
-# Tutorial: Building "Voices of Truth" From Scratch
+# Tutorial: Rebuilding "Voices of Truth" From Scratch
 
-Welcome, junior developer! This document is your guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
+> STATUS: Implemented (This guide reflects the CURRENT code state)  
+> GOAL: Help you (junior dev) rebuild the project step by step while understanding WHY each part exists.
 
-Let's start by setting up our Next.js project.
+---
+## 0. Prerequisites
+Install / verify:
+- Node.js: 20.x LTS (recommend using nvm)
+- pnpm: `npm i -g pnpm`
+- Git initialized
 
-### 1. Create a New Next.js Project
-
-We'll use `pnpm` to create a new Next.js project with TypeScript, ESLint, and Tailwind CSS configured.
-
+Check versions:
 ```bash
-pnpm create next-app voices-of-truth --typescript --eslint --tailwind --app --src-dir --use-pnpm
+node -v
+pnpm -v
 ```
+If you mismatch major versions, fix before continuing to avoid subtle build issues.
 
-This command will:
-*   `voices-of-truth`: Name your project directory.
-*   `--typescript`: Configure TypeScript.
-*   `--eslint`: Configure ESLint.
-*   `--tailwind`: Configure Tailwind CSS.
-*   `--app`: Use the App Router (recommended for Next.js 13+).
-*   `--src-dir`: Create an `src/` directory.
-*   `--use-pnpm`: Use pnpm as the package manager.
-
-Navigate into your new project:
+---
+## 1. Create the Base Next.js App
+Use the official starter with TypeScript, Tailwind, ESLint, App Router, and `src/`.
 ```bash
+pnpm create next-app voices-of-truth \
+  --typescript --eslint --tailwind --app --src-dir --use-pnpm
 cd voices-of-truth
 ```
+This gives you: Next.js 15.x, React 19, Tailwind + PostCSS, ready for extension.
 
-### 2. Install Internationalization Libraries
-
-We'll be using `i18next` and `react-i18next` for internationalization. Install them:
-
+---
+## 2. Add Project Dependencies
+Install the additional runtime libs actually used in the project.
 ```bash
-pnpm add i18next react-i18next
+pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons
 ```
+(Everything else comes from the scaffold.)
 
-### 3. Initial Project Structure
-
-After setup, your project structure will look similar to this:
-```
-/
-├── public/             # Static assets (images, fonts, translation files)
-│   └── ...
-├── src/                # Our main application source code
-│   ├── app/            # Next.js App Router pages and layouts
-│   │   └── ...
-│   ├── ...
-├── next.config.mjs     # Next.js configuration
-├── tailwind.config.ts  # Tailwind CSS configuration
-├── tsconfig.json       # TypeScript configuration
-├── package.json        # Project dependencies and scripts
-└── pnpm-lock.yaml      # pnpm lock file
-```
-
-**Our Tech Stack:**
-*   **Framework:** Next.js 15+ (with App Router)
-*   **Language:** TypeScript
-*   **Styling:** Tailwind CSS
-*   **UI Components:** React
-*   **Internationalization (i18n):** `i18next` and `react-i18next`
+Optional (later): SWR (only if you implement API fetching path).
 
 ---
-
-## Step 1: Project Structure & Configuration
-
-A clean structure is key to a maintainable application.
-
+## 3. Establish Directory Structure
+Target structure (matches current repo):
 ```
 /
-├── public/             # Static assets (images, fonts, translation files)
-│   ├── avatars/
-│   └── locales/
-├── src/                # Our main application source code
-│   ├── app/            # Next.js App Router pages and layouts
-│   │   └── [locale]/   # Dynamic pages for each language
-│   ├── components/     # Reusable React components
-│   ├── data/           # Static data for our scholars
-│   ├── lib/            # Helper functions (like i18n setup)
-│   └── types/          # TypeScript type definitions
-├── next.config.ts      # Next.js configuration
-├── tailwind.config.ts  # Tailwind CSS configuration
-└── tsconfig.json       # TypeScript configuration
+├── public/
+│   ├── avatars/          # Scholar images (or placeholders)
+│   └── locales/          # i18n JSON files (en/common.json, ar/common.json)
+├── src/
+│   ├── app/
+│   │   ├── [locale]/     # Locale-scoped routing segment
+│   │   │   ├── page.tsx  # Server Component (filter + data slice)
+│   │   │   └── layout.tsx
+│   ├── components/       # UI + client pieces
+│   ├── data/             # Static domain data (scholars, countries, specializations)
+│   ├── lib/              # i18n init and helpers
+│   └── types/            # TypeScript interfaces
+├── middleware.ts         # Locale detection
+├── tailwind.config.ts
+└── postcss.config.mjs
 ```
+Keep files small and singular in responsibility.
 
 ---
+## 4. Define Domain Types First
+Create `src/types/index.ts`:
+```ts
+export interface Country {
+  id: number;
+  name: Record<string, string>;
+}
 
-## Step 2: Defining Our Data (The "Model")
+export interface Specialization {
+  id: number;
+  name: Record<string, string>;
+}
 
-Before we build anything, we need to define the shape of our data. What information does a "scholar" have? We define this in `src/types/index.ts`.
-
-```typescript
-// src/types/index.ts
 export interface Scholar {
   id: number;
-  name: Record<string, string>; // e.g., { en: "Name", ar: "الاسم" }
-  socialMedia: {
-    platform: string;
-    link: string;
-    icon?: string;
-  }[];
+  name: Record<string, string>;
+  socialMedia: { platform: string; link: string; icon?: string }[];
   countryId: number;
   categoryId: number;
   language: string[];
   avatarUrl: string;
   bio?: Record<string, string>;
 }
-
-export interface Country {
-  id: number;
-  name: Record<string, string>; // e.g., { en: "Egypt", ar: "مصر" }
-}
-
-export interface Specialization {
-  id: number;
-  name: Record<string, string>; // e.g., { en: "Comparative Religion", ar: "مقارنة أديان" }
-}
 ```
-**Why `Record<string, string>`?** This is a simple and effective way to support multiple languages for a single field. The `key` is the language code (e.g., 'en', 'ar'), and the `value` is the translated text.
+Reasoning:
+- `Record<string,string>` keeps multilingual fields simple.
+- IDs (number) allow fast lookups and normalization.
 
 ---
-
-## Step 3: Creating the Data Source
-
-Our app uses static data stored in files. We organize it by category in `src/data/scholars/` and then combine it all into one master list in `src/data/scholars.ts`.
-
-```typescript
-// src/data/scholars.ts
-import { Scholar } from '../types';
-import { hadithStudiesScholars } from './scholars/hadith-studies';
-// ... import all other scholar category files
-
-export const scholars: Scholar[] = [
-  ...hadithStudiesScholars,
-  // ... spread all other imported arrays
+## 5. Add Static Data
+Example `src/data/countries.ts` (simplified):
+```ts
+import { Country } from '@/types';
+export const countries: Country[] = [
+  { id: 1, name: { en: 'Egypt', ar: 'مصر' } },
+  { id: 2, name: { en: 'Morocco', ar: 'المغرب' } },
 ];
 ```
+Similarly create `specializations.ts` and category-based scholar files. Then aggregate scholars:
+```ts
+// src/data/scholars.ts
+import { Scholar } from '@/types';
+export const scholars: Scholar[] = [ /* ... */ ];
+```
+Keep data flat; derive UI lists from code (not duplicated arrays).
 
 ---
+## 6. Internationalization Setup
+1. Translation resources go under `public/locales/{lng}/common.json`.
+2. Add i18n initializer: `src/lib/i18n.ts` (already in repo). It uses dynamic imports + `fallbackNS`.
+3. Add middleware for locale detection (`middleware.ts`) using `Accept-Language` header.
+4. In `[locale]/layout.tsx` call `getTranslation(locale)` and wrap children with `I18nProviderClient` + `ThemeProvider`.
 
-## Step 4: Server-Side Filtering with Server Components
+Key points:
+- Only fetch translations once per request on the server.
+- Pass hydrated resources to client to avoid duplicate loading.
+- Advanced topics (namespaces, pluralization, performance, additional locales, RTL enhancements) → see `docs/I18N_ADVANCED.md`
 
-A major architectural shift in this project was moving from client-side filtering to **server-side filtering**. This improves performance by sending only the necessary data to the client.
+---
+## 7. Theming (Dark / Light)
+Theme is handled by `ThemeProvider` + CSS variables + Tailwind `dark` class. Keep design tokens in one place (CSS variables) to avoid scattering color values. This keeps future re-theming low cost.
 
-This logic now lives in `src/app/[locale]/page.tsx`, which is a **Server Component**.
+---
+## 8. Core Page (Server Component)
+`src/app/[locale]/page.tsx` responsibilities:
+- Read `searchParams` (filters: `query`, `country`, `lang`, `category`).
+- Filter the in-memory `scholars` list.
+- Derive unique dropdown option arrays.
+- Pass minimal filtered slice + option lists to the client component.
 
+Simplified example:
 ```tsx
-// src/app/[locale]/page.tsx
-import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
-// ... other data imports
+import { countries } from '@/data/countries';
+import { specializations } from '@/data/specializations';
+import HomePageClient from './HomePageClient';
 
-interface HomePageProps {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+export default function HomePage({ searchParams }: { searchParams: any }) {
+  const { query = '', country, lang, category } = searchParams; // (sync access is fine here)
+  const q = query.toLowerCase();
 
-export default async function HomePage({ params, searchParams }: HomePageProps) {
-  // 1. Get filter values from the URL's search parameters.
-  const { query, country, lang, category } = await searchParams;
-
-  const searchQuery = (query || '').toString().toLowerCase();
-
-  // 2. Filter the scholars on the server
-  const filteredScholars = scholars.filter(scholar => {
-    // ... filtering logic based on searchQuery, country, lang, category
-    return true; // placeholder for actual logic
+  const filteredScholars = scholars.filter(s => {
+    const matchName = q ? (s.name.en.toLowerCase().includes(q) || s.name.ar.includes(q)) : true;
+    const matchCountry = country ? s.countryId === countries.find(c => c.name.en === country)?.id : true;
+    const matchLang = lang ? s.language.includes(lang) : true;
+    const matchCategory = category ? s.categoryId === specializations.find(sp => sp.name.en === category)?.id : true;
+    return matchName && matchCountry && matchLang && matchCategory;
   });
 
-  // 3. Prepare data for the client (e.g., for filter dropdowns)
-  const uniqueCountries = /* ... logic to get unique countries ... */;
-  const uniqueCategories = /* ... logic to get unique categories ... */;
-  const uniqueLanguages = /* ... logic to get unique languages ... */;
+  const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
+    .map(id => countries.find(c => c.id === id))
+    .filter(Boolean)
+    .map(c => ({ value: c!.name.en, label: c!.name.en }));
 
-  // 4. Pass the filtered data to the client component.
+  const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
+    .map(id => specializations.find(sp => sp.id === id))
+    .filter(Boolean)
+    .map(sp => ({ value: sp!.name.en, label: sp!.name.en }));
+
+  const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
+
   return (
     <HomePageClient
       scholars={filteredScholars}
       uniqueCountries={uniqueCountries}
       uniqueCategories={uniqueCategories}
       uniqueLanguages={uniqueLanguages}
+      countries={countries}
     />
   );
 }
 ```
-
-### Important Lesson: `searchParams` in Next.js 15
-
-You might have noticed `const { query, country, lang, category } = await searchParams;`.
-
-In Next.js 15, the `searchParams` object in Server Components is **asynchronous**. You **must `await` it** before you can access its properties. Forgetting this will cause an error. This is a key change from previous versions.
+Note: Removed `await searchParams` for clarity (not needed here in this repo).
 
 ---
+## 9. Client Interaction Layer
+`HomePageClient.tsx` tasks:
+- Read current URL params.
+- Push updated query string when filters change.
+- Render `FilterBar` + `ScholarList`.
 
-## Step 5: The Interactive Client Component
+Important detail: language param key is `lang` (NOT `language`). Keep consistent across docs + code.
 
-While the server handles filtering, the `HomePageClient.tsx` component is responsible for managing user interaction and telling the server when to re-filter the data.
+---
+## 10. Filters & Components
+Break filters into tiny, focused components (`CountryFilter`, `LanguageFilter`, etc.) feeding a shared pattern: label + select + onChange.
+Principles:
+- Pass only what is needed (avoid over-propping entire data arrays if not required).
+- Create derived arrays once (server) instead of regenerating in each component.
 
-Here’s how it works:
+---
+## 11. Scholar Presentation
+`ScholarCard` composes:
+- Avatar
+- Info (name, country, languages, bio)
+- Social links (loop over `socialMedia`)
+Use `framer-motion` for small polish (fade/slide). Keep animations subtle.
 
+---
+## 12. Internationalization in Components
+Use:
 ```tsx
-// src/app/[locale]/HomePageClient.tsx
-"use client";
-
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
-import FilterBar from "@/components/FilterBar";
-import ScholarList from "@/components/ScholarList";
-// ... other imports
-
-// ... (interface definition) ...
-
-const HomePageClient: React.FC<HomePageClientProps> = ({
-  scholars,
-  uniqueCountries,
-  // ... other props
-}) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  // 1. Define a callback to handle filter changes
-  const handleFilterChange = useCallback(
-    (name: string, value: string) => {
-      // Create a mutable copy of the current search params
-      const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(name, value);
-      } else {
-        params.delete(name);
-      }
-      // 2. Trigger Re-render: Push the new URL to the router.
-      // This tells Next.js to re-render the server component with new searchParams.
-      router.push(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
-
-  // 3. Pass the handler down to the FilterBar
-  return (
-    <div className="space-y-8">
-      <FilterBar
-        uniqueCountries={uniqueCountries}
-        // ... other props
-        onCountryChange={(country) => handleFilterChange("country", country)}
-        onCategoryChange={(category) => handleFilterChange("category", category)}
-        // ... other handlers
-      />
-      <ScholarList scholars={scholars} countries={countries} />
-    </div>
-  );
-};
-
-export default HomePageClient;
+const { t, i18n } = useTranslation('common');
 ```
-
-**Key Concept: The Client-Server Interaction Loop**
-1.  **User Action:** The user selects a category in the `FilterBar`.
-2.  **Event Handler:** The `onCategoryChange` callback fires, calling `handleFilterChange('category', 'islamic-thought')`.
-3.  **URL Update:** `handleFilterChange` constructs the new URL query string and `router.push()` changes the URL (e.g., to `/en?category=islamic-thought`).
-4.  **Server Reruns:** Next.js detects the URL change and re-renders the Server Component (`page.tsx`) with the new `searchParams`.
-5.  **New Data:** The server filters the data and passes the new, smaller list down to `HomePageClient`.
-6.  **UI Update:** The client re-renders with the new `scholars` prop.
+Pick dynamic values based on `i18n.language` with fallback to `en`.
+Avoid duplicating translation keys—group by functional area (e.g. `filters.searchPlaceholder`).
 
 ---
+## 13. Rebuild Checklist (Follow This Order)
+1. Scaffold project (Section 1).  
+2. Install dependencies (Section 2).  
+3. Create types (Section 4).  
+4. Add static data (Section 5).  
+5. Add i18n config + middleware (Section 6).  
+6. Add ThemeProvider + base layout (Section 7 & layout).  
+7. Implement server page filtering (Section 8).  
+8. Implement client page + filters + list + card (Sections 9–11).  
+9. Add translations & verify bilingual rendering.  
+10. Manual test filters (query, country, lang, category).  
+11. Refine docs / mark incomplete proposals (favorites, API).  
 
-## Conclusion & Your Turn
+Stop here before adding new features—stability first.
 
-You now have a complete overview of how "Voices of Truth" is built with a modern, server-centric architecture. You've seen how we:
-1.  Define data structures with TypeScript.
-2.  Perform data filtering on the server using Server Components.
-3.  Use a **stateful Client Component** to manage user input.
-4.  Use `useState`, `useEffect`, and `useRouter` to create a reactive loop where client-side actions trigger server-side data filtering.
+---
+## 14. Common Pitfalls (Watch Out)
+| Pitfall | Fix |
+|---------|-----|
+| Language filter not working | Ensure param key is `lang` in both URL + component. |
+| Data duplication | Derive unique lists on server only. |
+| Missing fallback text | Always fall back to `en` if locale key missing. |
+| Overusing client components | Default to server until you need interactivity. |
 
-**Your next task:**
-Explore the `FilterBar` and its child components (`CategoryFilter`, etc.). See how the `onCategoryChange` prop is passed down and connected to the `<select>` element's `onChange` event. This is the final link in the chain from a user's click to a full data refresh.
+---
+## 15. Next (Optional) Directions
+After stable rebuild:
+- Add STATUS tags to feature docs.
+- Introduce Data Reference doc.
+- Consider API + SWR only if dataset or latency grows.
+- Add minimal tests (render page + filter change updates URL).
+
+---
+## 16. Your Practice Task
+Rebuild without copy/pasting large blocks—type them to internalize patterns. After finishing, explain (verbally or in a note) the data flow from user selecting a filter to updated UI. Teaching it reinforces understanding.
+
+---
+## 17. Summary
+The app is a clean demonstration of: server-side data slicing + client-driven URL state + simple i18n + modular UI. Keep things lean; only add complexity (API layer, caching, favorites) when you have a concrete need.
+
+You can ask next for: a Data Reference doc template or a Testing Quick Start.

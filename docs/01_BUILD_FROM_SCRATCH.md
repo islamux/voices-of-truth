@@ -118,6 +118,7 @@ Key points:
 - Only fetch translations once per request on the server.
 - Pass hydrated resources to client to avoid duplicate loading.
 - Advanced topics (namespaces, pluralization, performance, additional locales, RTL enhancements) → see `docs/I18N_ADVANCED.md`
+- Step-by-step deep dive for this section → see `docs/06A_I18N_SETUP_DEEP_DIVE.md`
 
 ---
 ## 7. Theming (Dark / Light)

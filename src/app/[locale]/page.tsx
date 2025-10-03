@@ -1,41 +1,36 @@
 // src/app/[locale]/page.tsx
 /**
-* This is the main page for a given locale.
-  * It's a Server Component that renders the interactive Client Component.
-  * The responsibility for fetching and managing translations is delegated
-  * to the provider in the layout and the client component itself.
-  */
+ * Locale-specific page (server component)
+ * NOTE: In this codebase, params is treated as a Promise (similar to layout usage),
+ * so we await it before destructuring `locale`.
+ * If later refactored to the standard Next.js signature, remove the Promise type and the `await`.
+ */
 
-  import HomePageClient from './HomePageClient';
+import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
 import { Scholar, Country, Specialization } from '@/types';
 
-// Define the props for the page, including searchParams.
 interface HomePageProps {
+  // Promise-wrapped params (non-standard; matches current project pattern)
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-/**
-  * This is the main page. It's now a server component that handles
-  * data fetching and filtering.
-  * */
-  export default async function HomePage({ params,searchParams }: HomePageProps) {
+export default async function HomePage({ params, searchParams }: HomePageProps) {
+  // 1. Await params to safely extract locale (fix for: params must be awaited error)
+  const { locale } = await params;
+  // 2. Read filter criteria from URL search parameters
+  const { query, country, lang, category } = searchParams;
 
-    const {locale} = await params;
-    const { query, country, lang, category } = await searchParams;
-
-    const searchQuery = (query || '').toString().toLowerCase();
-
-
+  const searchQuery = (query || '').toString().toLowerCase();
 
     // 2. Filter the scholars on the server
     const filteredScholars = scholars.filter(scholar => {
       const matchSearch = searchQuery
         ? scholar.name.en.toLowerCase().includes(searchQuery) ||
-        scholar.name.ar.toLowerCase().includes(searchQuery)
+        scholar.name.ar.includes(searchQuery) // no need toLowerCase for ar.
         : true;
 
       // Add logic for country, lang, category filters here

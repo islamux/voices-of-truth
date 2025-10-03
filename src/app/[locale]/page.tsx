@@ -11,14 +11,19 @@ import { specializations } from '@/data/specializations';
 import { Scholar, Country, Specialization } from '@/types';
 
 interface HomePageProps {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  // params & searchParams appear to be Promise-like based on runtime warnings; treat them defensively.
+  params: Promise<{ locale: string }> | { locale: string };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined };
 }
 
 export default async function HomePage({ params, searchParams }: HomePageProps) {
-  // params is now synchronous (standard Next.js pattern)
-  const { locale } = params;
-  const { query, country, lang, category } = searchParams;
+  // Normalize params (await if it's a Promise)
+  const resolvedParams = await Promise.resolve(params);
+  const { locale } = resolvedParams;
+
+  // Normalize searchParams similarly
+  const resolvedSearchParams = await Promise.resolve(searchParams);
+  const { query, country, lang, category } = resolvedSearchParams;
 
   const searchQuery = (query || '').toString().toLowerCase();
 

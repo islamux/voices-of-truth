@@ -10,14 +10,16 @@ import Layout from '@/components/Layout'; // Structural app layout (header/foote
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: { locale: string };
+  // params is delivered as a Promise (Next.js warning indicated we must await it)
+  params: Promise<{ locale: string }>;
 }
 
 export default async function RootLayout({
   children,
   params,
 }: RootLayoutProps) {
-  const { locale } = params; // params is now synchronous
+  // Await params to safely access locale (fixes dynamic API warning)
+  const { locale } = await params;
 
   const { resources } = await getTranslation(locale);
 

@@ -160,34 +160,65 @@ Responsibilities:
 1. Receive the dynamic `locale` param.
 2. Load translations ON THE SERVER using `getTranslation(locale)`.
 3. Supply i18n resources to a client provider wrapper.
-4. Set `<html lang>` and `dir` attributes.
+4. (Optional) Set `<html lang>` and `dir` attributes (not yet in current file version; can be added later at app root).
 
-Pattern:
+Current real implementation (from repository) with explanatory comments:
 ```tsx
 // src/app/[locale]/layout.tsx
-import I18nProviderClient from '@/components/I18nProviderClient';
-import { getTranslation, fallbackLng } from '@/lib/i18n';
-import type { ReactNode } from 'react';
+// Locale-specific root layout.
+// This file is rendered for every route under /[locale]/...
+// Example: visiting /en or /ar will use this layout to wrap the page.
+// Goal: Load translations on the SERVER, then pass them (resources) to a client provider
+// so the client doesn't re-fetch translation JSON.
 
+import { getTranslation } from '../../lib/i18n';
+import I18nProviderClient from '../../components/I18nProviderClient';
+import ThemeProvider from '@/components/ThemeProvider';
+import Layout from '@/components/Layout'; // Structural app layout (header/footer/etc.)
+
+interface RootLayoutProps {
+  children: React.ReactNode;
+  // NOTE: In this project params is typed as a Promise. In a typical Next.js
+  // app router setup it would just be: params: { locale: string }. We await it below.
+  params: Promise<{ locale: string }>;
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: RootLayoutProps) {
+  // 1. Resolve the params to extract the dynamic [locale] segment
+  const { locale } = await params;
+
+  // 2. Load translation resources on the server for this locale
+  // getTranslation returns an object containing:
+  //  - resources: the raw translation bundles (for hydration)
+  //  - t / i18n: (not needed here because we only pass resources)
+  const { resources } = await getTranslation(locale);
+
+  // 3. Wrap the application subtree with the I18nProviderClient so that
+  // client components can use hooks like useTranslation().
+  // 4. ThemeProvider and Layout are standard app wrappers (unrelated to i18n logic).
+  return (
+    <I18nProviderClient locale={locale} resources={resources}>
+      <ThemeProvider>
+        <Layout>
+          {/** Child routes / pages render here */}
+          {children}
+        </Layout>
+      </ThemeProvider>
+    </I18nProviderClient>
+  );
+}
+
+// Static generation: emit one path per supported locale.
+// If you add a new language, include it here AND in supportedLngs (i18n.ts) and middleware locales.
 export async function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'ar' }];
 }
-
-export default async function LocaleLayout({ params, children }: { params: { locale: string }, children: ReactNode }) {
-  const locale = params.locale || fallbackLng;
-  const { resources } = await getTranslation(locale, ['common']);
-  const dir = locale === 'ar' ? 'rtl' : 'ltr';
-  return (
-    <html lang={locale} dir={dir}>
-      <body>
-        <I18nProviderClient locale={locale} resources={resources}>
-          {children}
-        </I18nProviderClient>
-      </body>
-    </html>
-  );
-}
 ```
+Planned improvement (optional enhancement): Wrap output with `<html lang={locale} dir={locale==='ar'?'rtl':'ltr'}>` at a higher layout level for accessibility + RTL correctness.
+
 Notes:
 - `generateStaticParams` enables static generation for each locale path.
 - No client fetch for translation JSON is needed post-hydration.

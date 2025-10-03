@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next/initReactI18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
 
 export const fallbackLng = 'en';
+// Add new locales here; first one (fallbackLng) is used as the overall fallback language.
 export const supportedLngs = [fallbackLng, 'ar'];
 export const defaultNS = 'common';
 
@@ -15,8 +16,10 @@ async function initI18next(
     .use(initReactI18next)
     .use(
       resourcesToBackend(
+        // Dynamically import the JSON file for the requested language + namespace.
+        // This keeps initial bundles small and only loads what is needed per request.
         (language: string, namespace: string) =>
-          import(`../../public/locales/${language}/${namespace}.json`)
+        import(`../../public/locales/${language}/${namespace}.json`)
       )
     )
     .init({

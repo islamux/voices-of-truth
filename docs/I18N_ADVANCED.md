@@ -89,14 +89,35 @@ export async function getTranslation(
 }
 ```
 
-#### src/middleware.ts (locale redirect)
+#### src/middleware.ts (locale redirect with step-by-step comments for juniors)
 ```ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+/*
+  Purpose: Force every user-facing URL to start with a locale (language) segment.
+  If someone visits "/" we redirect to "/en" or "/ar" based on their browser settings.
+
+  Why do this?
+  - Consistent URLs: /en/about, /ar/about
+  - Easier static generation per locale
+  - SEO clarity (search engines see distinct localized pages)
+*/
+
+// 1. List of languages we support in routing.
 const locales = ['en', 'ar'];
+// 2. Fallback if detection fails.
 const defaultLocale = 'en';
 
+/*
+  Detect the best locale from the Accept-Language header.
+  Example header: "en-US,en;q=0.9,ar;q=0.7"
+  Steps:
+    a. Split by comma -> ["en-US", "en;q=0.9", "ar;q=0.7"]
+    b. Strip off the ;q= parts
+    c. Take first two letters and see if they are in our supported list
+    d. Return the first match or fallback
+*/
 function getLocale(request: NextRequest): string {
   const acceptLanguage = request.headers.get('accept-language');
   if (acceptLanguage) {
@@ -104,24 +125,42 @@ function getLocale(request: NextRequest): string {
       .split(',')
       .map(lang => lang.split(';')[0].trim())
       .find(lang => locales.includes(lang.substring(0, 2)));
-    if (detectedLocale) return detectedLocale.substring(0, 2);
+
+    if (detectedLocale) {
+      return detectedLocale.substring(0, 2); // Normalize e.g. en-US -> en
+    }
   }
-  return defaultLocale;
+  return defaultLocale; // Fallback when nothing matched
 }
 
+/*
+  Middleware flow:
+    1. Read the current path.
+    2. Decide if it already contains a locale.
+    3. If missing -> detect locale -> redirect to a locale-prefixed path.
+    4. If present -> do nothing and allow request to continue.
+*/
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const pathname = request.nextUrl.pathname; // e.g. "/", "/about", "/en/dashboard"
+
+  // Does the path already start with /en or /ar ?
   const pathnameIsMissingLocale = locales.every(
-    locale => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
+
   if (pathnameIsMissingLocale) {
-    const locale = getLocale(request);
+    const locale = getLocale(request); // Decide which language to use
     return NextResponse.redirect(
       new URL(`/${locale}${pathname === '/' ? '' : pathname}`, request.url)
     );
   }
 }
 
+/*
+  Matcher: tells Next.js which paths should run through this middleware.
+  We EXCLUDE internal assets and API routes using a negative lookahead.
+  Add any new folders you want to skip inside the (?! ... ) group.
+*/
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|favicon.ico|avatars|locales).*)',

@@ -22,6 +22,7 @@ This is lean and good for small/medium projects.
 4. Update `supportedLngs` in `src/lib/i18n.ts`:
    ```ts
    export const supportedLngs = ['en', 'ar', 'fr'];
+   // (Real current value BEFORE adding fr): export const supportedLngs = ['en', 'ar'];
    ```
 5. Update `locales` array in `middleware.ts`.
 6. Add to `generateStaticParams` in `[locale]/layout.tsx`:
@@ -52,6 +53,7 @@ Example: Introduce `filters` namespace.
    t('filterByCountry');
    ```
 5. Consider leaving truly global keys (app title, meta) in `common`.
+Real current common.json keys (EN/AR) still live in a single namespace `common` see Section 16.1 for the actual loader implementation.
 
 ---
 ## 4. RTL Support Enhancements

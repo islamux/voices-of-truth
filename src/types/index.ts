@@ -1,6 +1,6 @@
 export interface Country {
   id: number;
-  name : Record<string, string>;
+  name: Record<string, string>;
 }
 
 export interface Specialization {

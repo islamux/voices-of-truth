@@ -1,9 +1,7 @@
 // src/app/[locale]/page.tsx
 /**
  * Locale-specific page (server component)
- * NOTE: In this codebase, params is treated as a Promise (similar to layout usage),
- * so we await it before destructuring `locale`.
- * If later refactored to the standard Next.js signature, remove the Promise type and the `await`.
+ * Refactored to standard Next.js pattern: params is a plain object.
  */
 
 import HomePageClient from './HomePageClient';
@@ -13,15 +11,13 @@ import { specializations } from '@/data/specializations';
 import { Scholar, Country, Specialization } from '@/types';
 
 interface HomePageProps {
-  // Promise-wrapped params (non-standard; matches current project pattern)
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export default async function HomePage({ params, searchParams }: HomePageProps) {
-  // 1. Await params to safely extract locale (fix for: params must be awaited error)
-  const { locale } = await params;
-  // 2. Read filter criteria from URL search parameters
+  // params is now synchronous (standard Next.js pattern)
+  const { locale } = params;
   const { query, country, lang, category } = searchParams;
 
   const searchQuery = (query || '').toString().toLowerCase();

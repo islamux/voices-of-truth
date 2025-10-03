@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import { Country, Scholar } from '../types';
+import { Country, Scholar } from '@/types';
 import { motion } from 'framer-motion';
 import ScholarAvatar from './ScholarAvatar';
 import ScholarInfo from './ScholarInfo';
@@ -29,7 +29,7 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar , countries}) => {
 
   const countryObject = countries.find(c=> c.id === scholar.countryId);
 
-  const country = countryObject ? (currentLang === 'ar' ? countryObject.ar : countryObject.en) : '';
+  const country = countryObject ? (countryObject.name?.[currentLang] || countryObject.name?.en || '') : '';
 
   // Retrieves the localized bio, if available, falling back to English.
   const bio = scholar.bio ? (currentLang === 'ar' ? scholar.bio.ar : scholar.bio.en) : undefined;

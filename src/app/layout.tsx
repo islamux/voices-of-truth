@@ -9,17 +9,18 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: Promise<{locale:string}>; 
+  params?: Promise<{ locale: string }>; // align with Next.js LayoutProps typing expectation
 }
 
 export default async function RootLayout({
   children,
   params,
 }: RootLayoutProps) {
-  const {locale} = await params;
+  const resolvedParams = params ? await params : { locale: 'en' };
+  const { locale } = resolvedParams;
   return (
     <html lang={locale} dir={dir(locale)}>
-    <body>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -8,22 +8,22 @@ import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
-import { Scholar, Country, Specialization } from '@/types';
+import { Scholar } from '@/types';
 
 interface HomePageProps {
-  // params & searchParams appear to be Promise-like based on runtime warnings; treat them defensively.
-  params: Promise<{ locale: string }> | { locale: string };
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined };
+  // Align with Next.js PageProps expectation: optional Promise-wrapped params/searchParams
+  params?: Promise<{ locale: string }>; // Next's type plugin expects Promise
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function HomePage({ params, searchParams }: HomePageProps) {
-  // Normalize params (await if it's a Promise)
-  const resolvedParams = await Promise.resolve(params);
+  // Safely resolve params (handle undefined)
+  const resolvedParams = params ? await params : { locale: 'en' };
   const { locale } = resolvedParams;
 
-  // Normalize searchParams similarly
-  const resolvedSearchParams = await Promise.resolve(searchParams);
-  const { query, country, lang, category } = resolvedSearchParams;
+  // Resolve searchParams or fallback to empty object
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const { query, country, lang, category } = resolvedSearchParams as Record<string, string | string[] | undefined>;
 
   const searchQuery = (query || '').toString().toLowerCase();
 
@@ -49,18 +49,18 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
     // 3. Prepare data for the client
     const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
       .map(id => countries.find(c => c.id === id))
-      .filter((country): country is Country => country !== undefined)
+      .filter((country): country is { id: number; name: { en: string; ar: string } } => country !== undefined)
       .map(country => ({ 
         value: country.name.en,
-        label: country.name[locale] || country.name.en,
+        label: country.name[locale as keyof typeof country.name] || country.name.en,
       }));
 
     const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
       .map(id => specializations.find(s => s.id === id))
-      .filter((specialization): specialization is Specialization => specialization !== undefined)
+      .filter((specialization): specialization is { id: number; name: { en: string; ar: string } } => specialization !== undefined)
       .map(specialization => ({
         value: specialization.name.en,
-        label: specialization.name[locale] || specialization.name.en,
+        label: specialization.name[locale as keyof typeof specialization.name] || specialization.name.en,
       }));
     const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
 

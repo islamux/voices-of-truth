@@ -1,6 +1,6 @@
 // Locale-specific root layout.
 // Rendered for every route under /[locale]/...
-// Refactored to standard Next.js pattern: params is a plain object (not a Promise).
+// Using Promise-based params (awaited) to satisfy Next.js dynamic API expectations.
 // Loads translations on the server and hydrates the client provider.
 
 import { getTranslation } from '../../lib/i18n';

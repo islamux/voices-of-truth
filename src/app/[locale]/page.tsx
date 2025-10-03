@@ -1,7 +1,7 @@
 // src/app/[locale]/page.tsx
 /**
  * Locale-specific page (server component)
- * Refactored to standard Next.js pattern: params is a plain object.
+ * Supports Promise-based params/searchParams (awaited) to avoid Next.js warnings.
  */
 
 import HomePageClient from './HomePageClient';

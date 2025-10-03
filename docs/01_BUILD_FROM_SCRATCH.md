@@ -139,8 +139,12 @@ import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
 import HomePageClient from './HomePageClient';
 
-export default function HomePage({ searchParams }: { searchParams: any }) {
-  const { query = '', country, lang, category } = searchParams; // (sync access is fine here)
+// IMPORTANT: params is a plain object provided by Next.js (NOT a Promise)
+export default function HomePage(
+  { params, searchParams }: { params: { locale: string }; searchParams: Record<string, any> }
+) {
+  const { locale } = params; // destructure locale from dynamic segment [locale]
+  const { query = '', country, lang, category } = searchParams; // sync access
   const q = query.toLowerCase();
 
   const filteredScholars = scholars.filter(s => {
@@ -153,13 +157,13 @@ export default function HomePage({ searchParams }: { searchParams: any }) {
 
   const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
     .map(id => countries.find(c => c.id === id))
-    .filter(Boolean)
-    .map(c => ({ value: c!.name.en, label: c!.name.en }));
+    .filter((c): c is typeof countries[number] => Boolean(c))
+    .map(c => ({ value: c.name.en, label: c.name[locale] || c.name.en }));
 
   const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
     .map(id => specializations.find(sp => sp.id === id))
-    .filter(Boolean)
-    .map(sp => ({ value: sp!.name.en, label: sp!.name.en }));
+    .filter((sp): sp is typeof specializations[number] => Boolean(sp))
+    .map(sp => ({ value: sp.name.en, label: sp.name[locale] || sp.name.en }));
 
   const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
 
@@ -174,7 +178,7 @@ export default function HomePage({ searchParams }: { searchParams: any }) {
   );
 }
 ```
-Note: Removed `await searchParams` for clarity (not needed here in this repo).
+Note: 1) Removed unnecessary `await searchParams`. 2) Removed incorrect `Promise<...>` usage around params (see docs/FIX_REFERENCEERROR_LOCALE.md).
 
 ---
 ## 9. Client Interaction Layer

@@ -3,7 +3,7 @@
 // Using Promise-based params (awaited) to satisfy Next.js dynamic API expectations.
 // Loads translations on the server and hydrates the client provider.
 
-import { getTranslation } from '../../lib/i18n';
+import { getTranslation, supportedLngs } from '../../lib/i18n';
 import I18nProviderClient from '../../components/I18nProviderClient';
 import ThemeProvider from '@/components/ThemeProvider';
 import Layout from '@/components/Layout'; // Structural app layout (header/footer/etc.)
@@ -25,15 +25,15 @@ export default async function RootLayout({
 
   return (
     <I18nProviderClient locale={locale} resources={resources}>
-      <ThemeProvider>
-        <Layout>
-          {children}
-        </Layout>
-      </ThemeProvider>
+    <ThemeProvider>
+    <Layout>
+    {children}
+    </Layout>
+    </ThemeProvider>
     </I18nProviderClient>
   );
 }
 
 export async function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'ar' }];
+  return supportedLngs.map((locale) => ({ locale }));
 }

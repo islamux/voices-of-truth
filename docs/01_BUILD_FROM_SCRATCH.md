@@ -1,6 +1,6 @@
-# Tutorial: Building "Voices of Truth" From Scratch
+# Tutorial: Building "Voices of Truth" From Scratch (Updated)
 
-Welcome, junior developer! This document is your guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
+Welcome, junior developer! This document is your up-to-date guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
 
 Let's start by setting up our Next.js project.
 
@@ -26,13 +26,17 @@ Navigate into your new project:
 cd voices-of-truth
 ```
 
-### 2. Install Internationalization Libraries
+### 2. Install Additional Dependencies
 
-We'll be using `i18next` and `react-i18next` for internationalization. Install them:
+Our project uses a few extra libraries for features like internationalization and icons.
 
 ```bash
-pnpm add i18next react-i18next
+pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons
 ```
+
+*   **`i18next`, `react-i18next`, `i18next-resources-to-backend`**: For handling translations.
+*   **`framer-motion`**: For animations.
+*   **`react-icons`**: For easily adding icons.
 
 ### 3. Initial Project Structure
 
@@ -57,7 +61,8 @@ After setup, your project structure will look similar to this:
 *   **Language:** TypeScript
 *   **Styling:** Tailwind CSS
 *   **UI Components:** React
-*   **Internationalization (i18n):** `i18next` and `react-i18next`
+*   **Internationalization (i18n):** `i18next`
+*   **Animation:** `framer-motion`
 
 ---
 
@@ -67,11 +72,12 @@ A clean structure is key to a maintainable application.
 
 ```
 /
-├── public/             # Static assets (images, fonts, translation files)
-│   ├── avatars/
-│   └── locales/
-├── src/                # Our main application source code
-│   ├── app/            # Next.js App Router pages and layouts
+├── public/
+│   ├── avatars/        # Scholar avatars
+│   └── locales/        # Translation files (ar/common.json, en/common.json)
+├── src/
+│   ├── app/
+│   │   ├── globals.css # Global styles and theme variables
 │   │   └── [locale]/   # Dynamic pages for each language
 │   ├── components/     # Reusable React components
 │   ├── data/           # Static data for our scholars
@@ -109,12 +115,14 @@ export interface Country {
   id: number;
   en: string;
   ar: string;
+  [key: string]: string | number;
 }
 
 export interface Specialization {
   id: number;
   en: string;
   ar: string;
+  [key: string]: string | number;
 }
 ```
 **Why `Record<string, string>`?** This is a simple and effective way to support multiple languages for a single field. The `key` is the language code (e.g., 'en', 'ar'), and the `value` is the translated text.
@@ -126,20 +134,35 @@ export interface Specialization {
 Our app uses static data stored in files. We organize it by category in `src/data/scholars/` and then combine it all into one master list in `src/data/scholars.ts`.
 
 ```typescript
-// src/data/scholars.ts
-import { Scholar } from '../types';
-import { hadithStudiesScholars } from './scholars/hadith-studies';
+// src/data/scholars/index.ts
+import { comparativeReligionScholars } from "./comparative-religion";
 // ... import all other scholar category files
 
-export const scholars: Scholar[] = [
-  ...hadithStudiesScholars,
+export const allScholars = [
+  ...comparativeReligionScholars,
   // ... spread all other imported arrays
 ];
+
+// src/data/scholars.ts
+import { allScholars } from './scholars/index';
+import { Scholar } from '../types';
+
+export const scholars: Scholar[] = allScholars;
 ```
 
 ---
 
-## Step 4: Server-Side Filtering with Server Components
+## Step 4: Internationalization (i18n) and Middleware
+
+Our app supports English and Arabic. This is handled by a combination of a middleware and a helper function.
+
+**`src/middleware.ts`**: This file is responsible for redirecting users to their preferred language. If a user visits `/`, it checks their browser's language and redirects them to `/en` or `/ar`.
+
+**`src/lib/i18n.ts`**: This helper sets up `i18next` to load the correct translation files from the `public/locales` directory based on the `[locale]` parameter in the URL.
+
+---
+
+## Step 5: Server-Side Filtering with Server Components
 
 A major architectural shift in this project was moving from client-side filtering to **server-side filtering**. This improves performance by sending only the necessary data to the client.
 
@@ -164,8 +187,20 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
 
   // 2. Filter the scholars on the server
   const filteredScholars = scholars.filter(scholar => {
-    // ... filtering logic based on searchQuery, country, lang, category
-    return true; // placeholder for actual logic
+    const matchSearch = searchQuery
+      ? scholar.name.en.toLowerCase().includes(searchQuery) ||
+        scholar.name.ar.toLowerCase().includes(searchQuery)
+      : true;
+
+    const countryId = country ? countries.find(c => c.en === country)?.id : undefined;
+    const matchCountry = country ? scholar.countryId === countryId : true;
+
+    const matchesLang = lang ? scholar.language.includes(lang as string) : true;
+
+    const categoryId = category ? specializations.find(s => s.en === category)?.id : undefined;
+    const matchesCategory = category ? scholar.categoryId === categoryId : true;
+
+    return matchSearch && matchCountry && matchesLang && matchesCategory;
   });
 
   // 3. Prepare data for the client (e.g., for filter dropdowns)
@@ -180,6 +215,7 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
       uniqueCountries={uniqueCountries}
       uniqueCategories={uniqueCategories}
       uniqueLanguages={uniqueLanguages}
+      countries={countries}
     />
   );
 }
@@ -193,7 +229,7 @@ In Next.js 15, the `searchParams` object in Server Components is **asynchronous*
 
 ---
 
-## Step 5: The Interactive Client Component
+## Step 6: The Interactive Client Component
 
 While the server handles filtering, the `HomePageClient.tsx` component is responsible for managing user interaction and telling the server when to re-filter the data.
 
@@ -271,7 +307,7 @@ You now have a complete overview of how "Voices of Truth" is built with a modern
 1.  Define data structures with TypeScript.
 2.  Perform data filtering on the server using Server Components.
 3.  Use a **stateful Client Component** to manage user input.
-4.  Use `useState`, `useEffect`, and `useRouter` to create a reactive loop where client-side actions trigger server-side data filtering.
+4.  Use `useRouter` to create a reactive loop where client-side actions trigger server-side data filtering.
 
 **Your next task:**
 Explore the `FilterBar` and its child components (`CategoryFilter`, etc.). See how the `onCategoryChange` prop is passed down and connected to the `<select>` element's `onChange` event. This is the final link in the chain from a user's click to a full data refresh.

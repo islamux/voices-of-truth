@@ -147,7 +147,10 @@ export const allScholars = [
 import { allScholars } from './scholars/index';
 import { Scholar } from '../types';
 
-export const scholars: Scholar[] = allScholars;
+// i update these file with direct lists instead of allScholars;
+export const scholars: Scholar[] = [
+....
+];
 ```
 
 ---

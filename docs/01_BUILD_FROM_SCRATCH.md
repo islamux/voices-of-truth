@@ -2,6 +2,7 @@
 
 Welcome, junior developer! This document is your up-to-date guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
 
+
 Let's start by setting up our Next.js project.
 
 ### 1. Create a New Next.js Project
@@ -115,7 +116,7 @@ export interface Country {
   id: number;
   en: string;
   ar: string;
-  [key: string]: string | number;
+  [key: string]: string | number; //Index Signiture: instead of add fr, gr, it, he, Or other kye like poplution:
 }
 
 export interface Specialization {
@@ -155,7 +156,130 @@ export const scholars: Scholar[] = [
 
 ---
 
-## Step 4: Internationalization (i18n) and Middleware
+## Step 4: Creating the Main Layout
+
+The `src/components/Layout.tsx` component is the main layout of our application. It provides a consistent structure with a header, main content area, and footer. It also includes the logic for theme switching (light/dark mode) and language selection.
+
+```tsx
+// src/components/Layout.tsx
+"use client";
+
+import React, { useState, useEffect, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRouter, usePathname } from 'next/navigation';
+
+interface LayoutProps {
+  children: ReactNode; // Prop to render child components within the layout.
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { t, i18n } = useTranslation('common'); // Hook for translations.
+    const router = useRouter();
+  const pathname = usePathname(); // Next.js hook for accessing the current path.
+    const currentLang = i18n.language; // Currently active language.
+
+    // State for managing the current theme (light/dark). Default is 'light'.
+    const [theme, setTheme] = useState('light');
+
+  // Effect to initialize theme from localStorage or system preference.
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
+    setTheme(initialTheme);
+    if (initialTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount.
+
+    // Toggles the theme between 'light' and 'dark'.
+    // Updates localStorage and the class on the <html> element.
+    const toggleTheme = () => {
+      const newTheme = theme === 'light' ? 'dark' : 'light';
+      setTheme(newTheme);
+      localStorage.setItem('theme', newTheme);
+      document.documentElement.classList.toggle('dark');
+    };
+
+  // Changes the application language.
+  // Replaces the current language slug in the path and navigates to the new path.
+  const changeLanguage = (newLang: string) => {
+    if (currentLang === newLang) return; // Avoid unnecessary change
+    if (pathname) {
+      const newPath = pathname.replace(`/${currentLang}`, `/${newLang}`);
+      router.push(newPath);
+    } else {
+      // Fallback if pathname is somehow not available
+      router.push(`/${newLang}`);
+    }
+  };
+
+  return (
+    <div class="min-h-screen flex flex-col bg-gradient-to-b from-transparent to-[rgb(var(--background-end-rgb))] bg-[rgb(var(--background-start-rgb))]">
+    <header class="p-4 bg-gray-100 dark:bg-gray-800 shadow-md text-gray-900 dark:text-white">
+    <div class="container mx-auto flex flex-wrap justify-between items-center">
+    <h1 class="text-xl sm:text-2xl font-semibold">{t('headerTitle')}</h1>
+    <div class="flex items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0">
+    <div class="flex items-center space-x-1">
+    <button 
+    onClick={() => changeLanguage('en')} 
+    disabled={currentLang === 'en'} 
+    class="px-3 py-1.5 text-sm rounded-md disabled:opacity-60 enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700 disabled:cursor-not-allowed"
+  >
+    {t('english')}
+    </button>
+    <button 
+    onClick={() => changeLanguage('ar')} 
+    disabled={currentLang === 'ar'} 
+    class="px-3 py-1.5 text-sm rounded-md disabled:opacity-60 enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700 disabled:cursor-not-allowed"
+  >
+    {t('arabic')}
+    </button>
+    </div>
+    <button 
+    onClick={toggleTheme} 
+    class="px-3 py-1.5 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+  >
+    {theme === 'light' ? t('dark') : t('light')} {t('theme')}
+    </button>
+    </div>
+    </div>
+    </header>
+    <main class="flex-grow container mx-auto p-4 md:p-6">
+    {children}
+    </main>
+    <footer class="p-4 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-700 dark:text-gray-300">
+    <p>{t('footerText')}</p>
+    </footer>
+    </div>
+  );
+};
+
+export default Layout;
+```
+
+> **Attention: The `children` Prop - Container vs. Content**
+> 
+> You'll notice that `Layout.tsx` has a `children` prop, but `page.tsx` does not. This is a fundamental concept in React and Next.js.
+> 
+> *   **Container Components (`children` prop):** A component that is designed to wrap or contain other components needs a `children` prop. Think of it as a box. The `children` are the items you put inside the box. `Layout.tsx` is a perfect example of a container component.
+> 
+> *   **Content Components (no `children` prop):** A component that represents the actual content doesn't need a `children` prop. It's the item that goes *inside* the box. `page.tsx` is a content component.
+> 
+> This is a simple but powerful pattern that you will see throughout the application.
+
+### Key Features of the Layout Component:
+
+*   **`"use client"`**: This directive is essential. It marks the component as a Client Component, allowing it to use React hooks like `useState` and `useEffect` for interactivity.
+*   **Theme Switching**: The `toggleTheme` function and `theme` state manage the light and dark modes. The theme is persisted in `localStorage` and applied to the `<html>` element.
+*   **Language Switching**: The `changeLanguage` function updates the URL with the selected language, triggering a re-render of the page with the new locale.
+*   **Responsive Design**: The layout uses Tailwind CSS classes to ensure it adapts to different screen sizes.
+
+---
+
+## Step 5: Internationalization (i18n) and Middleware
 
 Our app supports English and Arabic. This is handled by a combination of a middleware and a helper function.
 
@@ -165,7 +289,7 @@ Our app supports English and Arabic. This is handled by a combination of a middl
 
 ---
 
-## Step 5: Server-Side Filtering with Server Components
+## Step 6: Server-Side Filtering with Server Components
 
 A major architectural shift in this project was moving from client-side filtering to **server-side filtering**. This improves performance by sending only the necessary data to the client.
 
@@ -178,8 +302,9 @@ import { scholars } from '@/data/scholars';
 // ... other data imports
 
 interface HomePageProps {
-  params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  
 }
 
 export default async function HomePage({ params, searchParams }: HomePageProps) {
@@ -195,6 +320,7 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
         scholar.name.ar.toLowerCase().includes(searchQuery)
       : true;
 
+    // Add logic for country, category, filters here.
     const countryId = country ? countries.find(c => c.en === country)?.id : undefined;
     const matchCountry = country ? scholar.countryId === countryId : true;
 
@@ -205,11 +331,22 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
 
     return matchSearch && matchCountry && matchesLang && matchesCategory;
   });
+// 3. Prepare data for the client (e.g., for filter dropdowns)
+    /*  unique... avoid dupliaction  "SEARCCH TO SPLIT THEM IN SEPERATED FILES LATER"*/    // uniqueCountries
 
-  // 3. Prepare data for the client (e.g., for filter dropdowns)
-  const uniqueCountries = /* ... logic to get unique countries ... */;
-  const uniqueCategories = /* ... logic to get unique categories ... */;
-  const uniqueLanguages = /* ... logic to get unique languages ... */;
+    const uniqueCountries = [...new Set(scholars.map(s => s.countryId))] /* Set():  First Make Arry mayb contain dupliactions*/
+      .map(id => countries.find(c => c.id === id))
+      .filter((country): country is Country => country !== undefined)
+      .map(country => ({ value: country.en, label: country.en }));
+
+    // uniqueCategories
+    const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
+      .map(id => specializations.find(s => s.id === id))
+      .filter((specialization): specialization is Specialization => specialization !== undefined)
+      .map(specialization => ({ value: specialization.en, label: specialization.en }));
+
+      // uniqueLanguages
+    const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
 
   // 4. Pass the filtered data to the client component.
   return (
@@ -232,11 +369,26 @@ In Next.js 15, the `searchParams` object in Server Components is **asynchronous*
 
 ---
 
-## Step 6: The Interactive Client Component
+## Step 7: The Interactive Client Component
 
 While the server handles filtering, the `HomePageClient.tsx` component is responsible for managing user interaction and telling the server when to re-filter the data.
 
 Here’s how it works:
+
+> **Attention: Hooks are for Client Components Only**
+>
+> A critical rule in Next.js is that React hooks (e.g., `useState`, `useEffect`, `useCallback`, and `useSearchParams()`) can **only** be used inside Client Components. This is why the `HomePageClient.tsx` file starts with the `"use client";` directive.
+>
+> Server Components cannot use hooks because they run on the server and don't have the interactive, stateful lifecycle that hooks depend on.
+
+> **Attention: Follow the Rules of Hooks**
+>
+> Another key rule is that you must always use hooks at the **top level** of your React component.
+>
+> -   **DON'T** call hooks inside loops, conditions (`if` statements), or nested functions.
+> -   **DO** call them unconditionally at the top of your component every single time it renders.
+>
+> This is because React relies on the order in which hooks are called to associate state with the correct component. The code example for `HomePageClient` follows this rule correctly: `useRouter`, `usePathname`, and `useSearchParams` are all called right at the start of the component function.
 
 ```tsx
 // src/app/[locale]/HomePageClient.tsx
@@ -262,13 +414,13 @@ const HomePageClient: React.FC<HomePageClientProps> = ({
   // 1. Define a callback to handle filter changes
   const handleFilterChange = useCallback(
     (name: string, value: string) => {
-      // Create a mutable copy of the current search params
       const params = new URLSearchParams(searchParams.toString());
+
       if (value) {
-        params.set(name, value);
+        params.set(name, value); // set() adds or updates the parameter 
       } else {
-        params.delete(name);
-      }
+        params.delete(name); // delete() removes the parameter to clear the filter 
+        }
       // 2. Trigger Re-render: Push the new URL to the router.
       // This tells Next.js to re-render the server component with new searchParams.
       router.push(`${pathname}?${params.toString()}`);
@@ -293,6 +445,47 @@ const HomePageClient: React.FC<HomePageClientProps> = ({
 
 export default HomePageClient;
 ```
+
+### A Deeper Look at `handleFilterChange`
+
+> **Attention: Immutability in React**
+>
+> A fundamental principle in React is to treat state and props as immutable. This means you should never directly modify objects or arrays. Instead, always create a new copy with the updated values.
+>
+> -   **DON'T (Mutable):** `myArray.push(newItem);` or `myObject.property = 'new value';`
+> -   **DO (Immutable):** `const newArray = [...myArray, newItem];` or `const newObject = { ...myObject, property: 'new value' };`
+>
+> In our `handleFilterChange` function, we follow this rule by creating a `new URLSearchParams(searchParams.toString())`. This creates a safe, editable copy of the parameters that we can change without affecting the original `searchParams` object provided by the hook. This prevents unexpected side effects and makes our component's behavior more predictable.
+
+This function is the bridge between the user's actions on the client and the data filtering on the server. Its one and only job is to change the URL's query parameters whenever a user interacts with a filter. Let's break it down.
+
+First, the function is wrapped in `useCallback` for performance. This ensures that the function isn't recreated on every single render, only when its dependencies (`pathname`, `router`, or `searchParams`) change.
+
+When a user picks a filter (e.g., selecting "Egypt"), the `FilterBar` component calls `handleFilterChange("country", "Egypt")`. Here’s what happens inside:
+
+**1. Get the Current URL Params**
+```typescript
+const params = new URLSearchParams(searchParams.toString());
+```
+We get the current URL's query string (e.g., `?category=hadith-studies`) and use the standard `URLSearchParams` API to create a new, **editable copy** of the parameters.
+
+**2. Update the Params**
+```typescript
+if (value) {
+  params.set(name, value);
+} else {
+  params.delete(name);
+}
+```
+If the user selected a `value` (like "Egypt"), we `set` it (e.g., `country=Egypt`). If they cleared the filter, the `value` is empty, and we `delete` that parameter from our copy.
+
+**3. Trigger the Server Rerender**
+```typescript
+router.push(`${pathname}?${params.toString()}`);
+```
+This is the most important step. We use the router to push a new URL, combining the current `pathname` (like `/en`) with our newly modified query string. The final URL might look like: `/en?category=hadith-studies&country=Egypt`.
+
+This URL change is the magic trigger. As we'll see in the next section, Next.js detects this change and automatically re-runs the Server Component with the new parameters.
 
 **Key Concept: The Client-Server Interaction Loop**
 1.  **User Action:** The user selects a category in the `FilterBar`.

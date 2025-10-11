@@ -73,15 +73,15 @@ import I18nProviderClient from '../../components/I18nProviderClient';
 import ThemeProvider from '@/components/ThemeProvider';
 import Layout from '@/components/Layout';  //import the layout components
 
-interface RootLayoutProps {
+interface LocaleLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
   params,
-}: RootLayoutProps) {
+}: LocaleLayoutProps) {
   const { locale } = await params;
   const { resources } = await getTranslation(locale);
 

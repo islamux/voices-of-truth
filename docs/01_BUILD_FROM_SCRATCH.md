@@ -339,6 +339,30 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
       .filter((country): country is Country => country !== undefined)
       .map(country => ({ value: country.en, label: country.en }));
 
+//------------ Another solution but simpler -------------- //
+// The same func unique but using normal func not arrow.
+// 1. Get countries numbers 
+const allCountryIds = scholars.map(function(scholar) {
+  return scholar.countryId;
+});
+// 2. Remove dupliactions
+const uniqueCountryIds = Array.from(new Set(allCountryIds));
+// 3. Get country info based on id
+const foundCountries = uniqueCountryIds.map(function(id) {
+  return countries.find(function(country) {
+    return country.id === id;
+  });
+}).filter(function(country) {
+  return country !== undefined;
+});
+// 4. Create a ready array (e.g, select)
+const uniqueCountries = foundCountries.map(function(country) {
+  return {
+    value: country.en,
+    label: country.en
+  };
+});
+//----------------------------------------------//
     // uniqueCategories
     const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
       .map(id => specializations.find(s => s.id === id))

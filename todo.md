@@ -5,3 +5,7 @@
 - Make the code متناسق
 - Make it better , avoid boiler plate
 - Make Performance of fonts better
+- Make generateStaticParams(){
+    return [{..}];   // genric not ar, en , .. hardcoded
+}
+

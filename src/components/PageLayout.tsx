@@ -5,11 +5,11 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter, usePathname } from 'next/navigation';
 
-interface LayoutProps {
+interface PageLayoutProps {
   children: ReactNode; // Prop to render child components within the layout.
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   const { t, i18n } = useTranslation('common'); // Hook for translations.
     const router = useRouter();
   const pathname = usePathname(); // Next.js hook for accessing the current path.
@@ -94,4 +94,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default Layout;
+export default PageLayout;

@@ -1,8 +1,8 @@
 
-import { getTranslation } from '../../lib/i18n';
+import { getTranslation, supportedLngs } from '../../lib/i18n';
 import I18nProviderClient from '../../components/I18nProviderClient';
 import ThemeProvider from '@/components/ThemeProvider';
-import Layout from '@/components/Layout';  //import the layout components
+import Layout from '@/components/PageLayout';  //import the layout components
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -31,7 +31,14 @@ export default async function LocaleLayout({
   );
 }
 
-// Generate static params for all supported locales
+// Generate static params for all supported locales (Make the func generic avoid hardcoded)
 export async function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'ar' }];
+  return supportedLngs.map(function(locale){
+    return {locale: locale};
+  });
 }
+
+// Generate static params for all supported locales
+//export async function generateStaticParams() {
+//  return [{ locale: 'en' }, { locale: 'ar' }];
+//}

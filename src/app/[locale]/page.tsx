@@ -11,6 +11,8 @@ import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
 import { Scholar, Country, Specialization } from '@/types';
+import { futimes } from 'fs';
+import { label } from 'framer-motion/client';
 
 // Define the props for the page, including searchParams.
 interface HomePageProps {
@@ -51,10 +53,32 @@ interface HomePageProps {
     });
 
     // 3. Prepare data for the client
-    const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
-      .map(id => countries.find(c => c.id === id))
-      .filter((country): country is Country => country !== undefined)
-      .map(country => ({ value: country.en, label: country.en }));
+    // const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
+    //   .map(id => countries.find(c => c.id === id))
+    //   .filter((country): country is Country => country !== undefined)
+    //   .map(country => ({ value: country.en, label: country.en }));
+
+    // uniqueCountries another solution , simpler
+    // 1. Get countries numbers
+    const allCountryIds = scholars.map(function(scholar){return scholar.countryId;});
+    // 2. Remove duplications.
+    const uniqueCountryIds = Array.from(new Set(allCountryIds));
+    // 3. Get Country info based on id.
+    const foundCountries = uniqueCountryIds.map(function(id){
+      return countries.find(function(country){
+        return country.id ===id;
+      });
+    }).filter(function(country){
+      return country !== undefined;
+    });
+    // 4. Creat a ready array (e.g, select)
+    const uniqueCountries = foundCountries.map(function(country){
+      return {
+        value: country.en,
+        label :country.en,
+      }
+    });
+
 
     const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
       .map(id => specializations.find(s => s.id === id))

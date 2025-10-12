@@ -156,127 +156,143 @@ export const scholars: Scholar[] = [
 
 ---
 
-## Step 4: Creating the Main Layout
+## Step 4: The Layout System
 
-The `src/components/Layout.tsx` component is the main layout of our application. It provides a consistent structure with a header, main content area, and footer. It also includes the logic for theme switching (light/dark mode) and language selection.
+In Next.js, the "layout" isn't just one file; it's a system of nested components. Our app uses three key files to create a consistent and context-aware user experience. Let's look at them from the outside in.
+
+### A. The Root Layout: `src/app/layout.tsx`
+
+This is the top-level layout for the entire application. Think of it as the main HTML shell.
 
 ```tsx
-// src/components/Layout.tsx
-"use client";
+// src/app/layout.tsx
+import type { Metadata } from "next";
+import "./globals.css";
+import { dir } from "i18next";
 
-import React, { useState, useEffect, ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useRouter, usePathname } from 'next/navigation';
+export const metadata: Metadata = {
+  title: "Voices of Truth",
+  description: "A directory of scholars and preachers.",
+};
 
-interface LayoutProps {
-  children: ReactNode; // Prop to render child components within the layout.
+interface RootLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{locale:string}>; 
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { t, i18n } = useTranslation('common'); // Hook for translations.
-    const router = useRouter();
-  const pathname = usePathname(); // Next.js hook for accessing the current path.
-    const currentLang = i18n.language; // Currently active language.
+export default async function RootLayout({
+  children,
+  params,
+}: RootLayoutProps) {
+  const {locale} = await params;
+  return (
+    <html lang={locale} dir={dir(locale)}>
+    <body>{children}</body>
+    </html>
+  );
+}
+```
 
-    // State for managing the current theme (light/dark). Default is 'light'.
-    const [theme, setTheme] = useState('light');
+**What it does:**
+*   It's a **Server Component** that runs only on the server.
+*   It defines the `<html>` and `<body>` tags for every page.
+*   It receives the `locale` (e.g., "en" or "ar") from the URL parameters.
+*   It sets the language (`lang`) and direction (`dir`, which becomes "ltr" or "rtl") on the `<html>` tag. This is crucial for accessibility and correct styling of different languages.
+*   The `{children}` it renders will be the next layout in the hierarchy (`[locale]/layout.tsx`).
 
-  // Effect to initialize theme from localStorage or system preference.
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
-    setTheme(initialTheme);
-    if (initialTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []); // Empty dependency array ensures this runs only once on mount.
+### B. The Locale Layout: `src/app/[locale]/layout.tsx`
 
-    // Toggles the theme between 'light' and 'dark'.
-    // Updates localStorage and the class on the <html> element.
-    const toggleTheme = () => {
-      const newTheme = theme === 'light' ? 'dark' : 'light';
-      setTheme(newTheme);
-      localStorage.setItem('theme', newTheme);
-      document.documentElement.classList.toggle('dark');
-    };
+This layout wraps all pages for a specific language. It's responsible for providing the contexts (like theme and translations) and the main visual structure.
 
-  // Changes the application language.
-  // Replaces the current language slug in the path and navigates to the new path.
-  const changeLanguage = (newLang: string) => {
-    if (currentLang === newLang) return; // Avoid unnecessary change
-    if (pathname) {
-      const newPath = pathname.replace(`/${currentLang}`, `/${newLang}`);
-      router.push(newPath);
-    } else {
-      // Fallback if pathname is somehow not available
-      router.push(`/${newLang}`);
-    }
-  };
+```tsx
+// src/app/[locale]/layout.tsx
+import { getTranslation, supportedLngs } from '../../lib/i18n';
+import I18nProviderClient from '../../components/I18nProviderClient';
+import ThemeProvider from '@/components/ThemeProvider';
+import PageLayout from '@/components/PageLayout'; // Note the import
+
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: LocaleLayoutProps) {
+  const { locale } = await params;
+  const { resources } = await getTranslation(locale);
 
   return (
-    <div class="min-h-screen flex flex-col bg-gradient-to-b from-transparent to-[rgb(var(--background-end-rgb))] bg-[rgb(var(--background-start-rgb))]">
-    <header class="p-4 bg-gray-100 dark:bg-gray-800 shadow-md text-gray-900 dark:text-white">
-    <div class="container mx-auto flex flex-wrap justify-between items-center">
-    <h1 class="text-xl sm:text-2xl font-semibold">{t('headerTitle')}</h1>
-    <div class="flex items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0">
-    <div class="flex items-center space-x-1">
-    <button 
-    onClick={() => changeLanguage('en')} 
-    disabled={currentLang === 'en'} 
-    class="px-3 py-1.5 text-sm rounded-md disabled:opacity-60 enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700 disabled:cursor-not-allowed"
-  >
-    {t('english')}
-    </button>
-    <button 
-    onClick={() => changeLanguage('ar')} 
-    disabled={currentLang === 'ar'} 
-    class="px-3 py-1.5 text-sm rounded-md disabled:opacity-60 enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700 disabled:cursor-not-allowed"
-  >
-    {t('arabic')}
-    </button>
-    </div>
-    <button 
-    onClick={toggleTheme} 
-    class="px-3 py-1.5 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-  >
-    {theme === 'light' ? t('dark') : t('light')} {t('theme')}
-    </button>
-    </div>
-    </div>
-    </header>
-    <main class="flex-grow container mx-auto p-4 md:p-6">
-    {children}
-    </main>
-    <footer class="p-4 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-700 dark:text-gray-300">
-    <p>{t('footerText')}</p>
-    </footer>
+    <I18nProviderClient
+      locale={locale}
+      resources={resources}
+    >
+      <ThemeProvider>
+        <PageLayout> {/* Our visual layout component wraps the page */}
+          {children}
+        </PageLayout>
+      </ThemeProvider>
+    </I18nProviderClient>
+  );
+}
+```
+
+**What it does:**
+*   This is also a **Server Component**.
+*   It fetches the translation data for the current `locale`.
+*   It wraps the page (`{children}`) with three important components:
+    1.  `I18nProviderClient`: Provides the translation context to all client components.
+    2.  `ThemeProvider`: Provides the theme (light/dark) context.
+    3.  `PageLayout`: This is our custom component that contains the visible header, footer, and overall page structure.
+
+### C. The Page Layout Component: `src/components/PageLayout.tsx`
+
+Finally, this is the component that defines the actual look and feel of the page. It contains the interactive elements.
+
+```tsx
+// src/components/PageLayout.tsx
+"use client";
+
+import React, { ReactNode } from 'react';
+// ... other imports for hooks ...
+
+interface PageLayoutProps {
+  children: ReactNode;
+}
+
+const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
+  // ... hooks for theme and language switching ...
+
+  return (
+    <div className="min-h-screen flex flex-col ...">
+      <header>
+        {/* Language and Theme switchers are here */}
+      </header>
+      <main>{children}</main> {/* The actual page content goes here */}
+      <footer>...</footer>
     </div>
   );
 };
 
-export default Layout;
+export default PageLayout;
 ```
 
-> **Attention: The `children` Prop - Container vs. Content**
-> 
-> You'll notice that `Layout.tsx` has a `children` prop, but `page.tsx` does not. This is a fundamental concept in React and Next.js.
-> 
-> *   **Container Components (`children` prop):** A component that is designed to wrap or contain other components needs a `children` prop. Think of it as a box. The `children` are the items you put inside the box. `Layout.tsx` is a perfect example of a container component.
-> 
-> *   **Content Components (no `children` prop):** A component that represents the actual content doesn't need a `children` prop. It's the item that goes *inside* the box. `page.tsx` is a content component.
-> 
-> This is a simple but powerful pattern that you will see throughout the application.
+**What it does:**
+*   It's a **Client Component** (`"use client"`), which allows it to be interactive and use hooks like `useState` and `useEffect`.
+*   It contains the JSX for the header, main content area, and footer.
+*   It holds the state and logic for the theme switcher and language selector buttons.
+*   The `{children}` it renders is the actual page component (e.g., `src/app/[locale]/page.tsx`).
 
-### Key Features of the Layout Component:
+### Summary of the Layout System
 
-*   **`"use client"`**: This directive is essential. It marks the component as a Client Component, allowing it to use React hooks like `useState` and `useEffect` for interactivity.
-*   **Theme Switching**: The `toggleTheme` function and `theme` state manage the light and dark modes. The theme is persisted in `localStorage` and applied to the `<html>` element.
-*   **Language Switching**: The `changeLanguage` function updates the URL with the selected language, triggering a re-render of the page with the new locale.
-*   **Responsive Design**: The layout uses Tailwind CSS classes to ensure it adapts to different screen sizes.
+1.  A request comes in for a URL like `/en/some-page`.
+2.  **`RootLayout`** runs, creating the `<html>` and `<body>` tags with `lang="en"`.
+3.  **`LocaleLayout`** runs, fetching English translations and wrapping everything in the necessary providers and our `PageLayout` component.
+4.  The **Page Component** (`some-page.tsx`) runs and is placed inside the `<main>` tag of the `PageLayout` component.
+5.  The final HTML is sent to the browser.
 
+This nested structure is a powerful Next.js pattern for separating concerns: the root document structure, language/theme contexts, and the final visual presentation.
 ---
 
 ## Step 5: Internationalization (i18n) and Middleware

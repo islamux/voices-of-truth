@@ -44,17 +44,17 @@ pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-
 After setup, your project structure will look similar to this:
 ```
 /
-├── public/             # Static assets (images, fonts, translation files)
-│   └── ...
-├── src/                # Our main application source code
-│   ├── app/            # Next.js App Router pages and layouts
-│   │   └── ...
-│   ├── ...
-├── next.config.mjs     # Next.js configuration
-├── tailwind.config.ts  # Tailwind CSS configuration
-├── tsconfig.json       # TypeScript configuration
-├── package.json        # Project dependencies and scripts
-└── pnpm-lock.yaml      # pnpm lock file
+â”œâ”€â”€ public/             # Static assets (images, fonts, translation files)
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ src/                # Our main application source code
+â”‚   â”œâ”€â”€ app/            # Next.js App Router pages and layouts
+â”‚   â”‚   â””â”€â”€ ...
+â”‚   â”œâ”€â”€ ...
+â”œâ”€â”€ next.config.mjs     # Next.js configuration
+â”œâ”€â”€ tailwind.config.ts  # Tailwind CSS configuration
+â”œâ”€â”€ tsconfig.json       # TypeScript configuration
+â”œâ”€â”€ package.json        # Project dependencies and scripts
+â””â”€â”€ pnpm-lock.yaml      # pnpm lock file
 ```
 
 **Our Tech Stack:**
@@ -73,20 +73,20 @@ A clean structure is key to a maintainable application.
 
 ```
 /
-├── public/
-│   ├── avatars/        # Scholar avatars
-│   └── locales/        # Translation files (ar/common.json, en/common.json)
-├── src/
-│   ├── app/
-│   │   ├── globals.css # Global styles and theme variables
-│   │   └── [locale]/   # Dynamic pages for each language
-│   ├── components/     # Reusable React components
-│   ├── data/           # Static data for our scholars
-│   ├── lib/            # Helper functions (like i18n setup)
-│   └── types/          # TypeScript type definitions
-├── next.config.ts      # Next.js configuration
-├── tailwind.config.ts  # Tailwind CSS configuration
-└── tsconfig.json       # TypeScript configuration
+â”œâ”€â”€ public/
+â”‚   â”œâ”€â”€ avatars/        # Scholar avatars
+â”‚   â””â”€â”€ locales/        # Translation files (ar/common.json, en/common.json)
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ app/
+â”‚   â”‚   â”œâ”€â”€ globals.css # Global styles and theme variables
+â”‚   â”‚   â””â”€â”€ [locale]/   # Dynamic pages for each language
+â”‚   â”œâ”€â”€ components/     # Reusable React components
+â”‚   â”œâ”€â”€ data/           # Static data for our scholars
+â”‚   â”œâ”€â”€ lib/            # Helper functions (like i18n setup)
+â”‚   â””â”€â”€ types/          # TypeScript type definitions
+â”œâ”€â”€ next.config.ts      # Next.js configuration
+â”œâ”€â”€ tailwind.config.ts  # Tailwind CSS configuration
+â””â”€â”€ tsconfig.json       # TypeScript configuration
 ```
 
 ---
@@ -99,7 +99,7 @@ Before we build anything, we need to define the shape of our data. What informat
 // src/types/index.ts
 export interface Scholar {
   id: number;
-  name: Record<string, string>; // e.g., { en: "Name", ar: "الاسم" }
+  name: Record<string, string>; // e.g., { en: "Name", ar: "Ø§Ù„Ø§Ø³Ù…" }
   socialMedia: {
     platform: string;
     link: string;
@@ -373,7 +373,6 @@ import { I18nextProvider } from 'react-i18next';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import { fallbackLng, supportedLngs, defaultNS } from '../lib/i18n';
-
 import { Resource } from 'i18next';
 
 export default function I18nProviderClient({
@@ -540,7 +539,7 @@ In Next.js 15, the `searchParams` object in Server Components is **asynchronous*
 
 While the server handles filtering, the `HomePageClient.tsx` component is responsible for managing user interaction and telling the server when to re-filter the data.
 
-Here’s how it works:
+Hereâ€™s how it works:
 
 > **Attention: Hooks are for Client Components Only**
 >
@@ -628,7 +627,7 @@ This function is the bridge between the user's actions on the client and the dat
 
 First, the function is wrapped in `useCallback` for performance. This ensures that the function isn't recreated on every single render, only when its dependencies (`pathname`, `router`, or `searchParams`) change.
 
-When a user picks a filter (e.g., selecting "Egypt"), the `FilterBar` component calls `handleFilterChange("country", "Egypt")`. Here’s what happens inside:
+When a user picks a filter (e.g., selecting "Egypt"), the `FilterBar` component calls `handleFilterChange("country", "Egypt")`. Hereâ€™s what happens inside:
 
 **1. Get the Current URL Params**
 ```typescript

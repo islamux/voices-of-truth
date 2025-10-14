@@ -1,0 +1,1060 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enhanced Tutorial: Building &#34;Voices of Truth&#34; From Scratch with Next.js</title>
+<style>.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 40px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    }
+.chart-container {
+    position: relative;
+    margin: 3em auto;
+    max-width: 700px;
+    min-height: 200px;
+    max-height: 400px;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    }
+img {
+    display: block;
+    overflow: hidden;
+    max-width: 100%;
+    max-height: 280px;
+    margin: 1em auto;
+    border-radius: 8px;
+    }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.7;
+    color: #333;
+    background-color: #fdfdfd;
+    margin: 0 24px 0 24px;
+    padding: 0;
+    font-size: 16px;
+    max-width: None;
+    }
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111;
+    margin-top: 24px;
+    margin-bottom: 20px;
+    font-size: 28px;
+    }
+h1 {
+    font-size: 28px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5em;
+    margin-top: 24px;
+    margin-bottom: 20px;
+    }
+h2 {
+    font-size: 22px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.4em;
+    }
+h3 {
+    font-size: 20px;
+    }
+h4 {
+    font-size: 18px;
+    }
+p {
+    margin-bottom: 1.25em;
+    }
+a {
+    color: #007acc;
+    text-decoration: none;
+    }
+a:hover {
+    text-decoration: underline;
+    }
+code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.9em;
+    background-color: #f0f0f0;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    }
+pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 1.5em;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+    }
+pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: 0.95em;
+    }
+blockquote {
+    margin: 2em 0;
+    padding: 1em 1.5em;
+    border-left: 5px solid #007acc;
+    background-color: #f0f8ff;
+    border-radius: 0 8px 8px 0;
+    }
+blockquote p {
+    margin: 0;
+    font-size: 1.05em;
+    }
+blockquote strong {
+    color: #005a99;
+    display: block;
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2em 0;
+    }
+th, td {
+    border: 1px solid #ddd;
+    padding: 0.8em;
+    text-align: left;
+    }
+th {
+    background-color: #f7f7f7;
+    font-weight: 600;
+    }
+.toc {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    padding: 1.5em 2em;
+    border-radius: 8px;
+    margin-bottom: 3em;
+    }
+.toc h2 {
+    margin-top: 0;
+    border-bottom: none;
+    font-size: 1.5rem;
+    }
+.toc ul {
+    list-style-type: none;
+    padding-left: 0;
+    }
+.toc > ul > li {
+    margin-bottom: 0.75em;
+    font-weight: 600;
+    }
+.toc ul ul {
+    padding-left: 1.5em;
+    margin-top: 0.5em;
+    }
+.toc ul ul li {
+    font-weight: 400;
+    margin-bottom: 0.5em;
+    }
+.file-path {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.9em;
+    color: #555;
+    background-color: #e9e9e9;
+    padding: 0.3em 0.6em;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 1em;
+    }
+.comment {
+    color: #999;
+    }
+@media only screen and (max-device-width: 768px) {
+            body {
+                padding: 0;
+                margin: 0;
+                font-family: PingFang SC;
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            .container {
+                padding: 0;
+                margin: 16px 20px 30px;
+                box-shadow: none;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                font-family: PingFang SC;
+            }
+
+            h1 {
+                font-size: 1.87em;
+                line-height: 1.6;
+                margin-bottom: 0.5em;
+                text-align: center;
+            }
+
+            h2 {
+                font-size: 1.6em;
+                font-weight: 600;
+                margin-top: 1.3em;
+                margin-bottom: 0.8em;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 0.5em;
+            }
+
+            h3 {
+                font-size: 1.2em;
+                font-weight: 600;
+                margin-top: 1em;
+                margin-bottom: 0.6em;
+            }
+
+            h4 {
+                font-size: 1.1em;
+                font-weight: 500;
+                margin-top: 1em;
+                margin-bottom: 0.5em;
+                font-style: normal;
+            }
+
+            h5 {
+                font-size: 1em;
+                font-weight: 500;
+                margin-bottom: 1.2em;
+            }
+
+            ul,
+            ol {
+                font-size: 1em; /* Equivalent to 17.6px if base is 16px */
+                font-weight: 400;
+                margin-bottom: 1.2em;
+                line-height: 1.8;
+            }
+
+            p {
+                font-size: 1em;
+                line-height: 1.8; /* Equivalent to 17.6px if base is 16px */
+                font-weight: 400;
+                margin-top: 0.8em;
+                margin-bottom: 0.8em;
+            }
+
+            blockquote {
+                padding: 1em 1.2em;
+
+            p {
+                margin: 0;
+            }
+        }
+
+        figcaption {
+            margin-top: 0.5em;
+            font-size: 0.8em; /* Equivalent to 17.6px if base is 16px */
+            font-weight: 400;
+            text-align: center;
+            font-style: normal;
+            color: #7F8896;
+        }
+
+        img {
+            display: block;
+            overflow: hidden;
+            max-width: 100%;
+            max-height: 335px;
+            margin: 1em auto;
+            border-radius: 8px;
+        }
+        }</style>
+<link rel="stylesheet" href="https://static.skywork.ai/fe/skywork-site-assets/styles/doc_reference_style.css?v=1977961430789439488"/></head>
+<body>
+<div class="container">
+<h1 id="section-1">Enhanced Tutorial: Building &#34;Voices of Truth&#34; From Scratch</h1>
+<p><em>Last Updated: 2025-10-14</em></p>
+<p>Welcome, junior developer! This document is a deeply expanded, step-by-step guide to rebuilding the &#34;Voices of Truth&#34; project. The original tutorial provided a great overview, but this version aims to fill in the gaps, explain the &#34;why&#34; behind the code, and clarify concepts that can be tricky for developers new to the Next.js App Router ecosystem. Our goal is to empower you with a solid understanding of modern web application architecture, data flow, and component-based design.</p>
+<div class="toc">
+<h2 id="section-1">Table of Contents</h2>
+<ul>
+<li><a href="#section-intro">Introduction: Setting the Stage</a>
+<ul>
+<li><a href="#section-intro-tech-stack">Our Technology Stack</a></li>
+<li><a href="#section-intro-core-concepts">Core Concepts to Grasp</a></li>
+</ul>
+</li>
+<li><a href="#section-step-0">Step 0: Project Initialization</a>
+<ul>
+<li><a href="#section-step-0-1">Creating a New Next.js Project</a></li>
+<li><a href="#section-step-0-2">Installing Additional Dependencies</a></li>
+<li><a href="#section-step-0-3">Understanding the Initial Project Structure</a></li>
+</ul>
+</li>
+<li><a href="#section-step-1">Step 1: Architecting the Project Structure</a></li>
+<li><a href="#section-step-2">Step 2: Defining Our Data (The &#34;Model&#34;)</a>
+<ul>
+<li><a href="#section-step-2-1">The Power of `Record<string, string="">` for i18n</string,></a></li>
+<li><a href="#section-step-2-2">Understanding Index Signatures</a></li>
+</ul>
+</li>
+<li><a href="#section-step-3">Step 3: Creating the Static Data Source</a></li>
+<li><a href="#section-step-4">Step 4: The Next.js Layout System Explained</a>
+<ul>
+<li><a href="#section-step-4-a">A. The Root Layout: `src/app/layout.tsx`</a></li>
+<li><a href="#section-step-4-b">B. The Locale Layout: `src/app/[locale]/layout.tsx`</a></li>
+<li><a href="#section-step-4-c">C. The Page Layout Component: `src/components/PageLayout.tsx`</a></li>
+<li><a href="#section-step-4-d">D. The Translation Bridge: `src/components/I18nProviderClient.tsx`</a></li>
+<li><a href="#section-step-4-summary">Summary of the Layout System and Data Flow</a></li>
+</ul>
+</li>
+<li><a href="#section-step-5">Step 5: Mastering Internationalization (i18n)</a>
+<ul>
+<li><a href="#section-step-5-1">The Role of Middleware: `src/middleware.ts`</a></li>
+<li><a href="#section-step-5-2">The i18n Helper: `src/lib/i18n.ts`</a></li>
+</ul>
+</li>
+<li><a href="#section-step-6">Step 6: Server-Side Filtering with Server Components</a>
+<ul>
+<li><a href="#section-step-6-1">The Server Page: `src/app/[locale]/page.tsx`</a></li>
+<li><a href="#section-step-6-2">Important Lesson: Asynchronous `searchParams` in Next.js 15+</a></li>
+</ul>
+</li>
+<li><a href="#section-step-7">Step 7: The Interactive Client Component</a>
+<ul>
+<li><a href="#section-step-7-1">The Client-Side Hub: `src/app/[locale]/HomePageClient.tsx`</a></li>
+<li><a href="#section-step-7-2">A Deeper Look at `handleFilterChange`</a></li>
+<li><a href="#section-step-7-3">The Client-Server Interaction Loop</a></li>
+</ul>
+</li>
+<li><a href="#section-conclusion">Conclusion &amp; Your Next Mission</a></li>
+</ul>
+</div>
+<h2 id="section-intro">Introduction: Setting the Stage</h2>
+<p>Before we write a single line of code, let&#39;s understand the landscape. We are building a directory of scholars. This application needs to be fast, searchable, and available in multiple languages. The architecture we&#39;ll use, centered around the Next.js App Router, is designed to achieve these goals efficiently.</p>
+<h3 id="section-intro-tech-stack">Our Technology Stack</h3>
+<p>Here’s a breakdown of the tools we&#39;ll be using and, more importantly, <em>why</em> we&#39;ve chosen them.</p>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Purpose</th>
+<th>Why We Chose It</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Next.js 15+ (App Router)</strong></td>
+<td>Framework</td>
+<td>The App Router enables a powerful server-centric model. It allows us to render components on the server by default (for speed and SEO) and &#34;opt-in&#34; to client-side interactivity only where needed. This reduces the amount of JavaScript sent to the browser, leading to faster load times.</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td>Language</td>
+<td>TypeScript adds static typing to JavaScript. This means we can catch errors during development, not in production. It makes our code more predictable, readable, and easier to maintain, especially as the project grows.</td>
+</tr>
+<tr>
+<td><strong>Tailwind CSS</strong></td>
+<td>Styling</td>
+<td>A utility-first CSS framework that lets us build complex designs directly in our HTML. It avoids the need to write custom CSS files for every component, speeding up development and ensuring a consistent design system.</td>
+</tr>
+<tr>
+<td><strong>React</strong></td>
+<td>UI Components</td>
+<td>The foundational library for building user interfaces with a component-based model. Next.js is built on top of React, extending it with server-side capabilities.</td>
+</tr>
+<tr>
+<td><strong>i18next</strong></td>
+<td>Internationalization (i18n)</td>
+<td>A mature and flexible library for handling translations. Its ecosystem, including `react-i18next`, integrates seamlessly with React and provides hooks that make managing different languages straightforward.</td>
+</tr>
+<tr>
+<td><strong>Framer Motion</strong></td>
+<td>Animation</td>
+<td>A production-ready animation library for React. It provides a simple, declarative API to add fluid animations and micro-interactions, enhancing the user experience without a steep learning curve.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-intro-core-concepts">Core Concepts to Grasp</h3>
+<p>As we go through the tutorial, keep these fundamental concepts in mind. They are the pillars of this architecture.</p>
+<ul>
+<li><strong>Server Components (RSC):</strong> These are the default in the App Router. They run <em>only</em> on the server. They can directly access server resources (like databases or filesystems) and are great for fetching data and rendering non-interactive content. They produce HTML, which is sent to the browser.</li>
+<li><strong>Client Components:</strong> You create these by adding the <code>&#34;use client&#34;;</code> directive at the top of a file. They render on the server initially (for the first page load) and then &#34;hydrate&#34; and run in the browser, allowing them to use state (<code>useState</code>), effects (<code>useEffect</code>), and browser-only APIs. They are essential for any user interactivity.</li>
+<li><strong>Server-Side Rendering (SSR):</strong> The process of rendering a page (including both Server and Client Components) on the server in response to a request. This sends a fully-formed HTML page to the browser, which is great for performance and SEO. Our filtering logic is a prime example of SSR in action.</li>
+<li><strong>Data Flow:</strong> In our app, the flow is unidirectional and driven by the URL. The client component doesn&#39;t filter data itself; it just changes the URL. The server sees the new URL, re-runs the page with the new parameters, filters the data, and sends the updated UI back to the client.</li>
+</ul>
+<h2 id="section-step-0">Step 0: Project Initialization</h2>
+<p>Every great journey begins with a single step. For us, it&#39;s creating the project itself.</p>
+<h3 id="section-step-0-1">Creating a New Next.js Project</h3>
+<p>We will use <code>pnpm</code>, a fast and disk-space-efficient package manager. The command below scaffolds a new Next.js project with all our desired configurations out of the box.</p>
+<pre><code>pnpm create next-app voices-of-truth --typescript --eslint --tailwind --app --src-dir --use-pnpm</code></pre>
+<p>Let&#39;s break down what each flag does:</p>
+<ul>
+<li><code>voices-of-truth</code>: This is the name of our project and the directory that will be created.</li>
+<li><code>--typescript</code>: Automatically configures TypeScript, creating a <code>tsconfig.json</code> file and setting up the necessary types.</li>
+<li><code>--eslint</code>: Integrates ESLint for code linting, helping us maintain code quality and catch common errors.</li>
+<li><code>--tailwind</code>: Sets up Tailwind CSS, creating <code>tailwind.config.ts</code> and <code>postcss.config.js</code>, and configuring it for use in our project.</li>
+<li><code>--app</code>: This is the crucial flag that tells Next.js to use the modern <strong>App Router</strong> instead of the older Pages Router.</li>
+<li><code>--src-dir</code>: Organizes our application code inside a dedicated <code>src/</code> directory. This is a common convention that separates our code from configuration files at the root level.</li>
+<li><code>--use-pnpm</code>: Instructs the setup script to use <code>pnpm</code> to install the initial dependencies.</li>
+</ul>
+<p>After the command finishes, navigate into your newly created project directory:</p>
+<pre><code>cd voices-of-truth</code></pre>
+<h3 id="section-step-0-2">Installing Additional Dependencies</h3>
+<p>Our application requires a few more libraries for specific features. Let&#39;s install them.</p>
+<pre><code>pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons</code></pre>
+<p>Here’s a closer look at each one:</p>
+<ul>
+<li><strong><code>i18next</code></strong>: The core internationalization engine. It&#39;s framework-agnostic and handles the logic of loading translations, changing languages, and formatting text.</li>
+<li><strong><code>react-i18next</code></strong>: The official React bindings for <code>i18next</code>. It provides the hooks (like <code>useTranslation</code>) and components (like <code>I18nextProvider</code>) that connect the i18next engine to our React components.</li>
+<li><strong><code>i18next-resources-to-backend</code></strong>: A simple but useful i18next backend that allows us to load translation files (like our JSON files) on demand. This is key for our server-side translation fetching.</li>
+<li><strong><code>framer-motion</code></strong>: A powerful animation library that makes adding smooth transitions and effects to our UI components a breeze.</li>
+<li><strong><code>react-icons</code></strong>: A massive library of popular icon sets packaged as React components. This saves us from having to manage SVG files manually.</li>
+</ul>
+<h3 id="section-step-0-3">Understanding the Initial Project Structure</h3>
+<p>After setup, your project directory will have a structure like this. It&#39;s important to know what each part is for.</p>
+<pre><code>/
+├── public/             <span class="comment"># Static assets accessible from the web root (images, fonts, etc.)</span>
+│   └── ...
+├── src/                <span class="comment"># Our main application source code lives here.</span>
+│   ├── app/            <span class="comment"># The heart of the App Router. Layouts and pages go here.</span>
+│   │   └── ...
+│   ├── ...
+├── next.config.mjs     <span class="comment"># Configuration file for Next.js itself.</span>
+├── tailwind.config.ts  <span class="comment"># Configuration for Tailwind CSS (e.g., custom colors, themes).</span>
+├── tsconfig.json       <span class="comment"># Configuration for the TypeScript compiler.</span>
+├── package.json        <span class="comment"># Lists project dependencies and scripts (like `pnpm dev`).</span>
+└── pnpm-lock.yaml      <span class="comment"># Locks dependency versions for consistent installs.</span>
+</code></pre>
+<h2 id="section-step-1">Step 1: Architecting the Project Structure</h2>
+<p>A clean, predictable folder structure is crucial for a maintainable application. As our project grows, this organization will save us countless hours. Here is the target structure we will build towards.</p>
+<pre><code>/
+├── public/
+│   ├── avatars/        <span class="comment"># Stores scholar avatar images.</span>
+│   └── locales/        <span class="comment"># Stores translation files (e.g., ar/common.json, en/common.json).</span>
+├── src/
+│   ├── app/
+│   │   ├── globals.css <span class="comment"># Global styles and Tailwind CSS base layers.</span>
+│   │   └── [locale]/   <span class="comment"># A dynamic route segment for handling different languages.</span>
+│   ├── components/     <span class="comment"># Reusable React components (both Server and Client).</span>
+│   ├── data/           <span class="comment"># Static data files, like our list of scholars.</span>
+│   ├── lib/            <span class="comment"># Helper functions and library initializations (like i18n setup).</span>
+│   └── types/          <span class="comment"># TypeScript type definitions and interfaces.</span>
+├── next.config.mjs     <span class="comment"># Note: The original doc had .ts, but create-next-app often uses .mjs now.</span>
+├── tailwind.config.ts
+└── tsconfig.json
+</code></pre>
+<p>The most interesting part here is the <code>src/app/[locale]/</code> directory. The square brackets <code>[]</code> denote a <strong>dynamic segment</strong> in Next.js routing. This means that URLs like <code>/en</code>, <code>/ar</code>, or <code>/fr</code> will all be handled by the pages and layouts inside this folder, and the value (&#39;en&#39;, &#39;ar&#39;, &#39;fr&#39;) will be available to our components as a parameter named <code>locale</code>.</p>
+<h2 id="section-step-2">Step 2: Defining Our Data (The &#34;Model&#34;)</h2>
+<p>Before we build any UI, we must define the &#34;shape&#34; of our data. In TypeScript, we do this using interfaces. This acts as a contract for our application, ensuring that a &#34;scholar&#34; object always has the properties we expect. We&#39;ll define these in <code>src/types/index.ts</code>.</p>
+<div class="file-path">src/types/index.ts</div>
+<pre><code><span class="comment">// src/types/index.ts</span>
+export interface Scholar {
+  id: number;
+  name: Record&lt;string, string&gt;; <span class="comment">// e.g., { en: &#34;Name&#34;, ar: &#34;الاسم&#34; }</span>
+  socialMedia: {
+    platform: string;
+    link: string;
+    icon?: string; <span class="comment">// The &#39;?&#39; makes this property optional.</span>
+  }[];
+  countryId: number;
+  categoryId: number;
+  language: string[];
+  avatarUrl: string;
+  bio?: Record&lt;string, string&gt;;
+}
+
+export interface Country {
+  id: number;
+  en: string;
+  ar: string;
+  [key: string]: string | number; <span class="comment">// An index signature for flexibility.</span>
+}
+
+export interface Specialization {
+  id: number;
+  en: string;
+  ar: string;
+  [key: string]: string | number;
+}
+</code></pre>
+<h3 id="section-step-2-1">The Power of <code>Record&lt;string, string&gt;</code> for i18n</h3>
+<p>You&#39;ll notice we use <code>Record&lt;string, string&gt;</code> for properties like <code>name</code> and <code>bio</code>. This is a simple yet powerful TypeScript utility type that is perfect for internationalization.</p>
+<p><code>Record&lt;KeyType, ValueType&gt;</code> creates an object type where the keys are of <code>KeyType</code> and the values are of <code>ValueType</code>. So, <code>Record&lt;string, string&gt;</code> means &#34;an object with string keys and string values.&#34;</p>
+<p>For our <code>name</code> field, this allows us to structure the data like this:</p>
+<pre><code>{
+  en: &#34;Ibn Taymiyyah&#34;,
+  ar: &#34;ابن تيمية&#34;
+}</code></pre>
+<p>The key is the language code (e.g., &#39;en&#39;, &#39;ar&#39;), and the value is the translated text. This makes it trivial to access the correct translation: <code>scholar.name[currentLocale]</code>.</p>
+<h3 id="section-step-2-2">Understanding Index Signatures</h3>
+<p>In the <code>Country</code> and <code>Specialization</code> interfaces, you see this line: <code>[key: string]: string | number;</code>. This is called an <strong>index signature</strong>.</p>
+<p>It tells TypeScript that besides the explicitly defined properties (<code>id</code>, <code>en</code>, <code>ar</code>), this object can have <em>any number of other properties</em> as long as their key is a string and their value is either a string or a number. This provides flexibility. For example, we could add a French name or population data to a country object without changing the interface:</p>
+<pre><code>const egypt: Country = {
+  id: 1,
+  en: &#34;Egypt&#34;,
+  ar: &#34;مصر&#34;,
+  fr: &#34;Égypte&#34;,       <span class="comment">// Allowed by the index signature</span>
+  population: 102000000 <span class="comment">// Also allowed by the index signature</span>
+};</code></pre>
+<p>This is a good way to make our types extensible for future requirements.</p>
+<h2 id="section-step-3">Step 3: Creating the Static Data Source</h2>
+<p>For this project, we are not using a database. Instead, our data will be stored in static TypeScript files. This is a common approach for smaller projects or data that doesn&#39;t change often. It&#39;s extremely fast because the data can be bundled with our application at build time.</p>
+<p>The original document suggests organizing scholars by category (e.g., <code>comparative-religion.ts</code>) and then combining them. Let&#39;s look at the final structure in <code>src/data/scholars.ts</code>.</p>
+<div class="file-path">src/data/scholars.ts</div>
+<pre><code><span class="comment">// src/data/scholars.ts</span>
+import { Scholar } from &#39;../types&#39;;
+
+<span class="comment">// In a real application, you would also import your countries and specializations data.</span>
+<span class="comment">// import { countries } from &#39;./countries&#39;;</span>
+<span class="comment">// import { specializations } from &#39;./specializations&#39;;</span>
+
+<span class="comment">// Here we define the list of scholars directly. 
+// This array must conform to the `Scholar[]` type (an array of Scholar objects).</span>
+export const scholars: Scholar[] = [
+  {
+    id: 1,
+    name: { en: &#34;Ahmed Deedat&#34;, ar: &#34;أحمد ديدات&#34; },
+    socialMedia: [
+      { platform: &#34;Website&#34;, link: &#34;https://www.ahmed-deedat.net/&#34; }
+    ],
+    countryId: 1, <span class="comment">// Corresponds to a country in our `countries` data</span>
+    categoryId: 1, <span class="comment">// Corresponds to a specialization</span>
+    language: [&#34;English&#34;],
+    avatarUrl: &#34;/avatars/deedat.jpg&#34;,
+    bio: {
+      en: &#34;A prominent South African writer and public speaker of Indian descent, known for his work in comparative religion.&#34;,
+      ar: &#34;كاتب وخطيب جنوب أفريقي من أصل هندي، اشتهر بأعماله في مقارنة الأديان.&#34;
+    }
+  },
+  {
+    id: 2,
+    name: { en: &#34;Zakir Naik&#34;, ar: &#34;ذاكر نايك&#34; },
+    socialMedia: [
+      { platform: &#34;Facebook&#34;, link: &#34;https://www.facebook.com/zakirnaik/&#34; },
+      { platform: &#34;YouTube&#34;, link: &#34;https://www.youtube.com/user/Drzakirchannel&#34; }
+    ],
+    countryId: 2, <span class="comment">// India</span>
+    categoryId: 1, <span class="comment">// Comparative Religion</span>
+    language: [&#34;English&#34;, &#34;Urdu&#34;],
+    avatarUrl: &#34;/avatars/zakir.jpg&#34;,
+    bio: {
+      en: &#34;An Indian Islamic televangelist and preacher, founder of the Islamic Research Foundation.&#34;,
+      ar: &#34;داعية وخطيب إسلامي هندي، مؤسس مؤسسة البحث الإسلامي.&#34;
+    }
+  },
+  <span class="comment">// ... more scholar objects</span>
+];
+</code></pre>
+<p>Notice how the <code>avatarUrl</code> starts with a <code>/</code>. This points to the <code>public</code> directory, so <code>/avatars/deedat.jpg</code> will resolve to <code>public/avatars/deedat.jpg</code>.</p>
+<h2 id="section-step-4">Step 4: The Next.js Layout System Explained</h2>
+<p>In the Next.js App Router, a &#34;layout&#34;; is not just one file; it&#39;s a powerful system of nested components that wrap your pages. This allows you to share UI and logic across different parts of your application. Our app uses a three-tiered layout system. Let&#39;s examine it from the outermost layer to the innermost.</p>
+<h3 id="section-step-4-a">A. The Root Layout: <code>src/app/layout.tsx</code></h3>
+<p>This is the top-level layout for the <em>entire</em> application. It&#39;;s mandatory and defines the root <code>&lt;html&gt;</code> and <code>&lt;body&gt;</code> tags. Think of it as the main shell of your web page.</p>
+<div class="file-path">src/app/layout.tsx</div>
+<pre><code><span class="comment">// src/app/layout.tsx</span>
+import type { Metadata } from &#34;next&#34;;
+import &#34;./globals.css&#34;;
+import { dir } from &#34;i18next&#34;;
+
+<span class="comment">// This metadata object defines default SEO tags for all pages.</span>
+export const metadata: Metadata = {
+  title: &#34;Voices of Truth&#34;,
+  description: &#34;A directory of scholars and preachers.&#34;,
+};
+
+<span class="comment">// Define the props for our layout. It receives children and params.</span>
+interface RootLayoutProps {
+  children: React.ReactNode; <span class="comment">// This will be the next nested layout or page.</span>
+  params: { locale: string }; <span class="comment">// The dynamic [locale] from the URL.</span>
+}
+
+<span class="comment">// This is an async Server Component.</span>
+export default function RootLayout({
+  children,
+  params: { locale }, <span class="comment">// We can destructure locale directly from params.</span>
+}: RootLayoutProps) {
+  return (
+    &lt;html lang={locale} dir={dir(locale)}&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+</code></pre>
+<blockquote>
+<strong>Deeper Dive: What&#39;s happening here?</strong>
+<ul>
+<li><strong>Server Component:</strong> This component runs entirely on the server. It has no interactivity. Its job is to generate the basic HTML structure.</li>
+<li><strong><code>params: { locale }</code>:</strong> Next.js automatically passes the dynamic segments from the URL as the <code>params</code> prop. Because our folder is named <code>[locale]</code>, we get a <code>locale</code> property.</li>
+<li><strong><code>lang={locale}</code>:</strong> We set the <code>lang</code> attribute on the <code>&lt;html&gt;</code> tag. This is crucial for accessibility and SEO, telling browsers and screen readers the language of the page (e.g., &#34;en&#34; or &#34;ar&#34;).</li>
+<li><strong><code>dir={dir(locale)}</code>:</strong> The <code>dir()</code> function from <code>i18next</code> is a helper that returns &#34;ltr&#34; (left-to-right) for languages like English or &#34;rtl&#34; (right-to-left) for languages like Arabic. This attribute is essential for correct styling of right-to-left languages.</li>
+<li><strong><code>{children}</code>:</strong> This is where the next layer of our application will be rendered. In our case, it will be the <code>LocaleLayout</code>.</li>
+</ul>
+</blockquote>
+<p><em>Note: The original document showed <code>params</code> as a <code>Promise</code>. While this can be true in some advanced streaming scenarios, for basic layouts and pages, you can often access it directly. The key takeaway is that data fetching in Server Components is asynchronous.</em></p>
+<h3 id="section-step-4-b">B. The Locale Layout: <code>src/app/[locale]/layout.tsx</code></h3>
+<p>This layout sits inside the <code>[locale]</code> directory, so it will wrap all pages for a specific language. Its main job is to set up the context (like translations and theme) that our interactive components will need.</p>
+<div class="file-path">src/app/[locale]/layout.tsx</div>
+<pre><code><span class="comment">// src/app/[locale]/layout.tsx</span>
+import { getTranslation } from &#39;../../lib/i18n&#39;;
+import I18nProviderClient from &#39;../../components/I18nProviderClient&#39;;
+import ThemeProvider from &#39;@/components/ThemeProvider&#39;;
+import PageLayout from &#39;@/components/PageLayout&#39;;
+
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: { locale: string };
+}
+
+<span class="comment">// This is also an async Server Component.</span>
+export default async function LocaleLayout({
+  children,
+  params: { locale },
+}: LocaleLayoutProps) {
+  <span class="comment">// 1. Fetch data on the server. Here, we get translation resources.</span>
+  const { resources } = await getTranslation(locale);
+
+  return (
+    <span class="comment">// 2. Provide the fetched data to client components via context providers.</span>
+    &lt;I18nProviderClient
+      locale={locale}
+      resources={resources}
+    &gt;
+      &lt;ThemeProvider&gt;
+        &lt;PageLayout&gt; <span class="comment">{/* Our main visual structure */}</span>
+          {children} <span class="comment">{/* This will be the actual page component, e.g., page.tsx */}</span>
+        &lt;/PageLayout&gt;
+      &lt;/ThemeProvider&gt;
+    &lt;/I18nProviderClient&gt;
+  );
+}
+</code></pre>
+<blockquote>
+<strong>Deeper Dive: The Server-to-Client Handoff</strong>
+<p>This component perfectly illustrates a core pattern of the App Router:</p>
+<ol>
+<li><strong>Fetch Data on the Server:</strong> As a Server Component, <code>LocaleLayout</code> can be <code>async</code>. It calls <code>getTranslation(locale)</code> to fetch the necessary translation JSON file from the server&#39;;s file system. This is fast and secure.</li>
+<li><strong>Pass Data as Props:</strong> It then passes the fetched <code>resources</code> and the current <code>locale</code> as props to the <code>I18nProviderClient</code> component.</li>
+<li><strong>Provide Context on the Client:</strong> <code>I18nProviderClient</code> is a Client Component (as we&#39;ll see next). It takes these props and uses them to initialize the i18next context, making the translations available to all other Client Components down the tree.</li>
+</ol>
+<p>This &#34;Fetch on Server, Provide on Client&#34; pattern is fundamental to building efficient apps with the App Router.</p>
+</blockquote>
+<h3 id="section-step-4-c">C. The Page Layout Component: <code>src/components/PageLayout.tsx</code></h3>
+<p>This is the component that defines the visible structure of our page: the header, the main content area, and the footer. Because it contains interactive elements like buttons for changing the theme and language, it <strong>must</strong> be a Client Component.</p>
+<div class="file-path">src/components/PageLayout.tsx</div>
+<pre><code><span class="comment">// src/components/PageLayout.tsx</span>
+&#34;use client&#34;; <span class="comment">// This directive marks the file as a Client Component.</span>
+
+import React, { useState, useEffect, ReactNode } from &#39;react&#39;;
+import { useTranslation } from &#39;react-i18next&#39;;
+import { useRouter, usePathname } from &#39;next/navigation&#39;;
+
+interface PageLayoutProps {
+  children: ReactNode;
+}
+
+const PageLayout: React.FC&lt;PageLayoutProps&gt; = ({ children }) =&gt; {
+  <span class="comment">// Hooks can only be used in Client Components.</span>
+  const { t, i18n } = useTranslation(&#39;common&#39;);
+  const router = useRouter();
+  const pathname = usePathname();
+  const currentLang = i18n.language;
+
+  <span class="comment">// State for managing the theme.</span>
+  const [theme, setTheme] = useState(&#39;light&#39;);
+
+  <span class="comment">// Effect to set the initial theme on component mount.</span>
+  useEffect(() =&gt; {
+    const storedTheme = localStorage.getItem(&#39;theme&#39;);
+    const systemPrefersDark = window.matchMedia(&#39;(prefers-color-scheme: dark)&#39;).matches;
+    const initialTheme = storedTheme || (systemPrefersDark ? &#39;dark&#39; : &#39;light&#39;);
+    setTheme(initialTheme);
+
+    <span class="comment">// Apply the theme class to the root  element for Tailwind CSS.</span>
+    if (initialTheme === &#39;dark&#39;) {
+      document.documentElement.classList.add(&#39;dark&#39;);
+    } else {
+      document.documentElement.classList.remove(&#39;dark&#39;);
+    }
+  }, []); <span class="comment">// Empty array `[]` means this effect runs only once.</span>
+
+  const toggleTheme = () =&gt; {
+    const newTheme = theme === &#39;light&#39; ? &#39;dark&#39; : &#39;light&#39;;
+    setTheme(newTheme);
+    localStorage.setItem(&#39;theme&#39;, newTheme);
+    document.documentElement.classList.toggle(&#39;dark&#39;);
+  };
+
+  const changeLanguage = (newLang: string) =&gt; {
+    if (currentLang === newLang) return;
+    <span class="comment">// Reconstruct the URL with the new language.</span>
+    const newPath = pathname.replace(`/${currentLang}`, `/${newLang}`);
+    router.push(newPath);
+  };
+
+  return (
+    &lt;div className=&#34;min-h-screen flex flex-col bg-gradient-to-b from-transparent to-[rgb(var(--background-end-rgb))] bg-[rgb(var(--background-start-rgb))]&#34;&gt;
+      &lt;header className=&#34;p-4 bg-gray-100 dark:bg-gray-800 shadow-md text-gray-900 dark:text-white&#34;&gt;
+        <span class="comment">&lt;!-- Header content with language and theme toggles --&gt;</span>
+        &lt;div className=&#34;container mx-auto flex flex-wrap justify-between items-center&#34;&gt;
+          &lt;h1 className=&#34;text-xl sm:text-2xl font-semibold&#34;&gt;{t(&#39;headerTitle&#39;)}&lt;/h1&gt;
+          <span class="comment">&lt;!-- ... buttons for language and theme ... --&gt;</span>
+        &lt;/div&gt;
+      &lt;/header&gt;
+      &lt;main className=&#34;flex-grow container mx-auto p-4 md:p-6&#34;&gt;
+        {children} <span class="comment">{/* The actual page content is rendered here. */}</span>
+      &lt;/main&gt;
+      &lt;footer className=&#34;p-4 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-700 dark:text-gray-300&#34;&gt;
+        &lt;p&gt;{t(&#39;footerText&#39;)}&lt;/p&gt;
+      &lt;/footer&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default PageLayout;
+</code></pre>
+<blockquote>
+<strong>Deeper Dive: Client Component Responsibilities</strong>
+<ul>
+<li><strong><code>&#34;use client&#34;</code>:</strong> This is the boundary. Everything in this file (and any components it imports that don&#39;t have a &#34;use server&#34; directive) is now part of the client-side JavaScript bundle.</li>
+<li><strong>State Management (<code>useState</code>):</strong> It holds the current <code>theme</code> in its state. When <code>setTheme</code> is called, the component re-renders to reflect the change.</li>
+<li><strong>Side Effects (<code>useEffect</code>):</strong> It interacts with browser-only APIs like <code>localStorage</code> and <code>window.matchMedia</code> to provide a persistent theme. The empty dependency array <code>[]</code> is critical; it ensures this logic runs only once when the component is first mounted in the browser, not on every re-render.</li>
+<li><strong>Interactivity:</strong> It provides the functions (<code>toggleTheme</code>, <code>changeLanguage</code>) that respond to user clicks. These functions use the Next.js navigation hooks (<code>useRouter</code>) to change the URL, which is the key to triggering server-side updates.</li>
+<li><strong>Consuming Context:</strong> It uses the <code>useTranslation</code> hook. This hook only works because a parent component (<code>I18nProviderClient</code>) has provided the necessary i18next context.</li>
+</ul>
+</blockquote>
+<h3 id="section-step-4-d">D. The Translation Bridge: <code>src/components/I18nProviderClient.tsx</code></h3>
+<p>This component is the crucial &#34;bridge&#34; between our server-side data fetching and our client-side components. A Server Component can&#39;t create a React Context, but a Client Component can. This component&#39;s sole purpose is to take the data fetched on the server and use it to initialize a context provider on the client.</p>
+<div class="file-path">src/components/I18nProviderClient.tsx</div>
+<pre><code><span class="comment">// src/components/I18nProviderClient.tsx</span>
+&#39;use client&#39;; <span class="comment">// This MUST be a client component to use context.</span>
+
+import { I18nextProvider } from &#39;react-i18next&#39;;
+import { createInstance, Resource } from &#39;i18next&#39;;
+import { initReactI18next } from &#39;react-i18next/initReactI18next&#39;;
+import { fallbackLng, supportedLngs, defaultNS } from &#39;../lib/i18n&#39;;
+
+export default function I18nProviderClient({
+  children,
+  locale,
+  resources
+}: {
+  children: React.ReactNode;
+  locale: string;
+  resources: Resource;
+}) {
+  <span class="comment">// 1. Create a new i18next instance on the client.</span>
+  const i18n = createInstance();
+
+  <span class="comment">// 2. Initialize it with the data passed down from the server component.</span>
+  i18n
+    .use(initReactI18next) <span class="comment">// Binds i18next to React.</span>
+    .init({
+      supportedLngs,
+      fallbackLng,
+      lng: locale, <span class="comment">// Set the active language.</span>
+      ns: defaultNS,
+      defaultNS,
+      resources, <span class="comment">// Provide the pre-fetched translations.</span>
+    });
+
+  <span class="comment">// 3. Wrap children in the provider, making the i18n instance available via hooks.</span>
+  return &lt;I18nextProvider i18n={i18n}&gt;{children}&lt;/I18nextProvider&gt;;
+}
+</code></pre>
+<p>By doing this, we get the best of both worlds: translations are loaded once on the server (no client-side fetching), but they are made available to all interactive client components through a standard React context.</p>
+<h3 id="section-step-4-summary">Summary of the Layout System and Data Flow</h3>
+<p>Let&#39;s trace a request for <code>/en/scholars</code> to see how it all fits together:</p>
+<ol>
+<li><strong>Request:</strong> The browser requests <code>/en/scholars</code>.</li>
+<li><strong>Root Layout (`layout.tsx`):</strong> Next.js runs this first. It sees <code>locale</code> is &#34;en&#34; and renders <code>&lt;html lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;...&lt;/html&gt;</code>.</li>
+<li><strong>Locale Layout (`[locale]/layout.tsx`):</strong> This runs next. It&#39;s <code>async</code>, so it <code>await</code>s <code>getTranslation(&#39;en&#39;)</code> to load the English JSON file. It then renders its providers, passing the translations down as props.</li>
+<li><strong>Page Layout (`PageLayout.tsx`):</strong> This is rendered inside the providers. It sets up the header, main, and footer structure.</li>
+<li><strong>Page (`[locale]/page.tsx`):</strong> Finally, the actual page component for the scholars list runs. Its output is placed inside the <code>&lt;main&gt;</code> tag of the <code>PageLayout</code>.</li>
+<li><strong>Response:</strong> The fully assembled HTML is sent to the browser. The browser then loads the client-side JavaScript to &#34;hydrate&#34; the Client Components (like <code>PageLayout</code>), making them interactive.</li>
+</ol>
+<h2 id="section-step-5">Step 5: Mastering Internationalization (i18n)</h2>
+<p>Supporting multiple languages is handled by a combination of middleware for routing and a helper library for loading translations.</p>
+<h3 id="section-step-5-1">The Role of Middleware: <code>src/middleware.ts</code></h3>
+<p>The original document mentioned middleware but didn&#39;t show the code. A middleware is a function that runs <em>before</em> a request is completed. It can inspect the request and rewrite, redirect, or modify it. Our middleware&#39;s job is to handle language detection and redirection.</p>
+<p>If a user visits the root URL (<code>/</code>), we want to redirect them to their preferred language (e.g., <code>/en</code> or <code>/ar</code>) based on their browser settings.</p>
+<div class="file-path">src/middleware.ts</div>
+<pre><code><span class="comment">// src/middleware.ts</span>
+import { NextRequest, NextResponse } from &#39;next/server&#39;;
+import acceptLanguage from &#39;accept-language&#39;;
+import { fallbackLng, supportedLngs } from &#39;./lib/i18n&#39;;
+
+<span class="comment">// Register supported languages for the accept-language library.</span>
+acceptLanguage.languages(supportedLngs);
+
+export const config = {
+  <span class="comment">// Matcher avoids running middleware on static assets and API routes.</span>
+  matcher: [&#39;/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)&#39;]
+};
+
+export function middleware(req: NextRequest) {
+  let lng;
+  <span class="comment">// You could add logic here to check for a language cookie first.</span>
+  
+  <span class="comment">// If no cookie, check the &#39;Accept-Language&#39; header.</span>
+  if (!lng) {
+    lng = acceptLanguage.get(req.headers.get(&#39;Accept-Language&#39;));
+  }
+  <span class="comment">// If no language is found, use the fallback.</span>
+  if (!lng) {
+    lng = fallbackLng;
+  }
+
+  const pathname = req.nextUrl.pathname;
+
+  <span class="comment">// If the user is visiting a path that doesn&#39;t have a language prefix...</span>
+  if (
+    !supportedLngs.some(loc =&gt; pathname.startsWith(`/${loc}`)) &amp;&amp;
+    !pathname.startsWith(&#39;/_next&#39;)
+  ) {
+    <span class="comment">// ...redirect them to the same path but with the detected language prefix.</span>
+    return NextResponse.redirect(new URL(`/${lng}${pathname}`, req.url));
+  }
+
+  return NextResponse.next();
+}
+</code></pre>
+<h3 id="section-step-5-2">The i18n Helper: <code>src/lib/i18n.ts</code></h3>
+<p>This file centralizes our i18n configuration and provides the <code>getTranslation</code> function that our server components use.</p>
+<div class="file-path">src/lib/i18n.ts</div>
+<pre><code><span class="comment">// src/lib/i18n.ts</span>
+import { createInstance } from &#39;i18next&#39;;
+import { initReactI18next } from &#39;react-i18next&#39;;
+import resourcesToBackend from &#39;i18next-resources-to-backend&#39;;
+
+export const fallbackLng = &#39;en&#39;;
+export const supportedLngs = [&#39;en&#39;, &#39;ar&#39;];
+export const defaultNS = &#39;common&#39;;
+
+export async function getTranslation(lng: string, ns: string = defaultNS) {
+  const i18n = createInstance();
+  await i18n
+    .use(initReactI18next)
+    .use(resourcesToBackend((language: string, namespace: string) =&gt; 
+      import(`../../public/locales/${language}/${namespace}.json`)
+    ))
+    .init({
+      supportedLngs,
+      fallbackLng,
+      lng,
+      ns,
+      defaultNS,
+    });
+  
+  return {
+    i18n,
+    resources: i18n.services.resourceStore.data,
+    t: i18n.t,
+  };
+}
+</code></pre>
+<p>The key part is <code>resourcesToBackend</code>. It takes a function that dynamically imports the correct JSON file based on the language and namespace. This is how our server components can load just the translations they need for a given request.</p>
+<h2 id="section-step-6">Step 6: Server-Side Filtering with Server Components</h2>
+<p>One of the most significant architectural decisions in this project is performing all data filtering on the server. In a traditional client-side app, you might download the entire list of scholars and filter it in the browser with JavaScript. Here, we do the opposite.</p>
+<p>The logic lives in our main page component, <code>src/app/[locale]/page.tsx</code>, which is a Server Component.</p>
+<h3 id="section-step-6-1">The Server Page: <code>src/app/[locale]/page.tsx</code></h3>
+<p>This component receives the search parameters from the URL, filters the master list of scholars, and then passes only the filtered results to the client component for display.</p>
+<div class="file-path">src/app/[locale]/page.tsx</div>
+<pre><code><span class="comment">// src/app/[locale]/page.tsx</span>
+import HomePageClient from &#39;./HomePageClient&#39;;
+import { scholars } from &#39;@/data/scholars&#39;;
+import { countries } from &#39;@/data/countries&#39;; <span class="comment">// Assuming this data file exists</span>
+import { specializations } from &#39;@/data/specializations&#39;; <span class="comment">// Assuming this data file exists</span>
+import { Country, Specialization } from &#39;@/types&#39;;
+
+interface HomePageProps {
+  params: { locale: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function HomePage({ params, searchParams }: HomePageProps) {
+  <span class="comment">// 1. Get filter values from the URL&#39;s search parameters (e.g., ?country=Egypt).</span>
+  const { query, country, lang, category } = searchParams;
+  const searchQuery = (query || &#39;&#39;).toString().toLowerCase();
+
+  <span class="comment">// 2. Filter the master `scholars` array on the server.</span>
+  const filteredScholars = scholars.filter(scholar =&gt; {
+    const matchSearch = searchQuery
+      ? scholar.name.en.toLowerCase().includes(searchQuery) ||
+        scholar.name.ar.toLowerCase().includes(searchQuery)
+      : true;
+
+    const countryId = country ? countries.find(c =&gt; c.en === country)?.id : undefined;
+    const matchCountry = country ? scholar.countryId === countryId : true;
+
+    const matchesLang = lang ? scholar.language.includes(lang as string) : true;
+
+    const categoryId = category ? specializations.find(s =&gt; s.en === category)?.id : undefined;
+    const matchesCategory = category ? scholar.categoryId === categoryId : true;
+
+    return matchSearch &amp;&amp; matchCountry &amp;&amp; matchesLang &amp;&amp; matchesCategory;
+  });
+
+  <span class="comment">// 3. Prepare data for the client&#39;s filter dropdowns.</span>
+  const uniqueCountries = [...new Set(scholars.map(s =&gt; s.countryId))]
+    .map(id =&gt; countries.find(c =&gt; c.id === id))
+    .filter((c): c is Country =&gt; c !== undefined)
+    .map(c =&gt; ({ value: c.en, label: c.en }));
+
+  const uniqueCategories = [...new Set(scholars.map(s =&gt; s.categoryId))]
+    .map(id =&gt; specializations.find(s =&gt; s.id === id))
+    .filter((s): s is Specialization =&gt; s !== undefined)
+    .map(s =&gt; ({ value: s.en, label: s.en }));
+
+  const uniqueLanguages = [...new Set(scholars.flatMap(s =&gt; s.language))];
+
+  <span class="comment">// 4. Pass ONLY the filtered data and dropdown options to the client component.</span>
+  return (
+    &lt;HomePageClient
+      scholars={filteredScholars}
+      uniqueCountries={uniqueCountries}
+      uniqueCategories={uniqueCategories}
+      uniqueLanguages={uniqueLanguages}
+      countries={countries}
+    /&gt;
+  );
+}
+</code></pre>
+<p>The benefit is immense: if there are 1000 scholars but the filter matches only 5, the browser only ever receives data for those 5. This makes the application incredibly fast and scalable.</p>
+<h3 id="section-step-6-2">Important Lesson: Asynchronous <code>searchParams</code> in Next.js 15+</h3>
+<p>The original document correctly pointed out a key change in recent Next.js versions. In older versions, <code>searchParams</code> was a plain object. Now, to support streaming rendering, it can be promise-like.</p>
+<p>While in many simple cases like ours it might resolve immediately, the official and safest way to access it is with <code>await</code>, as shown in the original document&#39;s example:</p>
+<pre><code><span class="comment">// The robust way to handle searchParams in modern Next.js</span>
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = await searchParams;
+  const { query, country } = resolvedSearchParams;
+  <span class="comment">// ... rest of the logic</span>
+}</code></pre>
+<p>For simplicity, our main code example destructures it directly, but it&#39;s vital to remember that it&#39;s an async-first feature. Always treat data access in Server Components as potentially asynchronous.</p>
+<h2 id="section-step-7">Step 7: The Interactive Client Component</h2>
+<p>The server does the heavy lifting of filtering, but the client is responsible for the user experience. The <code>HomePageClient.tsx</code> component manages user input and tells the server when to re-filter the data.</p>
+<blockquote>
+<strong>Attention: Rules of Hooks</strong>
+<p>Remember these two golden rules for using React Hooks (like <code>useState</code>, <code>useRouter</code>, etc.):</p>
+<ol>
+<li><strong>Only call hooks in Client Components.</strong> They will not work in Server Components. This is why <code>HomePageClient.tsx</code> needs the <code>&#34;use client&#34;</code> directive.</li>
+<li><strong>Only call hooks at the top level of your function.</strong> Never call them inside loops, conditions, or nested functions. React relies on the consistent order of hook calls to work correctly.</li>
+</ol>
+</blockquote>
+<h3 id="section-step-7-1">The Client-Side Hub: <code>src/app/[locale]/HomePageClient.tsx</code></h3>
+<p>This component receives the filtered data as props and renders the UI. Its most important job is to handle changes from the filter controls.</p>
+<div class="file-path">src/app/[locale]/HomePageClient.tsx</div>
+<pre><code><span class="comment">// src/app/[locale]/HomePageClient.tsx</span>
+&#34;use client&#34;;
+
+import { usePathname, useRouter, useSearchParams } from &#39;next/navigation&#39;;
+import { useCallback } from &#39;react&#39;;
+import FilterBar from &#34;@/components/FilterBar&#34;;
+import ScholarList from &#34;@/components/ScholarList&#34;;
+<span class="comment">// ... other imports and prop types ...</span>
+
+const HomePageClient: React.FC&lt;HomePageClientProps&gt; = ({
+  scholars,
+  uniqueCountries,
+  uniqueCategories,
+  uniqueLanguages,
+  countries
+}) =&gt; {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  <span class="comment">// 1. Define a memoized callback to handle filter changes.</span>
+  const handleFilterChange = useCallback(
+    (name: string, value: string) =&gt; {
+      <span class="comment">// Create a mutable copy of the current search params.</span>
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
+      
+      <span class="comment">// 2. Trigger a navigation to the new URL.</span>
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams] <span class="comment">// Dependencies for useCallback.</span>
+  );
+
+  <span class="comment">// 3. Pass the data and the handler down to presentational components.</span>
+  return (
+    &lt;div className=&#34;space-y-8&#34;&gt;
+      &lt;FilterBar
+        uniqueCountries={uniqueCountries}
+        uniqueCategories={uniqueCategories}
+        uniqueLanguages={uniqueLanguages}
+        onCountryChange={(country) =&gt; handleFilterChange(&#34;country&#34;, country)}
+        onCategoryChange={(category) =&gt; handleFilterChange(&#34;category&#34;, category)}
+        onLanguageChange={(lang) =&gt; handleFilterChange(&#34;lang&#34;, lang)}
+        onSearchChange={(query) =&gt; handleFilterChange(&#34;query&#34;, query)}
+      /&gt;
+      &lt;ScholarList scholars={scholars} countries={countries} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default HomePageClient;
+</code></pre>
+<h3 id="section-step-7-2">A Deeper Look at <code>handleFilterChange</code></h3>
+<p>This function is the heart of our client-server interaction. Let&#39;s dissect it.</p>
+<blockquote>
+<strong>Key Concept: Immutability in React</strong>
+<p>A core principle in React is to treat state and props as immutable (unchangeable). Instead of modifying an object or array directly, you create a new one with the desired changes. The line <code>const params = new URLSearchParams(searchParams.toString());</code> follows this rule perfectly. It creates a <em>new, editable copy</em> of the URL parameters, leaving the original <code>searchParams</code> from the hook untouched. This prevents bugs and makes our component&#39;s behavior predictable.</p>
+</blockquote>
+<ul>
+<li><strong><code>useCallback</code>:</strong> This hook memoizes the <code>handleFilterChange</code> function. This means the function itself is not recreated on every render of <code>HomePageClient</code>. It will only be recreated if one of its dependencies (<code>pathname</code>, <code>router</code>, or <code>searchParams</code>) changes. This is a performance optimization that can be useful when passing callbacks down to child components.</li>
+<li><strong><code>new URLSearchParams(...)</code>:</strong> This is a standard browser API that makes it easy to manipulate URL query strings. We create a new instance from the current parameters.</li>
+<li><strong><code>params.set()</code> / <code>params.delete()</code>:</strong> We update our copy. If a filter value is provided, we set it (e.g., <code>country=Egypt</code>). If the value is empty (e.g., the user selected &#34;All Countries&#34;), we delete the parameter entirely to keep the URL clean.</li>
+<li><strong><code>router.push(...)</code>:</strong> This is the magic trigger. We tell the Next.js router to navigate to a new URL. For example, if the user selects &#34;Egypt&#34;;, the new URL becomes <code>/en?country=Egypt</code>. This navigation is what tells Next.js to re-render the page on the server.</li>
+</ul>
+<h3 id="section-step-7-3">The Client-Server Interaction Loop</h3>
+<p>This architecture creates a beautiful, reactive loop that is both efficient and simple to reason about:</p>
+<ol>
+<li><strong>User Action:</strong> The user selects &#34;Egypt&#34; from a dropdown in the <code>FilterBar</code> component.</li>
+<li><strong>Client-Side Event:</strong> The <code>onChange</code> event on the dropdown fires, calling <code>onCountryChange(&#34;Egypt&#34;)</code>.</li>
+<li><strong>Handler Execution:</strong> This calls our <code>handleFilterChange(&#34;country&#34;, &#34;Egypt&#34;)</code> function in <code>HomePageClient</code>.</li>
+<li><strong>URL Update:</strong> The function constructs a new URL query string (<code>?country=Egypt</code>) and uses <code>router.push()</code> to change the browser&#39;s URL without a full page reload.</li>
+<li><strong>Server Re-renders:</strong> Next.js detects the URL change. It re-runs the <code>HomePage</code> Server Component, passing in the new <code>searchParams</code>: <code>{ country: &#39;Egypt&#39; }</code>.</li>
+<li><strong>Server-Side Filtering:</strong> The <code>HomePage</code> component re-filters the master <code>scholars</code> list using the new parameters.</li>
+<li><strong>New Props, New UI:</strong> It passes the new, smaller list of filtered scholars as a prop to <code>HomePageClient</code>. React detects the prop change and re-renders the <code>ScholarList</code> component with the updated data. The user sees the filtered list almost instantly.</li>
+</ol>
+<h2 id="section-conclusion">Conclusion &amp; Your Next Mission</h2>
+<p>Congratulations! You&#39;ve now walked through a comprehensive guide to building a modern, server-centric Next.js application. You&#39;ve seen how to structure a project, model data with TypeScript, and, most importantly, how to orchestrate a powerful data flow between Server and Client Components.</p>
+<p>You&#39;ve learned to:</p>
+<ul>
+<li><strong>Separate Concerns:</strong> Use Server Components for data fetching and filtering, and Client Components for stateful user interaction.</li>
+<li><strong>Leverage the URL:</strong> Use the URL&#39;s search parameters as the &#34;single source of truth&#34; for the application&#39;s state.</li>
+<li><strong>Create a Reactive Loop:</strong> Understand how client-side actions can trigger server-side re-rendering through router-based navigation.</li>
+<li><strong>Handle Internationalization:</strong> Implement a robust i18n system using middleware and context providers.</li>
+</ul>
+<h4>Your Next Task:</h4>
+<p>The original tutorial gave you a great next step, and it remains your mission. Dive into the code for the <code>FilterBar.tsx</code> component and its children (like a hypothetical <code>CountryFilter.tsx</code>).</p>
+<p>Trace how the <code>onCountryChange</code> prop is passed down from <code>HomePageClient</code> to <code>FilterBar</code>, and finally connected to the <code>onChange</code> event of a <code>&lt;select&gt;</code> element. Seeing this final piece of the puzzle will solidify your understanding of how a user&#39;s click is translated into a complete data refresh, all orchestrated by the elegant architecture of the Next.js App Router.</p>
+<p>Happy coding!</p>
+<div class="reference-container">
+			<div class="reference-section">
+				<h3 class="reference-title">Reference</h3>
+				<div class="reference-list">
+					
+					<div class="reference-item">
+						<span class="reference-number">[1]</span>
+						<div class="reference-content">
+							<div class="reference-text-container">
+								<span class="reference-text">01_BUILD_FROM_SCRATCH</span>
+									
+							</div>
+							<a href="https://static-us-img.skywork.ai/prod/analysis/2025-10-14/8204028083329589645/1977957597152518144_1815760bf32c2a19802ad29179909e72.md" class="reference-link" target="_blank">
+								https://static-us-img.skywork.ai/prod/analysis/2025-10-14/8204028083329589645/1977957597152518144_1815760bf32c2a19802ad29179909e72.md
+							</a>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div></div>
+
+</body></html>

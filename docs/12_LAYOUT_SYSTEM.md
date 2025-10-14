@@ -61,7 +61,7 @@ This is a nested layout that is specific to the `[locale]` segment of the URL (e
 ### Purpose
 
 -   To provide the necessary context for the internationalization (i18n) and theme systems.
--   To wrap the pages with the main UI layout component (`src/components/Layout.tsx`).
+-   To wrap the pages with the main UI layout component (`src/components/PageLayout.tsx`).
 -   To fetch the translations for the current locale and provide them to the client components.
 
 ### Code
@@ -71,7 +71,7 @@ This is a nested layout that is specific to the `[locale]` segment of the URL (e
 import { getTranslation } from '../../lib/i18n';
 import I18nProviderClient from '../../components/I18nProviderClient';
 import ThemeProvider from '@/components/ThemeProvider';
-import Layout from '@/components/Layout';  //import the layout components
+import PageLayout from '@/components/PageLayout';  //import the layout components
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -91,9 +91,9 @@ export default async function LocaleLayout({
     resources={resources}
   >
     <ThemeProvider>
-    <Layout> {/*wrap children with the layout component*/}
+    <PageLayout> {/*wrap children with the layout component*/}
     {children}
-    </Layout>
+    </PageLayout>
     </ThemeProvider>
 
     </I18nProviderClient>
@@ -114,7 +114,7 @@ export async function generateStaticParams() {
 
 ---
 
-## 3. `src/components/Layout.tsx` (The Main UI Layout)
+## 3. `src/components/PageLayout.tsx` (The Main UI Layout)
 
 This is a **Client Component** that defines the main visual structure of the application.
 
@@ -126,7 +126,7 @@ This is a **Client Component** that defines the main visual structure of the app
 ### Code
 
 ```tsx
-// src/components/Layout.tsx
+// src/components/PageLayout.tsx
 "use client";
 
 import React, { useState, useEffect, ReactNode } from 'react';
@@ -153,7 +153,7 @@ Here's how the three layouts are nested to create the final page:
 2.  **`src/app/[locale]/layout.tsx`** (Locale-Specific Layout)
     -   Is the `children` of the Root Layout.
     -   Wraps the page with the `I18nProviderClient` and `ThemeProvider`.
-3.  **`src/components/Layout.tsx`** (Main UI Layout)
+3.  **`src/components/PageLayout.tsx`** (Main UI Layout)
     -   Is a child of the Locale-Specific Layout.
     -   Provides the header, footer, and interactive elements.
 4.  **The Page** (e.g., `src/app/[locale]/page.tsx`)

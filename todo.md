@@ -5,7 +5,7 @@
 - Make the code متناسق
 - Make it better , avoid boiler plate
 - Make Performance of fonts better
-- Make generateStaticParams(){
-    return [{..}];   // genric not ar, en , .. hardcoded
-}
+- Try too make PageLayout is more smaller but if the'r is overkill 
+- is it best practice using createInstance in I18nProviderClient? -- update docs 
+    
 

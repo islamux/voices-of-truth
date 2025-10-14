@@ -9,7 +9,8 @@ interface PageLayoutProps {
   children: ReactNode; // Prop to render child components within the layout.
 }
 
-const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
+export default function PageLayout({children}:PageLayoutProps){
+
   const { t, i18n } = useTranslation('common'); // Hook for translations.
     const router = useRouter();
   const pathname = usePathname(); // Next.js hook for accessing the current path.
@@ -94,4 +95,3 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   );
 };
 
-export default PageLayout;

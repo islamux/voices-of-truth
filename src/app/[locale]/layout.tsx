@@ -1,44 +1,37 @@
+import I18nProviderClient from "@/components/I18nProviderClient";
+import PageLayout from "@/components/PageLayout"; 
+import ThemeProvider from "@/components/ThemeProvider";
+import { getTranslation, supportedLngs } from "@/lib/i18n";
 
-import { getTranslation, supportedLngs } from '../../lib/i18n';
-import I18nProviderClient from '../../components/I18nProviderClient';
-import ThemeProvider from '@/components/ThemeProvider';
-import Layout from '@/components/PageLayout';  //import the layout components
+interface LocaleLayoutProps{
+  children : React.ReactNode;
+  params: Promise<{locale: string}>;
 
-interface LocaleLayoutProps {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: LocaleLayoutProps) {
-  const { locale } = await params;
-  const { resources } = await getTranslation(locale);
+export default async function LocaleLayout({children, params}:LocaleLayoutProps){
+
+  const {locale} = await params; 
+  const {resources} = await getTranslation(locale);
 
   return (
-    <I18nProviderClient
-    locale={locale}
-    resources={resources}
-  >
+    // Provide internationalization context to the application 
+    // and wrap with ThemeProvider for theming support 
+    // and PageLayout for consistent page structure
+    <I18nProviderClient locale={locale} resources={resources} > 
+
     <ThemeProvider>
-    <Layout> {/*wrap children with the layout component*/}
-    {children}
-    </Layout>
+    <PageLayout> {children} </PageLayout>
     </ThemeProvider>
 
-    </I18nProviderClient>
+    </I18nProviderClient> 
   );
 }
 
-// Generate static params for all supported locales (Make the func generic avoid hardcoded)
+// Generate static params for each supported locale
 export async function generateStaticParams() {
-  return supportedLngs.map(function(locale){
-    return {locale: locale};
+  return supportedLngs.map(function(locale) {
+    return { locale :locale};
   });
 }
 
-// Generate static params for all supported locales
-//export async function generateStaticParams() {
-//  return [{ locale: 'en' }, { locale: 'ar' }];
-//}

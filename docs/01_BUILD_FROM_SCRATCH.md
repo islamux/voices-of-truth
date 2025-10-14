@@ -206,35 +206,37 @@ This layout wraps all pages for a specific language. It's responsible for provid
 
 ```tsx
 // src/app/[locale]/layout.tsx
-import { getTranslation, supportedLngs } from '../../lib/i18n';
-import I18nProviderClient from '../../components/I18nProviderClient';
-import ThemeProvider from '@/components/ThemeProvider';
-import PageLayout from '@/components/PageLayout'; // Note the import
+import I18nProviderClient from "@/components/I18nProviderClient";
+import PageLayout from "@/components/PageLayout"; 
+import ThemeProvider from "@/components/ThemeProvider";
+import { getTranslation, supportedLngs } from "@/lib/i18n";
 
-interface LocaleLayoutProps {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+interface LocaleLayoutProps{
+  children : React.ReactNode;
+  params: Promise<{locale: string}>;
 }
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: LocaleLayoutProps) {
-  const { locale } = await params;
-  const { resources } = await getTranslation(locale);
+export default async function LocaleLayout({children, params}:LocaleLayoutProps){
+  const {locale} = await params; 
+  const {resources} = await getTranslation(locale);
 
   return (
-    <I18nProviderClient
-      locale={locale}
-      resources={resources}
-    >
+    // Provide internationalization context to the application 
+    // and wrap with ThemeProvider for theming support 
+    // and PageLayout for consistent page structure
+    <I18nProviderClient locale={locale} resources={resources} > 
       <ThemeProvider>
-        <PageLayout> {/* Our visual layout component wraps the page */}
-          {children}
-        </PageLayout>
+        <PageLayout> {children} </PageLayout>
       </ThemeProvider>
-    </I18nProviderClient>
+    </I18nProviderClient> 
   );
+}
+
+// Generate static params for each supported locale
+export async function generateStaticParams() {
+  return supportedLngs.map(function(locale) {
+    return { locale :locale};
+  });
 }
 ```
 
@@ -245,6 +247,7 @@ export default async function LocaleLayout({
     1.  `I18nProviderClient`: Provides the translation context to all client components.
     2.  `ThemeProvider`: Provides the theme (light/dark) context.
     3.  `PageLayout`: This is our custom component that contains the visible header, footer, and overall page structure.
+*   **`generateStaticParams`**: This function tells Next.js to pre-render a version of the layout for each supported language (`en` and `ar`). This improves performance by generating the pages at build time instead of on-demand for each user request.
 
 ### C. The Page Layout Component: `src/components/PageLayout.tsx`
 
@@ -262,7 +265,7 @@ interface PageLayoutProps {
   children: ReactNode; // Prop to render child components within the layout.
 }
 
-const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
+export default function PageLayout({ children }: PageLayoutProps) {
   const { t, i18n } = useTranslation('common'); // Hook for translations.
   const router = useRouter();
   const pathname = usePathname(); // Next.js hook for accessing the current path.
@@ -347,8 +350,6 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
     </div>
   );
 };
-
-export default PageLayout;
 ```
 
 **What it does:**
@@ -361,35 +362,36 @@ export default PageLayout;
 *   **Uses Translations**: It uses the `useTranslation` hook (which works because of the `I18nProviderClient` we wrapped it in) to get translated text like the header title and footer text.
 *   **Renders the Structure**: It defines the `header`, `main`, and `footer` for every page. The actual page content, passed as `{children}`, is rendered inside the `<main>` element.
 
-### D. The Translation Bridge: `I18nProviderClient.tsx`
+### D. The Translation Bridge: `I18nProviderClient.tsx` (Optimized)
 
-We've seen that `LocaleLayout` (a Server Component) fetches translations and passes them to `I18nProviderClient`. But why is this extra step necessary? This component is the critical bridge that makes translations available to all our interactive **Client Components**.
+We've seen that `LocaleLayout` (a Server Component) fetches translations and passes them to `I18nProviderClient`. This component is the critical bridge that makes translations available to all our interactive **Client Components**.
+
+A recent update optimized this component for performance using the `useMemo` hook.
 
 ```tsx
 // src/components/I18nProviderClient.tsx
 'use client';
 
 import { I18nextProvider } from 'react-i18next';
-import { createInstance } from 'i18next';
+import { createInstance, Resource } from 'i18next';
+import { useMemo } from 'react';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import { fallbackLng, supportedLngs, defaultNS } from '../lib/i18n';
 
-import { Resource } from 'i18next';
+interface I18nProviderClientProps {
+  children: React.ReactNode;
+  locale: string;
+  resources: Resource;
+}
 
 export default function I18nProviderClient({
   children,
   locale,
-  resources
-}: {
-  children: React.ReactNode;
-  locale: string;
-  resources: Resource;
-}) {
-  const i18n = createInstance();
-
-  i18n
-    .use(initReactI18next)
-    .init({
+  resources,
+}: I18nProviderClientProps) {
+  const i18n = useMemo(() => {
+    const instance = createInstance();
+    instance.use(initReactI18next).init({
       supportedLngs,
       fallbackLng,
       lng: locale,
@@ -397,27 +399,31 @@ export default function I18nProviderClient({
       defaultNS,
       resources,
     });
+    return instance;
+  }, [locale, resources]);
 
-  return <I18nextProvider i18n={i18n}>{children}</I1nextProvider>;
+  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
 ```
 
-**What it does:**
+**What it does (and why it's optimized):**
 
-*   **`'use client';`**: This is the most important part. It marks this component as a Client Component, allowing it to use state and context, which are essential for `react-i18next`.
-*   **Receives Server Data**: It accepts `locale` and `resources` (the actual translation strings) as props. These come directly from the `LocaleLayout` Server Component, which has already fetched them.
-*   **Initializes on the Client**: It creates a new `i18next` instance and initializes it *on the client side* using the data from the server. This avoids re-fetching translations on the client.
-*   **Provides Context**: It wraps its `children` with the `<I18nextProvider>`. This makes the initialized `i18n` instance available to any nested Client Component. Now, components like `PageLayout` or `FilterBar` can use the `useTranslation()` hook to get the correct text for the current language.
+*   **`'use client';`**: Marks this as a Client Component.
+*   **Receives Server Data**: It accepts `locale` and `resources` as props from the `LocaleLayout` Server Component.
+*   **Initializes on the Client**: It creates and initializes an `i18next` instance on the client side.
+*   **Provides Context**: It wraps its `children` with `<I18nextProvider>`, making the `i18n` instance available to any nested Client Component via the `useTranslation()` hook.
+*   **`useMemo` for Performance**: The entire `i18next` instance creation is wrapped in a `useMemo` hook. This is a crucial optimization. It ensures that the `i18n` instance is **only created once** unless the `locale` or `resources` props change. Without this, a new instance would be created on every render, causing unnecessary work and potential re-renders for all child components.
 
-This pattern is the standard way to handle i18n in the Next.js App Router: **Load data on the Server, provide context on the Client.**
+This pattern is the standard way to handle i18n in the Next.js App Router: **Load data on the Server, provide context on the Client, and memoize the context provider to prevent unnecessary re-renders.**
 
 ### Summary of the Layout System
 
-1.  A request comes in for a URL like `/en/some-page`.
-2.  **`RootLayout`** runs, creating the `<html>` and `<body>` tags with `lang="en"`.
-3.  **`LocaleLayout`** runs, fetching English translations and wrapping everything in the necessary providers and our `PageLayout` component.
-4.  The **Page Component** (`some-page.tsx`) runs and is placed inside the `<main>` tag of the `PageLayout` component.
-5.  The final HTML is sent to the browser.
+1.  At build time, `generateStaticParams` tells Next.js to create versions of the page for `/en` and `/ar`.
+2.  A request comes in for a URL like `/en/some-page`.
+3.  **`RootLayout`** runs, creating the `<html>` and `<body>` tags with `lang="en"`.
+4.  **`LocaleLayout`** runs, fetching English translations and wrapping everything in the necessary providers and our `PageLayout` component.
+5.  The **Page Component** (`some-page.tsx`) runs and is placed inside the `<main>` tag of the `PageLayout` component.
+6.  The final HTML is sent to the browser.
 
 This nested structure is a powerful Next.js pattern for separating concerns: the root document structure, language/theme contexts, and the final visual presentation.
 ---

@@ -7,5 +7,6 @@
 - Make Performance of fonts better
 - Try too make PageLayout is more smaller but if the'r is overkill 
 - is it best practice using createInstance in I18nProviderClient? -- update docs 
+- Make sure update other effected files after using useMemo() in I18nProviderClient
     
 

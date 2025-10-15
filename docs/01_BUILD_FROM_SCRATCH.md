@@ -160,6 +160,15 @@ export const scholars: Scholar[] = [
 
 In Next.js, the "layout" isn't just one file; it's a system of nested components. Our app uses three key files to create a consistent and context-aware user experience. Let's look at them from the outside in.
 
+Next.js uses **nested layouts**. Think of HTML wrappers that **stack** inside each other:
+
+#  Layouts – Russian Dolls Inside Next.js
+
+RootLayout (supplies <html lang=...>)  
+  └─ LocaleLayout (supplies translations)  
+      └─ PageLayout (header/footer + theme toggle)  
+          └─ Actual Page (list of scholars)
+`
 ### A. The Root Layout: `src/app/layout.tsx`
 
 This is the top-level layout for the entire application. Think of it as the main HTML shell.
@@ -361,6 +370,7 @@ export default function PageLayout({ children }: PageLayoutProps) {
     *   `changeLanguage`: Uses the Next.js `useRouter` hook to change the URL, swapping the language part (e.g., `/en` to `/ar`), which triggers a navigation to the page in the new language.
 *   **Uses Translations**: It uses the `useTranslation` hook (which works because of the `I18nProviderClient` we wrapped it in) to get translated text like the header title and footer text.
 *   **Renders the Structure**: It defines the `header`, `main`, and `footer` for every page. The actual page content, passed as `{children}`, is rendered inside the `<main>` element.
+> 🍪 **Persistence trick**: `localStorage` keeps the choice after refresh.
 
 ### D. The Translation Bridge: `I18nProviderClient.tsx` (Optimized)
 
@@ -540,6 +550,9 @@ You might have noticed `const { query, country, lang, category } = await searchP
 
 In Next.js 15, the `searchParams` object in Server Components is **asynchronous**. You **must `await` it** before you can access its properties. Forgetting this will cause an error. This is a key change from previous versions.
 
+> 🪄 **Why `async params`?** Next.js 15 made **all** dynamic params `Promise` so the framework can stream things in parallel.
+
+
 ---
 
 ## Step 7: The Interactive Client Component
@@ -668,6 +681,33 @@ This URL change is the magic trigger. As we'll see in the next section, Next.js 
 5.  **New Data:** The server filters the data and passes the new, smaller list down to `HomePageClient`.
 6.  **UI Update:** The client re-renders with the new `scholars` prop.
 
+## Cheat-Sheet – Print & Stick on Wall
+| Shortcut | Meaning |
+|---|---|
+| `params` **must** be awaited in Next.js 15 | `const {locale} = await params` |
+| Server Component = **no hooks** | Hooks only inside `"use client"` files |
+| URL is the **single source of truth** | Refresh page → same filter state |
+| `className="dark:bg-black"` | Works because we toggle `<html class="dark">` |
+| `t('key')` | Always use the **English** key in code, even when UI is Arabic |
+
+> 🔄 **Client-Server ping-pong**:  
+> User clicks ▶ `handleFilterChange` ▶ URL changes ▶ `HomePage` (server) re-runs ▶ new props ▶ UI updates.
+
+> The server does the heavy lifting of filtering, but the client is responsible for the user experience. The `HomePageClient.tsx` component manages user input and tells the server when to re-filter the data.
+
+
+> 🪄 **Image optimisation**: Next.js `<Image>` auto-serves **WebP**, **lazy-loads**, and **prevents layout shift** – all for free.
+
+> 🪄 **Tailwind dark mode**: Because we manually toggle `class="dark"` on `<html>`, Tailwind automatically enables `dark:bg-gray-900`, `dark:text-white`, etc.
+
+** Feature | How to add |
+|---|---|
+| **Search with Arabic diacritics** | Install `arabic-persian-search` npm pkg → normalize strings before `.includes()` |
+| **Pagination** | Use `searchParams.page` + `slice((page-1)*12, page*12)` |
+| **SEO** | Add `generateMetadata({ params })` in `page.tsx` → return `{title: …, openGraph: …}` |
+| **CMS** | Replace static `scholars.ts` with **Sanity**, **Strapi**, or **Contentful** |
+| **Tests** | Use **Playwright** to click language switcher → assert `<html lang="ar">` |
+| **Deploy** | Push to **GitHub** → import repo into **Vercel** → zero-config deploy |
 ---
 
 ## Conclusion & Your Turn

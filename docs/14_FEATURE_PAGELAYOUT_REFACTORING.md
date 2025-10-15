@@ -1,10 +1,22 @@
-Looking at your updated file structure with the nested layouts, I can see this is a more complex Next.js 14+ app with App Router. Given this context, **yes, it's still good practice to split `PageLayout.tsx`** but we need to be more strategic about it.
+# Refactoring `PageLayout` for a Scalable Next.js App
 
-## Recommended Split for Your App Structure:
+As our application grows, it's crucial to maintain a clean and organized codebase. This guide will walk you through refactoring the `PageLayout.tsx` component into smaller, more manageable pieces. This approach aligns with Next.js 14 best practices and will make your app easier to test, maintain, and scale.
 
-### 1. Keep the Theme Logic Separate
+## Why Refactor `PageLayout`?
+
+- **Separation of Concerns**: Each component will have a single, clear responsibility.
+- **Reusability**: Smaller components like `LanguageSwitcher` and `ThemeToggle` can be used in different parts of the application.
+- **Improved Testability**: It's easier to write unit tests for smaller, focused components.
+- **Better Code Organization**: A more modular structure is easier to navigate and understand.
+
+## Step-by-Step Refactoring Guide
+
+### Step 1: Create `useTheme` Hook
+
+First, let's extract the theme management logic into a custom hook. This will allow any component in our app to access and modify the theme.
+
+**Create the file `src/hooks/useTheme.ts`:**
 ```typescript
-// hooks/useTheme.ts
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -34,9 +46,12 @@ export function useTheme() {
 }
 ```
 
-### 2. Language Switcher Component
+### Step 2: Create `LanguageSwitcher` Component
+
+Next, we'll create a dedicated component for switching the application's language.
+
+**Create the file `src/components/LanguageSwitcher.tsx`:**
 ```typescript
-// components/LanguageSwitcher.tsx
 "use client";
 
 import React from 'react';
@@ -80,9 +95,12 @@ export default function LanguageSwitcher() {
 }
 ```
 
-### 3. Theme Toggle Component
+### Step 3: Create `ThemeToggle` Component
+
+Now, let's create a component for toggling the theme.
+
+**Create the file `src/components/ThemeToggle.tsx`:**
 ```typescript
-// components/ThemeToggle.tsx
 "use client";
 
 import React from 'react';
@@ -104,9 +122,12 @@ export default function ThemeToggle() {
 }
 ```
 
-### 4. Header Component
+### Step 4: Create `Header` Component
+
+With the `LanguageSwitcher` and `ThemeToggle` components ready, we can now create a `Header` component to house them.
+
+**Create the file `src/components/Header.tsx`:**
 ```typescript
-// components/Header.tsx
 "use client";
 
 import React from 'react';
@@ -131,14 +152,17 @@ export default function Header() {
 }
 ```
 
-### 5. Simplified PageLayout
+### Step 5: Simplify `PageLayout`
+
+Finally, we can simplify the `PageLayout` component to use our new `Header` component. We'll also assume you have a `Footer` component.
+
+**Update the file `src/components/PageLayout.tsx`:**
 ```typescript
-// src/components/PageLayout.tsx
 "use client";
 
 import React, { ReactNode } from 'react';
 import Header from './Header';
-import Footer from './Footer';
+import Footer from './Footer'; // Assuming you have a Footer component
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -157,24 +181,6 @@ export default function PageLayout({ children }: PageLayoutProps) {
 }
 ```
 
-## Why This Split Makes Sense for Your Architecture:
+## Conclusion
 
-**✅ Benefits in Your Context:**
-- **Clean Separation**: Server components (`RootLayout`, `LocaleLayout`) handle i18n setup, client components handle UI state
-- **Reusable Components**: `LanguageSwitcher` and `ThemeToggle` can be used in different layouts
-- **Better Testing**: Each piece can be tested independently
-- **Easier Maintenance**: Changes to language logic don't affect theme logic
-
-**🚫 Not Overkill Because:**
-- Your app already has a sophisticated layout structure
-- You're using multiple providers (`I18nProviderClient`, `ThemeProvider`)
-- The split aligns with Next.js 14 best practices for App Router
-- Each component has a clear, single responsibility
-
-**Important Notes for Your Architecture:**
-1. Keep `RootLayout` and `LocaleLayout` as server components
-2. Move interactive logic to client components
-3. Maintain the provider structure you have in `LocaleLayout`
-
-This approach follows Next.js 14 patterns while keeping your codebase maintainable as it grows.
-
+By following these steps, you've successfully refactored your `PageLayout` component into a more modular and maintainable structure. This approach not only cleans up your code but also aligns with the best practices for building modern Next.js applications.

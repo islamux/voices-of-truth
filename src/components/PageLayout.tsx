@@ -14,7 +14,7 @@ export default function PageLayout({children}:PageLayoutProps){
   return (
     <div className="flex-grow container mx-auto p-4 from-transparent to-[rgp]">
     <Header />
-    <main>{children}</main> <!-- page content -->
+    <main>{children}</main> 
     <Footer /> 
     </div>
   );

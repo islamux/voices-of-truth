@@ -1,6 +1,6 @@
 # 📚 Voices of Truth - دليل العلماء والدعاة
 
-![Next.js](https://img.shields.io/badge/Next.js-14.x-blue?logo=next.js&style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-15+-blue?logo=next.js&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Web-blueviolet?style=flat-square)
 ![License](https://img.shields.io/badge/License-GNU%20GPL-red?logo=gnu&style=flat-square)
 
@@ -12,22 +12,21 @@
 ## 🚀 Features
 
 - 🎨 Beautiful, user-friendly interface
-- 🌙 Dark & Light mode support
+- 🌙 Dark & Light mode support via a custom, hook-based theme provider
 - 🌍 Internationalization with instant language switching (Arabic RTL & English LTR)
 - 📱 Fully responsive for all devices
-- 🔍 Filter scholars by country and language
+- 🔍 Server-side filtering by category, country, and language
 - 🔍 Search scholars by name
 - ✨ Smooth animations with Framer Motion
-- 🖼️ Iconography with react-icons
 - 📝 Local (mock) data source for fast demo/development
 
 ---
 
-## 📷 Preview
+## 📚 Documentation & Learning Hub
 
-<!-- You can add a screenshot here if available
-![App Preview](public/preview.png)
--->
+All project documentation, tutorials, and guides are located in the `docs` directory. For a structured learning path, from setting up the project to understanding its core architecture, please start here:
+
+**[➡️ Go to the Documentation Hub](./docs/README.md)**
 
 ---
 
@@ -60,7 +59,7 @@ pnpm install
 
 Finally, you can run the following scripts:
 
-*   **`pnpm dev`**: Runs the development server with Turbopack. Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
+*   **`pnpm dev`**: Runs the development server. Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
 *   **`pnpm build`**: Builds the application for production.
 *   **`pnpm start`**: Starts the production server.
 *   **`pnpm lint`**: Runs ESLint to check for code quality issues.
@@ -72,23 +71,26 @@ Finally, you can run the following scripts:
 
 ```
 vocies-of-truth/
+├── docs/                     # All project documentation and guides
+│   ├── 01_BUILD_FROM_SCRATCH.md
+│   └── ...
 ├── public/
-│   ├── avatars/
-│   └── locales/
+│   ├── avatars/              # Scholar avatar images
+│   └── locales/              # Translation files (i18next)
 ├── src/
 │   ├── app/
-│   │   ├── [locale]/
+│   │   ├── [locale]/           # Dynamic routes for language
 │   │   │   ├── HomePageClient.tsx
 │   │   │   ├── layout.tsx
-│   │   │   └── page.tsx
-│   │   └── ...
+│   │   │   └── page.tsx      # Server Component for data filtering
+│   │   ├── globals.css
+│   │   └── layout.tsx          # Root layout
 │   ├── components/
-│   │   ├── filters/
-│   │   │   └── ...
+│   │   ├── filters/            # Individual filter components
 │   │   ├── FilterBar.tsx
-│   │   ├── Layout.tsx
+│   │   ├── PageLayout.tsx
 │   │   ├── ScholarCard.tsx
-│   │   └── ... (and other sub-components)
+│   │   └── ...
 │   ├── data/
 │   │   └── scholars.ts
 │   ├── lib/
@@ -96,8 +98,6 @@ vocies-of-truth/
 │   ├── middleware.ts
 │   └── types/
 │       └── index.ts
-├── docs/
-│   └── ...
 ├── package.json
 └── ...
 ```
@@ -106,24 +106,17 @@ vocies-of-truth/
 
 ## 🧠 How It Works
 
-- Separates concerns between logic (server-side filtering) and presentation (components).
-- Internationalization is powered by `react-i18next` with language detection and local translation files.
-- Scholars are listed and filtered server-side, with dynamic language and theme switching.
-- Fully responsive and visually enhanced with Tailwind CSS and Framer Motion.
-
----
-
-## 📚 Detailed Guides
-
-- [How to Add Translation Feature to a Next.js Project](./docs/04_FEATURE_TRANSLATION.md)
-- [How to Integrate Tailwind CSS and PostCSS in a Next.js Project](./docs/03_STYLING_GUIDE.md)
-- [How to Implement Light/Dark Theme in Next.js with Tailwind CSS](./docs/03_STYLING_GUIDE.md)
+- **Server-Centric Architecture**: Leverages Next.js 15 Server Components for data fetching and filtering (`src/app/[locale]/page.tsx`), ensuring a fast initial load and optimal performance.
+- **Client-Side Interactivity**: Uses Client Components (`'use client'`) for interactive UI elements like filters and theme switching.
+- **URL as State**: The URL query parameters are the single source of truth for the filter state, enabling shareable and bookmarkable links.
+- **Internationalization**: Powered by `react-i18next` with language detection middleware and local JSON translation files.
+- **Styling**: Styled with Tailwind CSS, using a custom hook-based provider for light and dark themes.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **GNU GPL**.  
+This project is licensed under the **GNU GPL**.
 Feel free to use and modify.  
 Read more: [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
@@ -135,13 +128,3 @@ Read more: [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/li
 💻 Muslim Developer • Linux Terminal Lover • Open Source Enthusiast  
 🕊️ "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ" – الأنبياء 107  
 *Using technology to spread peace and benefit all of humanity.*
-
----
-
-## ☁️ Future Ideas
-
-- Add a backend for real data and scholar profiles
-- User authentication for contributing new scholars
-- Integration with map providers to show scholar locations
-- Advanced filters and search
-- Add scholar audio/video lectures

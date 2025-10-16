@@ -8,7 +8,8 @@ interface  FilterDropdownProps{
   onChange: (value: string) => void;
 }
 
-const FilterDropdown : React.FC<FilterDropdownProps> = ({label, filterKey, options, onChange}) => {
+export default function FilterDropdown({label, filterKey, options, onChange}:FilterDropdownProps){
+  // const FilterDropdown : React.FC<FilterDropdownProps> = ({label, filterKey, options, onChange}) => {
 
   const {t} = useTranslation('common');
 
@@ -34,5 +35,4 @@ const FilterDropdown : React.FC<FilterDropdownProps> = ({label, filterKey, optio
     </select>
     </div>
   );  
-};
-export default FilterDropdown;
+  };

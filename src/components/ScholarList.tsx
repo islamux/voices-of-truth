@@ -6,7 +6,8 @@ interface ScholarListProps{
   countries: Country[];
 }
 
-const ScholarList = ({scholars, countries}: ScholarListProps)=>{
+export default function ScholarList({scholars, countries}:ScholarListProps){
+  // const ScholarList = ({scholars, countries}: ScholarListProps)=>{
   return(
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {scholars.map(
@@ -16,5 +17,4 @@ const ScholarList = ({scholars, countries}: ScholarListProps)=>{
     )}
     </div>
   );
-};
-export default ScholarList;
+  };

@@ -8,7 +8,8 @@ interface CountryFilterProps{
   onCountryChange: (country: string) => void;
 }
 
-const CountryFilter : React.FC<CountryFilterProps> = ({uniqueCountries, onCountryChange}) => {
+export default function CountryFilter({uniqueCountries, onCountryChange}:CountryFilterProps){
+  // const CountryFilter : React.FC<CountryFilterProps> = ({uniqueCountries, onCountryChange}) => {
   const { t } = useTranslation('common');
 
 
@@ -20,5 +21,4 @@ const CountryFilter : React.FC<CountryFilterProps> = ({uniqueCountries, onCountr
     onChange={onCountryChange}
     />
   );
-};
-export default CountryFilter;
+  };

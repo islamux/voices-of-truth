@@ -8,7 +8,8 @@ interface SearchInputProps{
 }
 
 
-const SearchInput: React.FC<SearchInputProps> = ({onSearchChange}) => {
+export default function SearchInput({onSearchChange }:SearchInputProps){
+  // const SearchInput: React.FC<SearchInputProps> = ({onSearchChange}) => {
 
   const {t} = useTranslation('common');
 
@@ -21,6 +22,5 @@ const SearchInput: React.FC<SearchInputProps> = ({onSearchChange}) => {
   >
     </input>
   );
-};
+  };
 
-export default SearchInput;

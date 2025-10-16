@@ -6,21 +6,22 @@ interface ScholarAvatarProps{
   name:string;
 }
 
-const ScholarAvatar :React.FC<ScholarAvatarProps> = 
-  ({ avatarUrl, name }) => {
-    return (
-      <Image 
-      src={avatarUrl || '../../public/avatars/default-avatar.png'}
-      alt={`${name}'s avatar`}
-      width={112}
-      height={112}
-      className="rounded-full mx-auto object-cover border-gray-300 dark:bg-slate-600 shadow-md mb-4"
-      onError={(e)=>{
-        e.currentTarget.src = '../../public/avatars/default-avatar.png'
-      }}
-      unoptimized
-      />
-    );
+
+export default function ScholarAvatar({avatarUrl, name}:ScholarAvatarProps){
+  // const ScholarAvatar :React.FC<ScholarAvatarProps> = 
+  // ({ avatarUrl, name }) => {
+  return (
+    <Image 
+    src={avatarUrl || '../../public/avatars/default-avatar.png'}
+    alt={`${name}'s avatar`}
+    width={112}
+    height={112}
+    className="rounded-full mx-auto object-cover border-gray-300 dark:bg-slate-600 shadow-md mb-4"
+    onError={(e)=>{
+      e.currentTarget.src = '../../public/avatars/default-avatar.png'
+    }}
+    unoptimized
+    />
+  );
   } 
 
-export default ScholarAvatar;

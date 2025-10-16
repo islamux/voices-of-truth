@@ -9,7 +9,8 @@ interface LanguageFilterProps{
   onLanguageChange: (language: string)=> void;
 }
 
-const LanguageFilter: React.FC<LanguageFilterProps> = ({uniqueLanguages, onLanguageChange})=>{
+export default function LanguageFilter({uniqueLanguages, onLanguageChange}:LanguageFilterProps){
+  // const LanguageFilter: React.FC<LanguageFilterProps> = ({uniqueLanguages, onLanguageChange})=>{
 
   const { t } = useTranslation('common');
   const languageOptions =  useMemo( ()=>
@@ -18,14 +19,13 @@ const LanguageFilter: React.FC<LanguageFilterProps> = ({uniqueLanguages, onLangu
   );
 
 
-  return (
-    <FilterDropdown 
-    label={t('filterByLanguage')}
-    filterKey="language"
-    options={languageOptions}
-    onChange={onLanguageChange}
-    />
-  );
-};
+    return (
+      <FilterDropdown 
+      label={t('filterByLanguage')}
+      filterKey="language"
+      options={languageOptions}
+      onChange={onLanguageChange}
+      />
+    );
+  };
 
-export default LanguageFilter;

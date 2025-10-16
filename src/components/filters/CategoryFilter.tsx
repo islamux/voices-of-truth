@@ -9,8 +9,8 @@ interface CategoryFilterProps{
     onCategoryChange: (category: string)=> void;
 }
 
-
-const CategoryFilter: React.FC<CategoryFilterProps> = ({uniqueCategories, onCategoryChange})=> {
+export default function CategoryFilter({uniqueCategories, onCategoryChange}:CategoryFilterProps){
+  // const CategoryFilter: React.FC<CategoryFilterProps> = ({uniqueCategories, onCategoryChange})=> {
 
   const { t } = useTranslation('common');
 
@@ -22,5 +22,4 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({uniqueCategories, onCate
     onChange={onCategoryChange}
     />
   );
-};
-export default CategoryFilter;
+  };

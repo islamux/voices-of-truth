@@ -22,3 +22,4 @@
 - Make sure using single source of truth for styling (css , theme , ...)
 - Change Header dir (rtl, ltr) based on themeToggle
 - Refactore @FilterBar.tsx using 'export default'
+- ThemeProvider.tsx 

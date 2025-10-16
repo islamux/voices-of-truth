@@ -18,7 +18,7 @@ interface FilterBarProps {
     onSearchChange: (term: string)=>void;
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({
+export default function FilterBar({
   uniqueCountries,
   uniqueLanguages,
   uniqueCategories,
@@ -26,7 +26,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onLanguageChange,
   onCategoryChange,
   onSearchChange
-}) => {
+}:FilterBarProps){
 
   return (
     <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md mb-6 flex flex-col sm:flex-row gap-4 items-center">
@@ -38,4 +38,3 @@ const FilterBar: React.FC<FilterBarProps> = ({
   );
 };
 
-export default FilterBar;

@@ -5,9 +5,10 @@ interface ScholarInfoProps{
   languages: string[];
 }
 
-const ScholarInfo: React.FC<ScholarInfoProps> = ({
-  name, country, bio, languages
-}) =>{
+export default function ScholarInfo({name, country,bio,languages}:ScholarInfoProps){
+  // const ScholarInfo: React.FC<ScholarInfoProps> = ({
+  //   name, country, bio, languages
+  // }) =>{
   return (
     <>
     <h3
@@ -17,6 +18,5 @@ const ScholarInfo: React.FC<ScholarInfoProps> = ({
     <p className="txs sm:text-sm text-[rgb(var(--muted-text-rgb))] mb-3"> languages:{languages.join(', ')} </p>
     </>
   );
-};
+  };
 
-export default ScholarInfo;

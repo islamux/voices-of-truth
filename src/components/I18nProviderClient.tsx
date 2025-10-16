@@ -1,7 +1,7 @@
 'use client';
 
 import { I18nextProvider } from 'react-i18next';
-import i18next, { createInstance } from 'i18next';
+import  { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import { fallbackLng, supportedLngs, defaultNS } from '../lib/i18n';
 import { Resource } from 'i18next';

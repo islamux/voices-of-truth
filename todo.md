@@ -18,6 +18,7 @@
 | **Tests** | Use **Playwright** to click language switcher → assert `<html lang="ar">` |
 | **Deploy** | Push to **GitHub** → import repo into **Vercel** → zero-config deploy |
 - Make some block of codes is simpler , writ in simpler way             
-
-    
-
+- After applying code and make sure its works well reWrit 01_Build... in best of all ai tools and take the best (chatgpt, claud, deep, qwen, ...)
+- Make sure using single source of truth for styling (css , theme , ...)
+- Change Header dir (rtl, ltr) based on themeToggle
+- Refactore @FilterBar.tsx using 'export default'

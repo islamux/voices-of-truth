@@ -1,8 +1,21 @@
-
 'use client';
 
-import { useState, useEffect, ReactNode } from 'react';
-import ThemeSwitcher from './ThemeSwitcher';
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+
+interface ThemeContextType {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -10,12 +23,8 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme) {
-      setTheme(savedTheme as 'light' | 'dark');
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme as 'light' | 'dark');
   }, []);
 
   useEffect(() => {
@@ -32,9 +41,8 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div>
-      <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
-    </div>
+    </ThemeContext.Provider>
   );
 }

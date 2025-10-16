@@ -32,7 +32,7 @@ cd voices-of-truth
 Our project uses a few extra libraries for features like internationalization and icons.
 
 ```bash
-pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons
+pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons tailwind-merge
 ```
 
 *   **`i18next`, `react-i18next`, `i18next-resources-to-backend`**: For handling translations.
@@ -156,22 +156,23 @@ export const scholars: Scholar[] = [
 
 ---
 
-## Step 4: The Layout System
+## Step 4: The Layout System (Refactored)
 
-In Next.js, the "layout" isn't just one file; it's a system of nested components. Our app uses three key files to create a consistent and context-aware user experience. Let's look at them from the outside in.
+In Next.js, the "layout" isn't just one file; it's a system of nested components. Our app uses a clean, component-based architecture to create a consistent and context-aware user experience. This approach separates concerns and makes our code much more maintainable.
 
-Next.js uses **nested layouts**. Think of HTML wrappers that **stack** inside each other:
+Think of our layouts as Russian Dolls, each one wrapping the next:
 
 #  Layouts – Russian Dolls Inside Next.js
 
-RootLayout (supplies <html lang=...>)  
-  └─ LocaleLayout (supplies translations)  
-      └─ PageLayout (header/footer + theme toggle)  
-          └─ Actual Page (list of scholars)
-`
+RootLayout (supplies `<html lang=...>)`
+  └─ LocaleLayout (supplies translations and theme)
+      └─ PageLayout (The visual structure: header, main, footer)
+          └─ Header (Contains title, language switcher, theme toggle)
+              └─ Actual Page (list of scholars)
+
 ### A. The Root Layout: `src/app/layout.tsx`
 
-This is the top-level layout for the entire application. Think of it as the main HTML shell.
+This is the top-level layout for the entire application. It's the main HTML shell.
 
 ```tsx
 // src/app/layout.tsx
@@ -186,7 +187,7 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: Promise<{locale:string}>; 
+  params: Promise<{locale:string}>;
 }
 
 export default async function RootLayout({
@@ -203,20 +204,18 @@ export default async function RootLayout({
 ```
 
 **What it does:**
-*   It's a **Server Component** that runs only on the server.
-*   It defines the `<html>` and `<body>` tags for every page.
-*   It receives the `locale` (e.g., "en" or "ar") from the URL parameters.
-*   It sets the language (`lang`) and direction (`dir`, which becomes "ltr" or "rtl") on the `<html>` tag. This is crucial for accessibility and correct styling of different languages.
-*   The `{children}` it renders will be the next layout in the hierarchy (`[locale]/layout.tsx`).
+*   It's a **Server Component**.
+*   It defines the `<html>` and `<body>` tags.
+*   It sets the language (`lang`) and direction (`dir`) on the `<html>` tag based on the URL, which is crucial for accessibility and styling.
 
 ### B. The Locale Layout: `src/app/[locale]/layout.tsx`
 
-This layout wraps all pages for a specific language. It's responsible for providing the contexts (like theme and translations) and the main visual structure.
+This layout wraps all pages for a specific language. It's responsible for providing the contexts for translations and themes.
 
 ```tsx
 // src/app/[locale]/layout.tsx
 import I18nProviderClient from "@/components/I18nProviderClient";
-import PageLayout from "@/components/PageLayout"; 
+import PageLayout from "@/components/PageLayout";
 import ThemeProvider from "@/components/ThemeProvider";
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 
@@ -226,22 +225,18 @@ interface LocaleLayoutProps{
 }
 
 export default async function LocaleLayout({children, params}:LocaleLayoutProps){
-  const {locale} = await params; 
+  const {locale} = await params;
   const {resources} = await getTranslation(locale);
 
   return (
-    // Provide internationalization context to the application 
-    // and wrap with ThemeProvider for theming support 
-    // and PageLayout for consistent page structure
-    <I18nProviderClient locale={locale} resources={resources} > 
+    <I18nProviderClient locale={locale} resources={resources} >
       <ThemeProvider>
         <PageLayout> {children} </PageLayout>
       </ThemeProvider>
-    </I18nProviderClient> 
+    </I18nProviderClient>
   );
 }
 
-// Generate static params for each supported locale
 export async function generateStaticParams() {
   return supportedLngs.map(function(locale) {
     return { locale :locale};
@@ -250,127 +245,224 @@ export async function generateStaticParams() {
 ```
 
 **What it does:**
-*   This is also a **Server Component**.
-*   It fetches the translation data for the current `locale`.
-*   It wraps the page (`{children}`) with three important components:
-    1.  `I18nProviderClient`: Provides the translation context to all client components.
+*   Also a **Server Component**.
+*   Fetches translations for the current language.
+*   Wraps the page (`{children}`) with two important providers:
+    1.  `I18nProviderClient`: Provides the translation context.
     2.  `ThemeProvider`: Provides the theme (light/dark) context.
-    3.  `PageLayout`: This is our custom component that contains the visible header, footer, and overall page structure.
-*   **`generateStaticParams`**: This function tells Next.js to pre-render a version of the layout for each supported language (`en` and `ar`). This improves performance by generating the pages at build time instead of on-demand for each user request.
+*   It then renders the `PageLayout` component, which holds the visual structure.
 
-### C. The Page Layout Component: `src/components/PageLayout.tsx`
+### C. The Theme Provider: `src/components/ThemeProvider.tsx`
 
-Finally, this is the component that defines the actual look and feel of the page. It contains the interactive elements. Because it uses hooks for state and effects, it must be a Client Component.
+This is a custom provider component that manages the application's theme using React Context. This is the modern, standard way to handle themes in a React application.
+
+```tsx
+// src/components/ThemeProvider.tsx
+'use client';
+
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+
+interface ThemeContextType {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}
+
+export default function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme as 'light' | 'dark');
+  }, []);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+```
+
+### D. The Reusable Button Component
+
+To ensure all our buttons are consistent and easy to maintain, we create a reusable `Button` component.
+
+```tsx
+// src/components/Button.tsx
+import React from 'react';
+import { twMerge } from 'tailwind-merge';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+}
+
+export default React.forwardRef<HTMLButtonElement, ButtonProps>(function Button({ children, className, ...props }, ref) {
+  const baseClasses = "px-3 py-1.5 text-sm rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed";
+  
+  const mergedClasses = twMerge(baseClasses, className);
+
+  return (
+    <button className={mergedClasses} ref={ref} {...props}>
+      {children}
+    </button>
+  );
+});
+```
+
+### E. The Page Layout and its Children
+
+Now that the providers and our reusable button are set up, the rest of the components are simple and focused on their specific tasks.
+
+**`src/components/PageLayout.tsx`**
 
 ```tsx
 // src/components/PageLayout.tsx
 "use client";
 
-import React, { useState, useEffect, ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useRouter, usePathname } from 'next/navigation';
+import React, { ReactNode } from 'react';
+import Header from './Header';
+import Footer from './Footer';
 
 interface PageLayoutProps {
-  children: ReactNode; // Prop to render child components within the layout.
+  children: ReactNode;
 }
 
 export default function PageLayout({ children }: PageLayoutProps) {
-  const { t, i18n } = useTranslation('common'); // Hook for translations.
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-transparent to-[rgb(var(--background-end-rgb))] bg-[rgb(var(--background-start-rgb))]">
+      <Header />
+      <main className="flex-grow container mx-auto p-4 md:p-6">
+        {children}
+      </main>
+      <Footer />
+    </div>
+  );
+}
+```
+
+**`src/components/Header.tsx`**
+
+```tsx
+// src/components/Header.tsx
+'use client';
+
+import { useTranslation } from "react-i18next";
+import LanguageSwicher from "./LanguageSwitcher";
+import ThemeToggle from "./ThemeToggle";
+
+export default function Header(){
+  const {t} = useTranslation('common');
+
+  return (
+    <header className="p-4 bg-gray-100 dark:bg-gray-800 shadow-md text-gray-900 dark:text-white">
+      <div className="container mx-auto flex flex-wrap justify-between items-center">
+        <h1 className="text-xl sm:text-2xl font-semibold">{t('headerTitle')}</h1>
+        <div className="flex items-centers space-x-2 sm:space-x-4 mt-2 sm:mt-0">
+          <LanguageSwicher/>
+          <ThemeToggle/>
+        </div>
+      </div>
+    </header>
+  );
+}
+```
+
+**`src/components/ThemeToggle.tsx`**
+
+```tsx
+// src/components/ThemeToggle.tsx
+'use client';
+
+import { useTheme } from "@/components/ThemeProvider";
+import { useTranslation } from "react-i18next";
+import Button from './Button';
+
+export default function ThemeToggle(){
+  const {theme, toggleTheme} = useTheme();
+  const {t} = useTranslation('common');
+
+  return (
+    <Button 
+      onClick={toggleTheme}
+      className="hover:bg-gray-200 dark:hover:bg-gray-700"
+    >
+      {theme === 'light' ? t('dark') : t('light')} {t('theme')}
+    </Button>
+  );
+}
+```
+
+**`src/components/LanguageSwitcher.tsx`**
+
+```tsx
+// src/components/LanguageSwitcher.tsx
+'use client';
+
+import { useTranslation } from "react-i18next";
+import { useRouter, usePathname } from 'next/navigation';
+import Button from './Button';
+
+export default function LanguageSwicher(){
+  const {t, i18n} = useTranslation('common');
   const router = useRouter();
-  const pathname = usePathname(); // Next.js hook for accessing the current path.
-  const currentLang = i18n.language; // Currently active language.
+  const pathname = usePathname();
+  const currentLang = i18n.language;
 
-  // State for managing the current theme (light/dark). Default is 'light'.
-  const [theme, setTheme] = useState('light');
-
-  // Effect to initialize theme from localStorage or system preference.
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
-    setTheme(initialTheme);
-
-    if (initialTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []); // Empty dependency array ensures this runs only once on mount.
-
-    // Toggles the theme between 'light' and 'dark'.
-    // Updates localStorage and the class on the <html> element.
-    const toggleTheme = () => {
-      const newTheme = theme === 'light' ? 'dark' : 'light';
-      setTheme(newTheme);
-      localStorage.setItem('theme', newTheme);
-      document.documentElement.classList.toggle('dark');
-    };
-
-  // Changes the application language.
-  // Replaces the current language slug in the path and navigates to the new path.
-  const changeLanguage = (newLang: string) => {
-    if (currentLang === newLang) return; // Avoid unnecessary change
-    if (pathname) {
+  const changeLanguage = (newLang: string)=>{
+    if(currentLang === newLang) return;
+    if(pathname){
       const newPath = pathname.replace(`/${currentLang}`, `/${newLang}`);
       router.push(newPath);
-    } else {
-      // Fallback if pathname is somehow not available
+    }else{
       router.push(`/${newLang}`);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-transparent to-[rgb(var(--background-end-rgb))] bg-[rgb(var(--background-start-rgb))]">
-    <header className="p-4 bg-gray-100 dark:bg-gray-800 shadow-md text-gray-900 dark:text-white">
-    <div className="container mx-auto flex flex-wrap justify-between items-center">
-    <h1 className="text-xl sm:text-2xl font-semibold">{t('headerTitle')}</h1>
-    <div className="flex items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0">
     <div className="flex items-center space-x-1">
-    <button 
-    onClick={() => changeLanguage('en')} 
-    disabled={currentLang === 'en'} 
-    className="px-3 py-1.5 text-sm rounded-md disabled:opacity-60 enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700 disabled:cursor-not-allowed"
-  >
-    {t('english')}
-    </button>
-    <button 
-    onClick={() => changeLanguage('ar')} 
-    disabled={currentLang === 'ar'} 
-    className="px-3 py-1.5 text-sm rounded-md disabled:opacity-60 enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700 disabled:cursor-not-allowed"
-  >
-    {t('arabic')}
-    </button>
-    </div>
-    <button 
-    onClick={toggleTheme} 
-    className="px-3 py-1.5 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-  >
-    {theme === 'light' ? t('dark') : t('light')} {t('theme')}
-    </button>
-    </div>
-    </div>
-    </header>
-    <main className="flex-grow container mx-auto p-4 md:p-6">
-    {children}
-    </main>
-    <footer className="p-4 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-700 dark:text-gray-300">
-    <p>{t('footerText')}</p>
-    </footer>
+      <Button
+        onClick={ ()=>changeLanguage('en') }
+        disabled ={currentLang === 'en'}
+        className="enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700"
+      >
+        {t('english')}
+      </Button>
+      <Button
+        onClick={ ()=> changeLanguage('ar') }
+        disabled={currentLang === 'ar'}
+        className="enabled:hover:bg-gray-200 dark:enabled:hover:bg-orange-700"
+      >
+        {t('arabic')}
+      </Button>
     </div>
   );
-};
+}
 ```
-
-**What it does:**
-*   **`"use client"`**: Declares this as a Client Component, allowing the use of React hooks.
-*   **Handles State**: It uses `useState` to manage the current `theme` ('light' or 'dark').
-*   **Handles Side Effects**: It uses `useEffect` to read the user's saved theme from `localStorage` or their system preference when the component first loads. This ensures the theme is persistent.
-*   **Provides Interactivity**: It contains the `toggleTheme` and `changeLanguage` functions.
-    *   `toggleTheme`: Switches between light and dark mode, saves the choice to `localStorage`, and adds/removes the `dark` class from the main `<html>` element to apply Tailwind's dark mode styles.
-    *   `changeLanguage`: Uses the Next.js `useRouter` hook to change the URL, swapping the language part (e.g., `/en` to `/ar`), which triggers a navigation to the page in the new language.
-*   **Uses Translations**: It uses the `useTranslation` hook (which works because of the `I18nProviderClient` we wrapped it in) to get translated text like the header title and footer text.
-*   **Renders the Structure**: It defines the `header`, `main`, and `footer` for every page. The actual page content, passed as `{children}`, is rendered inside the `<main>` element.
-> 🍪 **Persistence trick**: `localStorage` keeps the choice after refresh.
 
 ### D. The Translation Bridge: `I18nProviderClient.tsx` (Optimized)
 
@@ -463,7 +555,7 @@ import { scholars } from '@/data/scholars';
 interface HomePageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  
+
 }
 
 export default async function HomePage({ params, searchParams }: HomePageProps) {
@@ -500,7 +592,7 @@ export default async function HomePage({ params, searchParams }: HomePageProps) 
 
 //------------ Another solution but simpler -------------- //
 // The same func unique but using normal func not arrow.
-// 1. Get countries numbers 
+// 1. Get countries numbers
 const allCountryIds = scholars.map(function(scholar) {
   return scholar.countryId;
 });
@@ -603,9 +695,9 @@ const HomePageClient: React.FC<HomePageClientProps> = ({
       const params = new URLSearchParams(searchParams.toString());
 
       if (value) {
-        params.set(name, value); // set() adds or updates the parameter 
+        params.set(name, value); // set() adds or updates the parameter
       } else {
-        params.delete(name); // delete() removes the parameter to clear the filter 
+        params.delete(name); // delete() removes the parameter to clear the filter
         }
       // 2. Trigger Re-render: Push the new URL to the router.
       // This tells Next.js to re-render the server component with new searchParams.
@@ -690,7 +782,7 @@ This URL change is the magic trigger. As we'll see in the next section, Next.js 
 | `className="dark:bg-black"` | Works because we toggle `<html class="dark">` |
 | `t('key')` | Always use the **English** key in code, even when UI is Arabic |
 
-> 🔄 **Client-Server ping-pong**:  
+> 🔄 **Client-Server ping-pong**:
 > User clicks ▶ `handleFilterChange` ▶ URL changes ▶ `HomePage` (server) re-runs ▶ new props ▶ UI updates.
 
 > The server does the heavy lifting of filtering, but the client is responsible for the user experience. The `HomePageClient.tsx` component manages user input and tells the server when to re-filter the data.
@@ -720,3 +812,4 @@ You now have a complete overview of how "Voices of Truth" is built with a modern
 
 **Your next task:**
 Explore the `FilterBar` and its child components (`CategoryFilter`, etc.). See how the `onCategoryChange` prop is passed down and connected to the `<select>` element's `onChange` event. This is the final link in the chain from a user's click to a full data refresh.
+

@@ -1,31 +1,24 @@
-رائع 🌟
-إليك النسخة النهائية **المنسّقة باحتراف لملف GitHub Markdown** —
-جاهزة للنسخ أو الحفظ باسم:
-`ADD_SERVER_COMPLETE_GUIDE.md`
+# 🧭 Complete Guide: Adding an API Server and Integrating It with Next.js
+
+> This guide walks you through **migrating from local data files to a real API architecture**,  
+> step by step — starting with Next.js API routes, then optionally adding an Express server,  
+> and finally integrating a PostgreSQL database using Prisma.
 
 ---
 
-````markdown
-# 🧭 الدليل الكامل لإضافة خادم API وربطه بواجهة Next.js
+## ⚙️ Phase 1: Building an API Inside Next.js
 
-> هذا الدليل يوضّح **الانتقال من البيانات المحلية إلى خادم API احترافي**،  
-> مع خطوات متدرجة من واجهات Next.js API إلى خادم Express ثم قاعدة بيانات PostgreSQL باستخدام Prisma.
+### 🎯 Why This Change?
 
----
-
-## ⚙️ المرحلة الأولى: إنشاء واجهة API داخل Next.js
-
-### 🎯 الهدف من التغيير
-
-- 🧩 **فصل المهام:** فصل المنطق الخلفي (Backend) عن واجهة العرض (Frontend).  
-- ⚡ **تحسين الأداء:** تحميل البيانات بشكل جزئي دون إعادة تحميل الصفحة.  
-- 🔁 **قابلية التوسّع:** يمكن لاحقًا استخدام نفس الـ API من تطبيق جوّال أو لوحة إدارة.
+- 🧩 **Separation of Concerns:** Split frontend UI from backend logic.  
+- ⚡ **Improved Performance:** Fetch data dynamically without full-page reloads.  
+- 🔁 **Scalability:** Your API can later power mobile apps or admin dashboards.
 
 ---
 
-### 🛠️ إنشاء نقطة API
+### 🛠️ Create the API Endpoint
 
-أنشئ الملف التالي:
+Create a new file:
 
 ```typescript
 // src/app/api/scholars/route.ts
@@ -64,7 +57,7 @@ export async function GET(request: Request) {
 }
 ````
 
-🧪 جرّبها على:
+🧪 Test it at:
 
 ```
 http://localhost:3000/api/scholars
@@ -72,7 +65,7 @@ http://localhost:3000/api/scholars
 
 ---
 
-### 🧠 الجلب من الواجهة الأمامية (SWR هو الأفضل)
+### 🧠 Client-Side Fetching (Recommended: SWR)
 
 ```tsx
 "use client";
@@ -94,7 +87,7 @@ const HomePageClient = ({ uniqueCountries, uniqueLanguages, uniqueCategories }: 
     setFilters(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  if (error) return <div>تعذّر تحميل البيانات</div>;
+  if (error) return <div>Failed to load scholars.</div>;
 
   return (
     <div className="space-y-8">
@@ -116,16 +109,19 @@ const HomePageClient = ({ uniqueCountries, uniqueLanguages, uniqueCategories }: 
 export default HomePageClient;
 ```
 
-> ✅ **نصيحة:**
-> مكتبة `SWR` من Vercel تمنحك الكاش التلقائي، وإعادة الجلب الذكي، ومعالجة الأخطاء بشكل مدمج.
+> ✅ **Tip:**
+> The `SWR` library from Vercel provides caching, auto revalidation, and error handling out of the box — making it ideal for production.
 
 ---
 
-## 🧩 المرحلة الثانية: إضافة خادم Express مخصص (اختياري)
+## 🧩 Phase 2: Adding a Dedicated Express Server (Optional)
 
-في حال رغبت بإنشاء خادم منفصل للتوسّع مستقبلاً أو مشاركة الـ API مع مشاريع أخرى.
+If you need a standalone backend (for example, to serve data to multiple apps or perform heavier tasks),
+you can add a lightweight **Node.js Express** server.
 
-### 📦 إعداد المشروع
+---
+
+### 📦 Setup the Server Project
 
 ```bash
 mkdir server && cd server
@@ -136,7 +132,7 @@ pnpm add -D nodemon
 
 ---
 
-### 📜 إنشاء الخادم
+### 📜 Create the Server File
 
 ```javascript
 // server/index.js
@@ -157,7 +153,7 @@ app.get('/api/specializations', (_, res) => res.json(specializations));
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 ```
 
-ثم أضف في `package.json`:
+Add this to `server/package.json`:
 
 ```json
 "scripts": {
@@ -165,13 +161,13 @@ app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PO
 }
 ```
 
-وتشغّله عبر:
+Then run:
 
 ```bash
 pnpm dev
 ```
 
-> 🔗 يمكنك الآن الجلب من:
+> 🔗 Update your fetch calls:
 >
 > ```typescript
 > fetch('http://localhost:3001/api/scholars')
@@ -179,19 +175,19 @@ pnpm dev
 
 ---
 
-## 🗄️ المرحلة الثالثة: ربط قاعدة بيانات Prisma + PostgreSQL
+## 🗄️ Phase 3: Connecting to a Real Database (Prisma + PostgreSQL)
 
-### 🎯 لماذا قاعدة بيانات؟
+### 🎯 Why Use a Database?
 
-* تحديث البيانات بدون إعادة نشر التطبيق.
-* أداء أعلى مع آلاف السجلات.
-* قاعدة بيانات موحّدة لجميع الخدمات.
+* Update data without redeploying the app.
+* Handle thousands of records efficiently.
+* Maintain a **single source of truth** for all data.
 
 ---
 
-### 🧱 إعداد PostgreSQL عبر Docker
+### 🧱 Set Up PostgreSQL with Docker
 
-أنشئ ملفًا باسم `docker-compose.yml`:
+Create `docker-compose.yml`:
 
 ```yaml
 version: '3.8'
@@ -212,7 +208,7 @@ volumes:
   postgres_data:
 ```
 
-ثم شغّل:
+Then run:
 
 ```bash
 docker-compose up -d
@@ -220,7 +216,7 @@ docker-compose up -d
 
 ---
 
-### ⚙️ إعداد Prisma
+### ⚙️ Initialize Prisma
 
 ```bash
 pnpm add @prisma/client
@@ -228,7 +224,7 @@ pnpm add prisma -D
 pnpm prisma init --datasource-provider postgresql
 ```
 
-في `.env`:
+In your `.env` file:
 
 ```
 DATABASE_URL="postgresql://user:password@localhost:5432/voices_of_truth"
@@ -236,9 +232,9 @@ DATABASE_URL="postgresql://user:password@localhost:5432/voices_of_truth"
 
 ---
 
-### 🧬 نموذج قاعدة البيانات (Schema)
+### 🧬 Define Your Schema
 
-افتح الملف `prisma/schema.prisma`:
+Open `prisma/schema.prisma`:
 
 ```prisma
 model Scholar {
@@ -269,7 +265,7 @@ model Category {
 }
 ```
 
-ثم أنشئ الجداول:
+Run your migration:
 
 ```bash
 pnpm prisma migrate dev --name "initial-schema"
@@ -277,7 +273,7 @@ pnpm prisma migrate dev --name "initial-schema"
 
 ---
 
-### 🌐 إنشاء واجهة API متصلة بقاعدة البيانات
+### 🌐 Create the API Route Using Prisma
 
 ```typescript
 import { NextResponse } from 'next/server';
@@ -297,7 +293,7 @@ export async function GET() {
 }
 ```
 
-يمكنك تجربتها على:
+You can test it at:
 
 ```
 http://localhost:3000/api/scholars
@@ -305,26 +301,13 @@ http://localhost:3000/api/scholars
 
 ---
 
-## 🏁 الخلاصة
+## 🏁 Summary
 
-| المرحلة                 | التقنية            | الهدف                     |
-| ----------------------- | ------------------ | ------------------------- |
-| 1️⃣ واجهات Next.js API  | مدمجة داخل المشروع | أفضل أداء وبساطة          |
-| 2️⃣ خادم Express مستقل  | Node.js + CORS     | قابلية التوسع والمرونة    |
-| 3️⃣ قاعدة بيانات Prisma | PostgreSQL         | بيانات ديناميكية ومترابطة |
-
----
-
-> ✨ **النهاية السعيدة:**
-> أصبح لديك الآن تطبيق Next.js احترافي به خادم API متكامل، قابل للتوسع،
-> وجاهز للانتقال إلى أي مرحلة متقدمة مثل المصادقة أو الرفع إلى السحابة 🚀
-
-```
+| Phase                  | Technology       | Purpose                   |
+| ---------------------- | ---------------- | ------------------------- |
+| 1️⃣ Next.js API Routes | Built-in backend | Simplicity & performance  |
+| 2️⃣ Express Server     | Node.js + CORS   | Scalability & flexibility |
+| 3️⃣ Prisma Database    | PostgreSQL       | Dynamic, persistent data  |
 
 ---
-
-هل ترغب أن أضيف في نهاية الملف قسمًا بعنوان  
-📚 *"مراجع إضافية واقتراحات للتوسع"*  
-يتضمّن روابط رسمية مثل Prisma وNext.js Docs؟
-```
 

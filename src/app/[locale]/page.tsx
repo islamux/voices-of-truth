@@ -10,9 +10,7 @@
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
-import { Scholar, Country, Specialization } from '@/types';
-import { futimes } from 'fs';
-import { label } from 'framer-motion/client';
+import { Scholar, Specialization } from '@/types';
 
 // Define the props for the page, including searchParams.
 interface HomePageProps {

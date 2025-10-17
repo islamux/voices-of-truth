@@ -106,6 +106,95 @@ Our project uses a custom, self-contained theme provider, not a third-party libr
 3.  **`src/app/[locale]/layout.tsx`**: The `ThemeProvider` component wraps our application in the locale layout.
 4.  **`ThemeToggle.tsx`**: This is the UI component that allows the user to switch themes.
 
+### Deep Dive: The Theme System (Refactored)
+
+To improve organization, the theme system has been split into three parts: the Context, the Provider, and the consumer Hook.
+
+**1. The Provider: `src/components/ThemeProvider.tsx`**
+
+This component is now solely responsible for the state management and logic of the theme.
+
+```tsx
+// src/components/ThemeProvider.tsx
+'use client';
+
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+
+// 1. Define and export the shape of the context and the context itself
+export interface ThemeContextType {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+// 2. The Provider Component
+export default function ThemeProvider({ children }: ThemeProviderProps) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  // Effect to set the initial theme
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme as 'light' | 'dark');
+  }, []);
+
+  // Effect to apply and save theme changes
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+```
+
+**2. The Hook: `src/hooks/useTheme.ts`**
+
+A dedicated file now holds the `useTheme` hook. This is a clean convention for all custom hooks.
+
+```tsx
+// src/hooks/useTheme.ts
+'use client';
+
+import { useContext } from 'react';
+import { ThemeContext } from '@/components/ThemeProvider';
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+```
+
+**How It Works Now:**
+
+1.  **Context Definition (`ThemeProvider.tsx`)**: The `ThemeContext` and its type `ThemeContextType` are now **exported** directly from the provider file. This allows other files, like our new hook, to import them.
+2.  **Provider Logic (`ThemeProvider.tsx`)**: The provider component itself remains largely the same. It manages the state and the side effects of applying the theme to the DOM and `localStorage`.
+3.  **Consumer Hook (`useTheme.ts`)**: The `useTheme` hook is now in its own file. It imports the `ThemeContext`, consumes it with `useContext`, and returns the value. This separates the "consuming" logic from the "providing" logic.
+
+This refactoring makes our code more organized and follows the common pattern of keeping reusable hooks in a dedicated `src/hooks` directory.
+
 ## 4. Usage in Components
 
 ```tsx
@@ -128,26 +217,41 @@ Let's break down the classes used in our main layout components.
 
 ### `PageLayout.tsx`
 
-This component arranges the main sections of the page.
+This component provides the main visual structure for every page: a header, a main content area, and a footer. It arranges the main sections of the page.
 
 ```tsx
 // src/components/PageLayout.tsx
-export default function PageLayout({children}:PageLayoutProps){
+'use client';
+
+import { ReactNode } from 'react';
+import Header from './Header';
+import Footer from './Footer';
+
+interface PageLayoutProps {
+  children: ReactNode;
+}
+
+export default function PageLayout({ children }: PageLayoutProps) {
   return (
-    <div className="flex-grow container mx-auto p-4 from-transparent to-[rgp]">
+    // The background is now handled by the body tag in globals.css
+    <div class="min-h-screen flex flex-col">
       <Header />
-      <main>{children}</main>
-      <Footer /> 
+      <main class="flex-grow container mx-auto p-4 md:p-6">{children}</main>
+      <Footer />
     </div>
   );
 }
 ```
 
-- **`flex-grow`**: Allows the layout `div` to grow and take up available space.
-- **`container`**: A Tailwind utility that sets a max-width to match common screen sizes.
-- **`mx-auto`**: Centers the container horizontally by setting `margin-left` and `margin-right` to `auto`.
-- **`p-4`**: Applies a padding of `1rem` (16px) on all sides.
-- **`from-transparent to-[rgp]`**: These classes are likely part of an incomplete or broken `bg-gradient-*` utility. They are intended to create a gradient background but are not correctly implemented here.
+- **`min-h-screen`**: Ensures the layout takes up at least the full height of the viewport.
+- **`flex flex-col`**: Establishes a vertical flexbox context, stacking the `Header`, `main`, and `Footer` on top of each other.
+- The background styling is intentionally omitted here. It is handled globally on the `<body>` tag in `src/app/globals.css` to avoid redundancy.
+
+**`<main className="...">` (The Content Area):**
+- **`flex-grow`**: Allows the main content area to expand and fill any available vertical space between the header and footer.
+- **`container`**: Constrains the width of the content area.
+- **`mx-auto`**: Centers the container horizontally.
+- **`p-4 md:p-6`**: Adds padding around the content, with more padding on larger screens.
 
 ### `Header.tsx`
 
@@ -211,3 +315,37 @@ This component serves as the bottom banner of our application.
 **`<div>` container:**
 - **`container mx-auto`**: Centers the content within a max-width container.
 - **`text-center`**: Centers the text inside the div.
+
+## 6. Troubleshooting: Main Content Area Not Changing Theme
+
+A common issue you might face is that the `Header` and `Footer` switch themes correctly, but the main content area (the background behind the scholar cards) does not.
+
+### The Problem
+
+The `body` element has its background color changed by the theme switcher, but components like `ScholarCard` or `FilterBar` might have their own opaque backgrounds (e.g., `bg-white`). These opaque backgrounds will cover the `body`'s background, so you won't see the theme change.
+
+### The Solution
+
+You must add `dark:` variants to every component that needs to change its appearance in dark mode. The component must be responsible for its own theme-aware styling.
+
+**Example: Fixing `ScholarCard.tsx`**
+
+If your `ScholarCard` is styled like this:
+
+```tsx
+// Incorrect: No dark mode styles
+<div className="border rounded-lg shadow-lg p-5 bg-white">
+  ...
+</div>
+```
+
+You need to add `dark:` variants for the background, text, and border colors:
+
+```tsx
+// Correct: With dark mode styles
+<div className="border rounded-lg shadow-lg p-5 bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
+  ...
+</div>
+```
+
+By applying this principle to all the components in your main content area, you ensure that your entire application will correctly respond to theme changes.

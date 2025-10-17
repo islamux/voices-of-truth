@@ -49,6 +49,9 @@ Follow these tutorials in order to build a comprehensive understanding of the pr
 4.  **[Styling with Tailwind CSS (`03_STYLING_GUIDE.md`)](\./03_STYLING_GUIDE.md)**
     *   **Purpose:** Learn how Tailwind CSS and PostCSS are configured and used for styling components.
 
+5.  **[Normal Functions vs. Arrow Functions (`19_NORMAL_VS_ARROW_FUNCTIONS.md`)](\./19_NORMAL_VS_ARROW_FUNCTIONS.md)**
+    *   **Purpose:** Understand the differences and best practices for using normal functions versus arrow functions in the project.
+
 ### Part 3: Feature Implementation Tutorials
 
 5.  **[Feature: Internationalization (i18n) (`04_FEATURE_TRANSLATION.md`)](\./04_FEATURE_TRANSLATION.md)**

@@ -9,13 +9,13 @@ import SearchInput from './filters/SearchInput';
 
 
 interface FilterBarProps {
-  uniqueCountries: Array<{ value: string; label: string }>; // Array of unique countries for the filter dropdown.
-    uniqueLanguages: string[]; // Array of unique languages for the filter dropdown.
-    uniqueCategories: Array<{ value: string; label: string }>; // Array of unique categories for the filter dropdown.
-    onCountryChange: (country: string) => void; // Callback function when the selected country changes.
-    onLanguageChange: (language: string) => void; // Callback function when the selected language changes.
-    onCategoryChange: (category: string) => void; // Callback function when the selected category changes.
-    onSearchChange: (term: string)=>void;
+  uniqueCountries: Array<{ value: string; label: string }>; 
+  uniqueLanguages: string[]; 
+  uniqueCategories: Array<{ value: string; label: string }>; 
+  onCountryChange: (country: string) => void; 
+  onLanguageChange: (language: string) => void; 
+  onCategoryChange: (category: string) => void; 
+  onSearchChange: (term: string)=>void;
 }
 
 export default function FilterBar({
@@ -36,5 +36,5 @@ export default function FilterBar({
     <CategoryFilter uniqueCategories={uniqueCategories} onCategoryChange={onCategoryChange}/>
     </div>
   );
-};
+}
 

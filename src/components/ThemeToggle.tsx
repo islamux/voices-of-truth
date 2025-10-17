@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from "@/components/ThemeProvider";
+import useTheme  from "@/hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import Button from './Button';
 

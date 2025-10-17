@@ -23,3 +23,11 @@
 - Change Header dir (rtl, ltr) based on themeToggle
 - Refactore @FilterBar.tsx using 'export default'
 - ThemeProvider.tsx 
+- Fix ligt mode not working for all page only for Header, Footer.
+- /docs/TroubleShouting.md
+- Improve /docs as a tutorial, documentation with best practice.
+- Is there any dublications or redenduncy between usin global css, and tailwend implementaiton in project 
+- Train using arrow fun because its 
+    - It’s consistent (all functions are declared the same way).
+    - You can easily inline or pass them around as values.
+    - It avoids unexpected hoisting behavior.

@@ -12,7 +12,7 @@ export default function Header(){
     <header className="p-4 bg-gray-100 dark:bg-gray-800 shadow-md text-gray-900 dark:text-white">
     <div className="container mx-auto flex flex-wrap justify-between items-center">
     <h1 className="text-xl sm:text-2xl font-semibold">{t('headerTitle')}</h1>
-    <div className="flex items-centers space-x-2 sm:space-x-4 mt-2 sm:mt-0">
+    <div className="flex items-center space-x-2 sm:space-x-4 mt-2 sm:mt-0">
     <LanguageSwicher/>
     <ThemeToggle/>
     </div>

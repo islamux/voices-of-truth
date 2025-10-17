@@ -8,8 +8,7 @@ interface ScholarAvatarProps{
 
 
 export default function ScholarAvatar({avatarUrl, name}:ScholarAvatarProps){
-  // const ScholarAvatar :React.FC<ScholarAvatarProps> = 
-  // ({ avatarUrl, name }) => {
+
   return (
     <Image 
     src={avatarUrl || '../../public/avatars/default-avatar.png'}
@@ -23,5 +22,5 @@ export default function ScholarAvatar({avatarUrl, name}:ScholarAvatarProps){
     unoptimized
     />
   );
-  } 
+} 
 

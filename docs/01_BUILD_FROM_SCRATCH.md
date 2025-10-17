@@ -116,7 +116,7 @@ export interface Country {
   id: number;
   en: string;
   ar: string;
-  [key: string]: string | number; //Index Signiture: instead of add fr, gr, it, he, Or other kye like poplution:
+  [key: string]: string | number; //Index Signiture: instead of add another value like fr, gr, it, he, Or other kye like poplution:
 }
 
 export interface Specialization {
@@ -169,6 +169,7 @@ RootLayout (supplies `<html lang=...>)`
       └─ PageLayout (The visual structure: header, main, footer)
           └─ Header (Contains title, language switcher, theme toggle)
               └─ Actual Page (list of scholars)
+          └─ Footer
 
 ### A. The Root Layout: `src/app/layout.tsx`
 
@@ -252,34 +253,36 @@ export async function generateStaticParams() {
     2.  `ThemeProvider`: Provides the theme (light/dark) context.
 *   It then renders the `PageLayout` component, which holds the visual structure.
 
-### C. The Theme Provider: `src/components/ThemeProvider.tsx`
+### C. The Theme System: Provider and Hook
 
-This is a custom provider component that manages the application's theme using React Context. This is the modern, standard way to handle themes in a React application.
+To keep our code organized, the theme system is split into two main files: the provider component and a custom hook to consume it.
+
+**The Provider: `src/components/ThemeProvider.tsx`**
+
+This component manages the theme state and provides it to the application.
 
 ```tsx
 // src/components/ThemeProvider.tsx
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
-interface ThemeContextType {
+// Export the context type and the context itself
+export interface ThemeContextType {
   theme: 'light' | 'dark';
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+interface ThemeProviderProps {
+  children: ReactNode;
 }
 
-export default function ThemeProvider({ children }: { children: ReactNode }) {
+export default function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
+  // This effect runs once on the client to set the initial theme
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -287,11 +290,13 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(initialTheme as 'light' | 'dark');
   }, []);
 
+  // This effect runs whenever the 'theme' state changes
   useEffect(() => {
+    const root = document.documentElement;
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
@@ -307,6 +312,33 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 ```
+
+**The Hook: `src/hooks/useTheme.ts`**
+
+We create a dedicated `hooks` directory to store all our custom hooks. This is a common and recommended convention.
+
+```tsx
+// src/hooks/useTheme.ts
+'use client';
+
+import { useContext } from 'react';
+import { ThemeContext } from '@/components/ThemeProvider';
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+```
+
+**How it works, step-by-step:**
+1.  **`'use client'`**: Both files are marked as client-side because they use hooks (`useState`, `useEffect`, `useContext`).
+2.  **Context (`ThemeProvider.tsx`)**: We create and **export** `ThemeContext`. Exporting it is key, as it allows our external hook to import and use it.
+3.  **Provider (`ThemeProvider.tsx`)**: This component wraps our application. Its job is to hold the theme state (`'light'` or `'dark'`) and the logic for changing it. It passes these down via the `ThemeContext.Provider`.
+4.  **Hook (`useTheme.ts`)**: This is our consumer. Any client component can now call `useTheme()` to get the current `theme` and the `toggleTheme` function, without needing to import `useContext` and `ThemeContext` every time. This keeps our components cleaner.
+5.  **Synchronization**: The `useEffect` hooks in the provider still handle the logic of checking `localStorage` and adding/removing the `.dark` class from the `<html>` element.
 
 ### D. The Reusable Button Component
 
@@ -338,32 +370,67 @@ export default React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
 
 Now that the providers and our reusable button are set up, the rest of the components are simple and focused on their specific tasks.
 
-**`src/components/PageLayout.tsx`**
+**`src/components/PageLayout.tsx`** (Updated)
+
+
+
+To fix our theming issue and simplify our code, we'll remove the redundant background styling from our `PageLayout`. The `<body>` tag, styled in `globals.css`, is already handling the background gradient for the entire page. Our layout should just focus on arranging its children.
+
+
 
 ```tsx
+
 // src/components/PageLayout.tsx
+
 "use client";
 
+
+
 import React, { ReactNode } from 'react';
+
 import Header from './Header';
+
 import Footer from './Footer';
 
+
+
 interface PageLayoutProps {
+
   children: ReactNode;
+
 }
 
+
+
 export default function PageLayout({ children }: PageLayoutProps) {
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-transparent to-[rgb(var(--background-end-rgb))] bg-[rgb(var(--background-start-rgb))]">
+
+    // The background is now handled by the body tag in globals.css
+
+    <div className="min-h-screen flex flex-col">
+
       <Header />
+
       <main className="flex-grow container mx-auto p-4 md:p-6">
+
         {children}
+
       </main>
+
       <Footer />
+
     </div>
+
   );
+
 }
+
 ```
+
+
+
+> **Reasoning for the fix:** Previously, this component had its own background that was identical to the `<body>`'s background. This was redundant. By removing it, we let the main `<body>` style show through, which simplifies our layout and makes it easier to manage styles. The core of the theme-switching problem lies in the components *inside* `<main>`, which now need their own `dark:` styles.
 
 **`src/components/Header.tsx`**
 
@@ -401,7 +468,7 @@ export default function Header(){
 // src/components/ThemeToggle.tsx
 'use client';
 
-import { useTheme } from "@/components/ThemeProvider";
+import { useTheme } from "@/hooks/useTheme"; // Updated import path
 import { useTranslation } from "react-i18next";
 import Button from './Button';
 

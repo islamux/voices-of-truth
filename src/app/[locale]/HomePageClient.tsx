@@ -1,58 +1,57 @@
-// src/app/[locale]/HomePageClient.tsx
-"use client";
+'use client';
 
-import { usePathname,useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
-import FilterBar from "@/components/FilterBar";
+import { Scholar, Country, Specialization } from "@/types";
 import ScholarList from "@/components/ScholarList";
-import { Country, Scholar } from "@/types";
-
+import FilterBar from "@/components/FilterBar";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { FilterProvider } from "@/context/FilterContext";
 
 interface HomePageClientProps {
   scholars: Scholar[];
-  uniqueCountries: { value: string; label: string }[];
-  uniqueCategories: { value: string; label: string }[];
-  uniqueLanguages: string[];
   countries: Country[];
+  specializations: Specialization[];
+  uniqueLanguages: string[];
+  uniqueCountries: Array<{ value: string; label: string }>;
+  uniqueCategories: Array<{ value: string; label: string }>;
 }
 
-const HomePageClient: React.FC<HomePageClientProps> = ({
-  scholars,
-  uniqueCountries,
-  uniqueCategories,
-  uniqueLanguages,
-  countries
-}) => {
+export default function HomePageClient({ 
+  scholars, 
+  countries, 
+  uniqueLanguages, 
+  uniqueCountries, 
+  uniqueCategories 
+}: HomePageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const handleFilterChange = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(name, value);
-      } else {
-        params.delete(name);
-      }
-      router.push(`${pathname}?${params.toString()}`);
-    },
-    [pathname, router, searchParams]
-  );
+
+  const handleFilterChange = (key: string, value: string) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    if (!value) {
+      current.delete(key);
+    } else {
+      current.set(key, value);
+    }
+    const search = current.toString();
+    const query = search ? `?${search}` : '';
+    router.push(`${pathname}${query}`);
+  };
+
+  const filterContextValue = {
+    uniqueCountries,
+    uniqueLanguages,
+    uniqueCategories,
+    onCountryChange: (value: string) => handleFilterChange('country', value),
+    onLanguageChange: (value: string) => handleFilterChange('language', value),
+    onCategoryChange: (value: string) => handleFilterChange('category', value),
+    onSearchChange: (value: string) => handleFilterChange('search', value),
+  };
 
   return (
-    <div className="space-y-8">
-    <FilterBar
-    uniqueCountries={uniqueCountries}
-    uniqueCategories={uniqueCategories}
-    uniqueLanguages={uniqueLanguages}
-    onCountryChange={(country) => handleFilterChange("country", country)}
-    onLanguageChange={(language) => handleFilterChange("lang", language)}
-    onCategoryChange={(category) => handleFilterChange("category", category)}
-    onSearchChange={(term) => handleFilterChange("query", term)}
-    />
-    <ScholarList scholars={scholars} countries={countries} />
-    </div>
+    <FilterProvider value={filterContextValue}>
+      <FilterBar />
+      <ScholarList scholars={scholars} countries={countries} />
+    </FilterProvider>
   );
-
-};
-export default HomePageClient;
+}

@@ -1,4 +1,5 @@
 - Read @p.en.md as a protocol of analyzing and response 
+- Think , then make a steped clear plan.
 - just make the md file, dont touch code.                                                       
 - Make sure using latest ans stable and community suported lib. 
 - Make sure you using Nextjs 15+ related libs if neede. 

@@ -3,15 +3,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next"
 
-interface SearchInputProps{
-  onSearchChange :(term: string)=>void;
-}
+import { useFilters } from "@/context/FilterContext";
 
-
-export default function SearchInput({onSearchChange }:SearchInputProps){
-  // const SearchInput: React.FC<SearchInputProps> = ({onSearchChange}) => {
+export default function SearchInput(){
 
   const {t} = useTranslation('common');
+  const { onSearchChange } = useFilters();
 
   return (
     <input
@@ -22,5 +19,5 @@ export default function SearchInput({onSearchChange }:SearchInputProps){
   >
     </input>
   );
-  };
+};
 

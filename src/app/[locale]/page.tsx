@@ -38,60 +38,25 @@ interface HomePageProps {
         scholar.name.ar.toLowerCase().includes(searchQuery)
         : true;
 
-      // Add logic for country, lang, category filters here
-      const countryId = country ? countries.find(c => c.en === country)?.id : undefined;
-      const matchCountry = country ? scholar.countryId === countryId : true;
+      const matchCountry = country ? scholar.countryId === parseInt(country as string, 10) : true;
 
       const matchesLang = lang ? scholar.language.includes(lang as string) : true;
 
-      const categoryId = category ? specializations.find(s => s.en === category)?.id : undefined;
-      const matchesCategory = category ? scholar.categoryId === categoryId : true;
+      const matchesCategory = category ? scholar.categoryId === parseInt(category as string, 10) : true;
 
       return matchSearch && matchCountry && matchesLang && matchesCategory;
     });
 
     // 3. Prepare data for the client
-    // const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
-    //   .map(id => countries.find(c => c.id === id))
-    //   .filter((country): country is Country => country !== undefined)
-    //   .map(country => ({ value: country.en, label: country.en }));
-
-    // uniqueCountries another solution , simpler
-    // 1. Get countries numbers
-    const allCountryIds = scholars.map(function(scholar){return scholar.countryId;});
-    // 2. Remove duplications.
-    const uniqueCountryIds = Array.from(new Set(allCountryIds));
-    // 3. Get Country info based on id.
-    const foundCountries = uniqueCountryIds.map(function(id){
-      return countries.find(function(country){
-        return country.id ===id;
-      });
-    }).filter(function(country){
-      return country !== undefined;
-    });
-    // 4. Creat a ready array (e.g, select)
-    const uniqueCountries = foundCountries.map(function(country){
-      return {
-        value: country.en,
-        label :country.en,
-      }
-    });
-
-
-    const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
-      .map(id => specializations.find(s => s.id === id))
-      .filter((specialization): specialization is Specialization => specialization !== undefined)
-      .map(specialization => ({ value: specialization.en, label: specialization.en }));
     const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
 
     // 4.  Pass the filterd data to the client component.
     return (
       <HomePageClient
       scholars={filteredScholars as Scholar[]}
-      uniqueCountries={uniqueCountries}
-      uniqueCategories={uniqueCategories}
-      uniqueLanguages={uniqueLanguages}
       countries={countries}
+      specializations={specializations}
+      uniqueLanguages={uniqueLanguages}
       />
     );
   }

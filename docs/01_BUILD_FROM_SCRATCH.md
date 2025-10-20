@@ -238,40 +238,40 @@ import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
-import { Country, Specialization } from '@/types';
+import { Scholar } from '@/types';
 
 interface HomePageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export default function HomePage({ searchParams }: HomePageProps) {
-  const { country, language, category, search } = searchParams;
+  const { query, country, lang, category } = searchParams;
+
+  const searchQuery = (query || '').toString().toLowerCase();
 
   const filteredScholars = scholars.filter(scholar => {
-    // ... (filtering logic as in your file)
-    return true; // Placeholder for actual logic
+    const matchSearch = searchQuery
+      ? scholar.name.en.toLowerCase().includes(searchQuery) ||
+      scholar.name.ar.toLowerCase().includes(searchQuery)
+      : true;
+
+    const matchCountry = country ? scholar.countryId === parseInt(country as string, 10) : true;
+
+    const matchesLang = lang ? scholar.language.includes(lang as string) : true;
+
+    const matchesCategory = category ? scholar.categoryId === parseInt(category as string, 10) : true;
+
+    return matchSearch && matchCountry && matchesLang && matchesCategory;
   });
-
-  const uniqueCountries = [...new Set(scholars.map(s => s.countryId))]
-    .map(id => countries.find(c => c.id === id))
-    .filter((c): c is Country => !!c)
-    .map(c => ({ value: c.id.toString(), label: c.en }));
-
-  const uniqueCategories = [...new Set(scholars.map(s => s.categoryId))]
-    .map(id => specializations.find(s => s.id === id))
-    .filter((s): s is Specialization => !!s)
-    .map(s => ({ value: s.id.toString(), label: s.en }));
 
   const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
 
   return (
     <HomePageClient
-      scholars={filteredScholars}
+      scholars={filteredScholars as Scholar[]}
       countries={countries}
       specializations={specializations}
       uniqueLanguages={uniqueLanguages}
-      uniqueCountries={uniqueCountries}
-      uniqueCategories={uniqueCategories}
     />
   );
 }
@@ -345,17 +345,9 @@ interface HomePageClientProps {
   countries: Country[];
   specializations: Specialization[];
   uniqueLanguages: string[];
-  uniqueCountries: Array<{ value: string; label: string }>;
-  uniqueCategories: Array<{ value: string; label: string }>;
 }
 
-export default function HomePageClient({ 
-  scholars, 
-  countries, 
-  uniqueLanguages, 
-  uniqueCountries, 
-  uniqueCategories 
-}: HomePageClientProps) {
+export default function HomePageClient({ scholars, countries, specializations, uniqueLanguages }: HomePageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -372,14 +364,17 @@ export default function HomePageClient({
     router.push(`${pathname}${query}`);
   };
 
+  const uniqueCountries = countries.map(c => ({ value: c.id.toString(), label: c.en }));
+  const uniqueCategories = specializations.map(s => ({ value: s.id.toString(), label: s.en }));
+
   const filterContextValue = {
     uniqueCountries,
     uniqueLanguages,
     uniqueCategories,
     onCountryChange: (value: string) => handleFilterChange('country', value),
-    onLanguageChange: (value: string) => handleFilterChange('language', value),
+    onLanguageChange: (value: string) => handleFilterChange('lang', value),
     onCategoryChange: (value: string) => handleFilterChange('category', value),
-    onSearchChange: (value: string) => handleFilterChange('search', value),
+    onSearchChange: (value: string) => handleFilterChange('query', value),
   };
 
   return (

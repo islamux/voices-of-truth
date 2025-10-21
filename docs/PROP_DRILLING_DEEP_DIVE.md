@@ -77,33 +77,39 @@ export const FilterProvider = ({ children, value }: FilterProviderProps) => {
 
 ## Step 2: Provide the Context in `HomePageClient.tsx`
 
-Now that we have our `FilterProvider`, we need to use it. We will wrap our page components with it and give it the data and functions it needs to share.
+Now that we have our `FilterProvider`, we need to use it. We will wrap our page components with it. The data it provides will be prepared on the server and passed down as props.
 
 **Action:** Modify the `src/app/[locale]/HomePageClient.tsx` file.
 
-**Code:** Replace the content of `HomePageClient.tsx` with the following.
+**Code:** Replace the content of `HomePageClient.tsx` with the following. Notice that it no longer performs any data mapping.
 
 ```tsx
 // src/app/[locale]/HomePageClient.tsx (Refactored)
 
 'use client';
 
-import { Scholar, Country, Specialization } from "@/types";
+import { Scholar, Country } from "@/types";
 import ScholarList from "@/components/ScholarList";
 import FilterBar from "@/components/FilterBar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-// Import the provider we just created!
 import { FilterProvider } from '@/context/FilterContext';
 
 interface HomePageClientProps {
   scholars: Scholar[];
   countries: Country[];
-  specializations: Specialization[];
+  // Data is now pre-processed by the server and passed as props
+  uniqueCountries: { value: string; label: string }[];
+  uniqueCategories: { value: string; label: string }[];
   uniqueLanguages: string[];
 }
 
-export default function HomePageClient({ scholars, countries, specializations, uniqueLanguages }: HomePageClientProps) {
+export default function HomePageClient({
+  scholars,
+  countries,
+  uniqueCountries,
+  uniqueCategories,
+  uniqueLanguages
+}: HomePageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -120,11 +126,7 @@ export default function HomePageClient({ scholars, countries, specializations, u
     router.push(`${pathname}${query}`);
   };
 
-  const uniqueCountries = countries.map(c => ({ value: c.id.toString(), label: c.en }));
-  const uniqueCategories = specializations.map(s => ({ value: s.id.toString(), label: s.en }));
-
-  // Create a single object containing all the state and functions.
-  // This will be the value of our context.
+  // No more mapping! The data is ready to be used directly in the context value.
   const filterContextValue = {
     uniqueCountries,
     uniqueLanguages,
@@ -137,7 +139,6 @@ export default function HomePageClient({ scholars, countries, specializations, u
 
   return (
     // Wrap the components in the provider and pass the context value.
-    // Now, FilterBar and any of its children can access this value.
     <FilterProvider value={filterContextValue}>
       <FilterBar /> {/* Notice: No more props are being drilled! */}
       <ScholarList scholars={scholars} countries={countries} />

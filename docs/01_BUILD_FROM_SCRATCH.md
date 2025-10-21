@@ -228,9 +228,9 @@ export default function useTheme(): ThemeContextType {
 
 ---
 
-## Step 4: Server-Side Data Filtering
+## Step 4: Server-Side Data Filtering & Preparation
 
-The core logic of our app lives in the main page, which is a **Server Component**. It fetches data, filters it based on URL parameters, and then passes the result to a Client Component for display.
+The core logic of our app lives in the main page, which is a **Server Component**. It fetches data, filters it based on URL parameters, prepares it for the UI, and then passes the result to a Client Component for display.
 
 ```tsx
 // src/app/[locale]/page.tsx
@@ -241,6 +241,7 @@ import { specializations } from '@/data/specializations';
 import { Scholar } from '@/types';
 
 interface HomePageProps {
+    //  [key: string] : [value: string | string[] | undefined] // syntax here not correct but only for explanation.
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
@@ -264,14 +265,20 @@ export default function HomePage({ searchParams }: HomePageProps) {
     return matchSearch && matchCountry && matchesLang && matchesCategory;
   });
 
+  // --- Data Preparation on the Server ---
   const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
+  const uniqueCountries = countries.map(c => ({ value: c.id.toString(), label: c.en }));
+  const uniqueCategories = specializations.map(s => ({ value: s.id.toString(), label: s.en }));
 
   return (
     <HomePageClient
       scholars={filteredScholars as Scholar[]}
       countries={countries}
       specializations={specializations}
+      // Pass the pre-processed data to the client
       uniqueLanguages={uniqueLanguages}
+      uniqueCountries={uniqueCountries}
+      uniqueCategories={uniqueCategories}
     />
   );
 }
@@ -328,7 +335,7 @@ export const FilterProvider = ({ children, value }: FilterProviderProps) => {
 
 ### B. Create the Interactive Client Component
 
-`HomePageClient` is responsible for user interaction. It will now use our `FilterProvider` to pass down the filter data and handlers.
+`HomePageClient` is responsible for user interaction. It receives the pre-processed props from the server and uses our `FilterProvider` to pass down the filter data and handlers.
 
 ```tsx
 // src/app/[locale]/HomePageClient.tsx
@@ -344,10 +351,20 @@ interface HomePageClientProps {
   scholars: Scholar[];
   countries: Country[];
   specializations: Specialization[];
+  // Pre-processed data from the server
+  uniqueCountries: { value: string; label: string }[];
+  uniqueCategories: { value: string; label: string }[];
   uniqueLanguages: string[];
 }
 
-export default function HomePageClient({ scholars, countries, specializations, uniqueLanguages }: HomePageClientProps) {
+export default function HomePageClient({
+  scholars,
+  countries,
+  specializations,
+  uniqueCountries,
+  uniqueCategories,
+  uniqueLanguages
+}: HomePageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -364,9 +381,7 @@ export default function HomePageClient({ scholars, countries, specializations, u
     router.push(`${pathname}${query}`);
   };
 
-  const uniqueCountries = countries.map(c => ({ value: c.id.toString(), label: c.en }));
-  const uniqueCategories = specializations.map(s => ({ value: s.id.toString(), label: s.en }));
-
+  // The data is already prepared, so we just pass it to the context.
   const filterContextValue = {
     uniqueCountries,
     uniqueLanguages,

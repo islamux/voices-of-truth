@@ -1,16 +1,8 @@
-// src/app/[locale]/page.tsx
-/**
-* This is the main page for a given locale.
-  * It's a Server Component that renders the interactive Client Component.
-  * The responsibility for fetching and managing translations is delegated
-  * to the provider in the layout and the client component itself.
-  */
-
-  import HomePageClient from './HomePageClient';
+import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
-import { Scholar, Specialization } from '@/types';
+import { Scholar, Country, Specialization } from '@/types';
 
 // Define the props for the page, including searchParams.
 interface HomePageProps {
@@ -49,6 +41,8 @@ interface HomePageProps {
 
     // 3. Prepare data for the client
     const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
+    const uniqueCountries = countries.map((c: Country) => ({ value: c.id.toString(), label: c.en }));
+    const uniqueCategories = specializations.map((s: Specialization) => ({ value: s.id.toString(), label: s.en }));
 
     // 4.  Pass the filterd data to the client component.
     return (
@@ -57,6 +51,8 @@ interface HomePageProps {
       countries={countries}
       specializations={specializations}
       uniqueLanguages={uniqueLanguages}
+      uniqueCountries={uniqueCountries}
+      uniqueCategories={uniqueCategories}
       />
     );
   }

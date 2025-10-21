@@ -38,6 +38,7 @@ interface FilterProviderProps {
   value: FilterContextType;
 }
 
+// export default function FilterProvider({ children, value }: FilterProviderProps) {
 export const FilterProvider = ({ children, value }: FilterProviderProps) => {
   return (
     <FilterContext.Provider value={value}>{children}</FilterContext.Provider>

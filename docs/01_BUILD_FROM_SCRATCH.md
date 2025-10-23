@@ -23,7 +23,7 @@ cd voices-of-truth
 Our project uses a few extra libraries for features like internationalization and icons.
 
 ```bash
-pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons tailwind-merge
+pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons tailwind-merge next-themes
 ```
 
 ---
@@ -138,7 +138,7 @@ export default async function RootLayout({
 }: RootLayoutProps) {
   const {locale} = await params;
   return (
-    <html lang={locale} dir={dir(locale)}>
+    <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
     <body>{children}</body>
     </html>
   );
@@ -153,7 +153,7 @@ This layout wraps all pages and provides the Theme and Translation contexts.
 // src/app/[locale]/layout.tsx
 import I18nProviderClient from "@/components/I18nProviderClient";
 import PageLayout from "@/components/PageLayout";
-import ThemeProvider from "@/components/ThemeProvider";
+import { ThemeProvider } from 'next-themes';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 
 interface LocaleLayoutProps{
@@ -167,7 +167,12 @@ export default async function LocaleLayout({children, params}:LocaleLayoutProps)
 
   return (
     <I18nProviderClient locale={locale} resources={resources} >
-      <ThemeProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
         <PageLayout> {children} </PageLayout>
       </ThemeProvider>
     </I18nProviderClient>
@@ -181,48 +186,40 @@ export async function generateStaticParams() {
 }
 ```
 
-### C. The Theme System: Provider and Hook
+### C. The Theme System: Using `next-themes`
 
-To manage the theme, we use a Context Provider and a custom hook. This follows our established naming convention of `...Type` for context value interfaces.
+To manage the theme, we use the `next-themes` library, a robust and community-accepted solution. This simplifies our code, handles edge cases like "flash of incorrect theme" (FOUC), and syncs themes across tabs automatically.
 
-**The Provider: `src/components/ThemeProvider.tsx`**
+**The Provider:**
+The `ThemeProvider` from `next-themes` is now used in `src/app/[locale]/layout.tsx` to wrap the application and provide theme context.
+
+**The `ThemeToggle` Component: `src/components/ThemeToggle.tsx`**
+The toggle component now uses the `useTheme` hook from `next-themes` to switch between light and dark modes.
+
 ```tsx
-// src/components/ThemeProvider.tsx
+// src/components/ThemeToggle.tsx
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { useTheme } from 'next-themes';
+import { useTranslation } from "react-i18next";
+import Button from './Button';
 
-// Following our convention for context values
-export interface ThemeContextType {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
-}
+export default function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const { t } = useTranslation('common');
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
 
-interface ThemeProviderProps {
-  children: ReactNode;
-}
-
-export default function ThemeProvider({ children }: ThemeProviderProps) {
-  // ... (theme logic as in your file)
-}
-```
-
-**The Hook: `src/hooks/useTheme.ts`**
-```tsx
-// src/hooks/useTheme.ts
-'use client';
-
-import { useContext } from 'react';
-import { ThemeContext, ThemeContextType } from '@/components/ThemeProvider';
-
-export default function useTheme(): ThemeContextType {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+  return (
+    <Button
+      onClick={toggleTheme}
+      className="hover:bg-gray-200 dark:hover:bg-gray-700"
+    >
+      {theme === 'light' ? t('dark') : t('light')} {t('theme')}
+    </Button>
+  );
 }
 ```
 
@@ -315,6 +312,7 @@ const FilterContext = createContext<FilterContextType | null>(null);
 
 export const useFilters = () => {
   const context = useContext(FilterContext);
+  // Ensure the hook is used within a provider, Prevents runtime errors, Make developer sure to wrap components properly.
   if (!context) {
     throw new Error('useFilters must be used within a FilterProvider');
   }
@@ -322,12 +320,13 @@ export const useFilters = () => {
 };
 
 interface FilterProviderProps {
-  children: ReactNode;
+  children: ReactNode; // ReactNode is coming from React and represents any valid React child (elements, strings, fragments, etc.)
   value: FilterContextType;
 }
 
 export const FilterProvider = ({ children, value }: FilterProviderProps) => {
   return (
+  // ".Provider" is coming from createContext. {chi}ldren} is the nested components inside the Provider.
     <FilterContext.Provider value={value}>{children}</FilterContext.Provider>
   );
 };
@@ -351,7 +350,6 @@ interface HomePageClientProps {
   scholars: Scholar[];
   countries: Country[];
   specializations: Specialization[];
-  // Pre-processed data from the server
   uniqueCountries: { value: string; label: string }[];
   uniqueCategories: { value: string; label: string }[];
   uniqueLanguages: string[];
@@ -369,23 +367,27 @@ export default function HomePageClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+// Function to handle filter changes and update the URL accordingly (key = filter type, value = selected value)
   const handleFilterChange = (key: string, value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
+    // Update or remove the filter in the URL ( value is empty => remove the filter)
     if (!value) {
       current.delete(key);
     } else {
       current.set(key, value);
     }
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
+
+    const search = current.toString(); // Reconstruct the search string after modification
+    const query = search ? `?${search}` : ''; // Explain: only add '?' if there are search params (? here is the separator between pathname and query)
     router.push(`${pathname}${query}`);
   };
 
   // The data is already prepared, so we just pass it to the context.
   const filterContextValue = {
-    uniqueCountries,
-    uniqueLanguages,
-    uniqueCategories,
+  // Pre-processed data from the server . 
+    uniqueCountries, 
+    uniqueLanguages,  
+    uniqueCategories, 
     onCountryChange: (value: string) => handleFilterChange('country', value),
     onLanguageChange: (value: string) => handleFilterChange('lang', value),
     onCategoryChange: (value: string) => handleFilterChange('category', value),

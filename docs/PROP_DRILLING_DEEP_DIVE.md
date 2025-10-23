@@ -114,16 +114,20 @@ export default function HomePageClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const handleFilterChange = (key: string, value: string) => {
+// Function to handle filter changes and update the URL accordingly (key = filter type, value = selected value)
+  const handleFilterChange = (key: string, value: string) => { 
+  
     const current = new URLSearchParams(Array.from(searchParams.entries()));
+    // Update or delete the filter based on the value
     if (!value) {
       current.delete(key);
     } else {
       current.set(key, value);
     }
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-    router.push(`${pathname}${query}`);
+    
+    const search = current.toString(); // Get the updated query string
+    const query = search ? `?${search}` : ''; // Format it properly
+    router.push(`${pathname}${query}`); // Navigate to the new URL
   };
 
   // No more mapping! The data is ready to be used directly in the context value.

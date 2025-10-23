@@ -20,18 +20,19 @@ export default function LanguageSwitcher() {
 
   return (
     <div className="flex items-center space-x-1">
-      {/* Map over the supported language CODES */}
-      {supportedLngs.map((langCode) => (
-        <Button
-          key={langCode}
-          onClick={() => changeLanguage(langCode)}
-          disabled={currentLang === langCode}
-          className="enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700"
-        >
-          {/* Use the language code directly to get the translation */}
-          {t(langCode)}
-        </Button>
-      ))}
+    {/* Map over the supported language CODES */}
+    {supportedLngs.map((langCode) => (
+      // langCode is like 'en', 'fr', 'de', etc.
+      <Button
+      key={langCode}
+      onClick={() => changeLanguage(langCode)}
+      disabled={currentLang === langCode}
+      className="enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700"
+    >
+      {/* Use the language code directly to get the translation */}
+      {t(langCode)}
+      </Button>
+    ))}
     </div>
   );
 }

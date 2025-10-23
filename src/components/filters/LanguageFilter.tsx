@@ -10,7 +10,9 @@ export default function LanguageFilter(){
 
   const { t } = useTranslation('common');
   const { uniqueLanguages, onLanguageChange } = useFilters();
+
   const languageOptions =  useMemo( ()=>
+    // Memoize the options to avoid unnecessary re-renders 
     uniqueLanguages.map( lang => ({value: lang, label: lang})),
     [uniqueLanguages]
   );

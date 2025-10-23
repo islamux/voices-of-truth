@@ -9,10 +9,11 @@ interface  FilterDropdownProps{
 }
 
 export default function FilterDropdown({label, filterKey, options, onChange}:FilterDropdownProps){
-  // const FilterDropdown : React.FC<FilterDropdownProps> = ({label, filterKey, options, onChange}) => {
 
   const {t} = useTranslation('common');
 
+  // Render the dropdown filterKey
+  
   return(
     <div  className="w-full sm:w-auto">
     <label htmlFor={`${filterKey}-filter`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -35,4 +36,4 @@ export default function FilterDropdown({label, filterKey, options, onChange}:Fil
     </select>
     </div>
   );  
-  };
+};

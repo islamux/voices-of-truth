@@ -1,6 +1,6 @@
 import I18nProviderClient from "@/components/I18nProviderClient";
 import PageLayout from "@/components/PageLayout"; 
-import ThemeProvider from "@/components/ThemeProvider";
+import { ThemeProvider } from 'next-themes';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 
 interface LocaleLayoutProps{
@@ -20,8 +20,13 @@ export default async function LocaleLayout({children, params}:LocaleLayoutProps)
     // and PageLayout for consistent page structure
     <I18nProviderClient locale={locale} resources={resources} > 
 
-    <ThemeProvider>
-    <PageLayout> {children} </PageLayout>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <PageLayout> {children} </PageLayout>
     </ThemeProvider>
 
     </I18nProviderClient> 
@@ -34,4 +39,3 @@ export async function generateStaticParams() {
     return { locale :locale};
   });
 }
-

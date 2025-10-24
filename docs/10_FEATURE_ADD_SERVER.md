@@ -1,330 +1,0 @@
-رائع 🌟
-إليك النسخة النهائية **المنسّقة باحتراف لملف GitHub Markdown** —
-جاهزة للنسخ أو الحفظ باسم:
-`ADD_SERVER_COMPLETE_GUIDE.md`
-
----
-
-````markdown
-# 🧭 الدليل الكامل لإضافة خادم API وربطه بواجهة Next.js
-
-> هذا الدليل يوضّح **الانتقال من البيانات المحلية إلى خادم API احترافي**،  
-> مع خطوات متدرجة من واجهات Next.js API إلى خادم Express ثم قاعدة بيانات PostgreSQL باستخدام Prisma.
-
----
-
-## ⚙️ المرحلة الأولى: إنشاء واجهة API داخل Next.js
-
-### 🎯 الهدف من التغيير
-
-- 🧩 **فصل المهام:** فصل المنطق الخلفي (Backend) عن واجهة العرض (Frontend).  
-- ⚡ **تحسين الأداء:** تحميل البيانات بشكل جزئي دون إعادة تحميل الصفحة.  
-- 🔁 **قابلية التوسّع:** يمكن لاحقًا استخدام نفس الـ API من تطبيق جوّال أو لوحة إدارة.
-
----
-
-### 🛠️ إنشاء نقطة API
-
-أنشئ الملف التالي:
-
-```typescript
-// src/app/api/scholars/route.ts
-import { NextResponse } from 'next/server';
-import { scholars } from '@/data/scholars';
-import { countries } from '@/data/countries';
-import { specializations } from '@/data/specializations';
-import { Scholar } from '@/types';
-
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get('query') || '';
-  const country = searchParams.get('country');
-  const lang = searchParams.get('lang');
-  const category = searchParams.get('category');
-
-  const searchQuery = query.toLowerCase();
-
-  const filteredScholars = scholars.filter(scholar => {
-    const matchSearch =
-      scholar.name.en.toLowerCase().includes(searchQuery) ||
-      scholar.name.ar.toLowerCase().includes(searchQuery);
-
-    const countryId = country ? countries.find(c => c.en === country)?.id : undefined;
-    const matchCountry = country ? scholar.countryId === countryId : true;
-
-    const matchesLang = lang ? scholar.language.includes(lang) : true;
-
-    const categoryId = category ? specializations.find(s => s.en === category)?.id : undefined;
-    const matchesCategory = category ? scholar.categoryId === categoryId : true;
-
-    return matchSearch && matchCountry && matchesLang && matchesCategory;
-  });
-
-  return NextResponse.json(filteredScholars as Scholar[]);
-}
-````
-
-🧪 جرّبها على:
-
-```
-http://localhost:3000/api/scholars
-```
-
----
-
-### 🧠 الجلب من الواجهة الأمامية (SWR هو الأفضل)
-
-```tsx
-"use client";
-import { useState, useCallback } from 'react';
-import useSWR from 'swr';
-import FilterBar from "@/components/FilterBar";
-import ScholarList from "@/components/ScholarList";
-import ScholarCardSkeleton from '@/components/ScholarCardSkeleton';
-import { Scholar } from "@/types";
-
-const fetcher = (url: string) => fetch(url).then(res => res.json());
-
-const HomePageClient = ({ uniqueCountries, uniqueLanguages, uniqueCategories }: any) => {
-  const [filters, setFilters] = useState({ query: '', country: '', lang: '', category: '' });
-  const params = new URLSearchParams(filters);
-  const { data: scholars, error, isLoading } = useSWR<Scholar[]>(`/api/scholars?${params}`, fetcher);
-
-  const handleFilterChange = useCallback((name: string, value: string) => {
-    setFilters(prev => ({ ...prev, [name]: value }));
-  }, []);
-
-  if (error) return <div>تعذّر تحميل البيانات</div>;
-
-  return (
-    <div className="space-y-8">
-      <FilterBar
-        onCountryChange={v => handleFilterChange("country", v)}
-        onCategoryChange={v => handleFilterChange("category", v)}
-        onLanguageChange={v => handleFilterChange("lang", v)}
-        onSearchChange={v => handleFilterChange("query", v)}
-      />
-      {isLoading
-        ? <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => <ScholarCardSkeleton key={i} />)}
-          </div>
-        : <ScholarList scholars={scholars || []} countries={uniqueCountries} />
-      }
-    </div>
-  );
-};
-export default HomePageClient;
-```
-
-> ✅ **نصيحة:**
-> مكتبة `SWR` من Vercel تمنحك الكاش التلقائي، وإعادة الجلب الذكي، ومعالجة الأخطاء بشكل مدمج.
-
----
-
-## 🧩 المرحلة الثانية: إضافة خادم Express مخصص (اختياري)
-
-في حال رغبت بإنشاء خادم منفصل للتوسّع مستقبلاً أو مشاركة الـ API مع مشاريع أخرى.
-
-### 📦 إعداد المشروع
-
-```bash
-mkdir server && cd server
-npm init -y
-pnpm add express cors
-pnpm add -D nodemon
-```
-
----
-
-### 📜 إنشاء الخادم
-
-```javascript
-// server/index.js
-const express = require('express');
-const cors = require('cors');
-const { scholars } = require('../src/data/scholars');
-const { countries } = require('../src/data/countries');
-const { specializations } = require('../src/data/specializations');
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-app.use(cors());
-
-app.get('/api/scholars', (_, res) => res.json(scholars));
-app.get('/api/countries', (_, res) => res.json(countries));
-app.get('/api/specializations', (_, res) => res.json(specializations));
-
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
-```
-
-ثم أضف في `package.json`:
-
-```json
-"scripts": {
-  "dev": "nodemon index.js"
-}
-```
-
-وتشغّله عبر:
-
-```bash
-pnpm dev
-```
-
-> 🔗 يمكنك الآن الجلب من:
->
-> ```typescript
-> fetch('http://localhost:3001/api/scholars')
-> ```
-
----
-
-## 🗄️ المرحلة الثالثة: ربط قاعدة بيانات Prisma + PostgreSQL
-
-### 🎯 لماذا قاعدة بيانات؟
-
-* تحديث البيانات بدون إعادة نشر التطبيق.
-* أداء أعلى مع آلاف السجلات.
-* قاعدة بيانات موحّدة لجميع الخدمات.
-
----
-
-### 🧱 إعداد PostgreSQL عبر Docker
-
-أنشئ ملفًا باسم `docker-compose.yml`:
-
-```yaml
-version: '3.8'
-services:
-  postgres:
-    image: postgres:13
-    restart: always
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=voices_of_truth
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
-```
-
-ثم شغّل:
-
-```bash
-docker-compose up -d
-```
-
----
-
-### ⚙️ إعداد Prisma
-
-```bash
-pnpm add @prisma/client
-pnpm add prisma -D
-pnpm prisma init --datasource-provider postgresql
-```
-
-في `.env`:
-
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/voices_of_truth"
-```
-
----
-
-### 🧬 نموذج قاعدة البيانات (Schema)
-
-افتح الملف `prisma/schema.prisma`:
-
-```prisma
-model Scholar {
-  id           Int      @id @default(autoincrement())
-  name         Json
-  bio          Json?
-  avatarUrl    String
-  language     String[]
-  socialMedia  Json     @default("[]")
-  country      Country  @relation(fields: [countryId], references: [id])
-  countryId    Int
-  category     Category @relation(fields: [categoryId], references: [id])
-  categoryId   Int
-}
-
-model Country {
-  id       Int       @id @default(autoincrement())
-  en       String
-  ar       String
-  scholars Scholar[]
-}
-
-model Category {
-  id       Int       @id @default(autoincrement())
-  en       String
-  ar       String
-  scholars Scholar[]
-}
-```
-
-ثم أنشئ الجداول:
-
-```bash
-pnpm prisma migrate dev --name "initial-schema"
-```
-
----
-
-### 🌐 إنشاء واجهة API متصلة بقاعدة البيانات
-
-```typescript
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-
-export async function GET() {
-  try {
-    const scholars = await prisma.scholar.findMany({
-      include: { country: true, category: true },
-    });
-    return NextResponse.json(scholars);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
-  }
-}
-```
-
-يمكنك تجربتها على:
-
-```
-http://localhost:3000/api/scholars
-```
-
----
-
-## 🏁 الخلاصة
-
-| المرحلة                 | التقنية            | الهدف                     |
-| ----------------------- | ------------------ | ------------------------- |
-| 1️⃣ واجهات Next.js API  | مدمجة داخل المشروع | أفضل أداء وبساطة          |
-| 2️⃣ خادم Express مستقل  | Node.js + CORS     | قابلية التوسع والمرونة    |
-| 3️⃣ قاعدة بيانات Prisma | PostgreSQL         | بيانات ديناميكية ومترابطة |
-
----
-
-> ✨ **النهاية السعيدة:**
-> أصبح لديك الآن تطبيق Next.js احترافي به خادم API متكامل، قابل للتوسع،
-> وجاهز للانتقال إلى أي مرحلة متقدمة مثل المصادقة أو الرفع إلى السحابة 🚀
-
-```
-
----
-
-هل ترغب أن أضيف في نهاية الملف قسمًا بعنوان  
-📚 *"مراجع إضافية واقتراحات للتوسع"*  
-يتضمّن روابط رسمية مثل Prisma وNext.js Docs؟
-```
-

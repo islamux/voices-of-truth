@@ -97,103 +97,81 @@ body {
 - **`:root`**: Defines the default (light theme) color values.
 - **`.dark`**: Defines the color values that will be applied when the `dark` class is active on the `<html>` element. Our `ThemeProvider` is responsible for adding and removing this class.
 
-## 3. Theming Strategy: A Custom Hook Approach
+## 3. Theming Strategy: Using `next-themes`
 
-Our project uses a custom, self-contained theme provider, not a third-party library. This gives us full control.
+To manage the theme, we use the `next-themes` library, a robust and community-accepted solution. This simplifies our code, handles edge cases like "flash of incorrect theme" (FOUC), and syncs themes across tabs automatically.
 
-1.  **`ThemeProvider.tsx`**: This client component (`'use client'`) is the core of our theming system.
-2.  **`useTheme()` Hook**: The `ThemeProvider` also exports a `useTheme` custom hook.
-3.  **`src/app/[locale]/layout.tsx`**: The `ThemeProvider` component wraps our application in the locale layout.
-4.  **`ThemeToggle.tsx`**: This is the UI component that allows the user to switch themes.
+### A. The Provider
 
-### Deep Dive: The Theme System (Refactored)
-
-To improve organization, the theme system has been split into three parts: the Context, the Provider, and the consumer Hook.
-
-**1. The Provider: `src/components/ThemeProvider.tsx`**
-
-This component is now solely responsible for the state management and logic of the theme.
+The `ThemeProvider` from `next-themes` is used in `src/app/[locale]/layout.tsx` to wrap the application and provide theme context.
 
 ```tsx
-// src/components/ThemeProvider.tsx
+// src/app/[locale]/layout.tsx
+import I18nProviderClient from "@/components/I18nProviderClient";
+import PageLayout from "@/components/PageLayout";
+import { ThemeProvider } from 'next-themes';
+import { getTranslation, supportedLngs } from "@/lib/i18n";
+
+interface LocaleLayoutProps{
+  children : React.ReactNode;
+  params: Promise<{locale: string}>;
+}
+
+export default async function LocaleLayout({children, params}:LocaleLayoutProps){
+  const {locale} = await params;
+  const {resources} = await getTranslation(locale);
+
+  return (
+    <I18nProviderClient locale={locale} resources={resources} >
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <PageLayout> {children} </PageLayout>
+      </ThemeProvider>
+    </I18nProviderClient>
+  );
+}
+
+export async function generateStaticParams() {
+  return supportedLngs.map(function(locale) {
+    return { locale :locale};
+  });
+}
+```
+
+### B. The `ThemeToggle` Component
+
+The toggle component uses the `useTheme` hook from `next-themes` to switch between light and dark modes.
+
+```tsx
+// src/components/ThemeToggle.tsx
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { useTheme } from 'next-themes';
+import { useTranslation } from "react-i18next";
+import Button from './Button';
 
-// 1. Define and export the shape of the context and the context itself
-export interface ThemeContextType {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
-}
-
-export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-interface ThemeProviderProps {
-  children: ReactNode;
-}
-
-// 2. The Provider Component
-export default function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  // Effect to set the initial theme
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-    setTheme(initialTheme as 'light' | 'dark');
-  }, []);
-
-  // Effect to apply and save theme changes
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+export default function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const { t } = useTranslation('common');
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <Button
+      onClick={toggleTheme}
+      className="hover:bg-gray-200 dark:hover:bg-gray-700"
+    >
+      {theme === 'light' ? t('dark') : t('light')} {t('theme')}
+    </Button>
   );
 }
 ```
-
-**2. The Hook: `src/hooks/useTheme.ts`**
-
-A dedicated file now holds the `useTheme` hook. This is a clean convention for all custom hooks.
-
-```tsx
-// src/hooks/useTheme.ts
-'use client';
-
-import { useContext } from 'react';
-import { ThemeContext } from '@/components/ThemeProvider';
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
-```
-
-**How It Works Now:**
-
-1.  **Context Definition (`ThemeProvider.tsx`)**: The `ThemeContext` and its type `ThemeContextType` are now **exported** directly from the provider file. This allows other files, like our new hook, to import them.
-2.  **Provider Logic (`ThemeProvider.tsx`)**: The provider component itself remains largely the same. It manages the state and the side effects of applying the theme to the DOM and `localStorage`.
-3.  **Consumer Hook (`useTheme.ts`)**: The `useTheme` hook is now in its own file. It imports the `ThemeContext`, consumes it with `useContext`, and returns the value. This separates the "consuming" logic from the "providing" logic.
-
-This refactoring makes our code more organized and follows the common pattern of keeping reusable hooks in a dedicated `src/hooks` directory.
 
 ## 4. Usage in Components
 

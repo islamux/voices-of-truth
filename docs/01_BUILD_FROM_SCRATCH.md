@@ -281,6 +281,9 @@ export default function HomePage({ searchParams }: HomePageProps) {
 }
 ```
 
+> **Note for Real-World Applications:**
+> In this tutorial, we are importing `scholars`, `countries`, and `specializations` directly from local files for simplicity. In a production application, this data would typically be fetched from an external API.
+
 ---
 
 ## Step 5: State Management with Context

@@ -32,3 +32,4 @@
     - You can easily inline or pass them around as values.
     - It avoids unexpected hoisting behavior.
 - Refactor data management (scholars list) using React Context or Zustand for better state handling across components.
+- Eror handling

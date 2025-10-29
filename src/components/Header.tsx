@@ -5,7 +5,7 @@ import LanguageSwicher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Header(){
-  const {t} = useTranslation('common');
+  const {t} = useTranslation('header');
 
 
   return (

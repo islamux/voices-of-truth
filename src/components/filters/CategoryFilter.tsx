@@ -12,7 +12,7 @@ export default function CategoryFilter(){
 
 
 
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('scholar');
 
   const { uniqueCategories, onCategoryChange } = useFilters();
 

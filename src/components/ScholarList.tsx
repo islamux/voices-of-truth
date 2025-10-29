@@ -21,9 +21,9 @@ export default function ScholarList({ scholars, countries }: ScholarListProps) {
 
         // Efficiently find the country and its localized name.
         const countryObject = countriesMap.get(scholar.countryId);
-        const countryName = countryObject
+        const countryName = String(countryObject
           ? countryObject[currentLang] || countryObject['en']
-          : "";
+          : "");
 
         return (
           <ScholarCard

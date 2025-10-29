@@ -2,7 +2,7 @@
 
 'use client';
 
-import { Scholar, Country } from "@/types";
+import { Scholar, Country, Specialization } from "@/types";
 import ScholarList from "@/components/ScholarList";
 import FilterBar from "@/components/FilterBar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -13,6 +13,7 @@ import { FilterProvider } from '@/context/FilterContext';
 interface HomePageClientProps {
   scholars: Scholar[];
   countries: Country[];
+  specializations:Specialization[];
   // Data is now pre-processed by the server and passed as props
   uniqueCountries: { value: string; label: string }[];
   uniqueCategories: { value: string; label: string }[];
@@ -56,8 +57,8 @@ export default function HomePageClient({
   return (
     // Wrap the components in the provider and pass the context value.
     <FilterProvider value={filterContextValue}>
-      <FilterBar /> {/* Notice: No more props are being drilled! */}
-      <ScholarList scholars={scholars} countries={countries} />
+    <FilterBar /> {/* Notice: No more props are being drilled! */}
+    <ScholarList scholars={scholars} countries={countries} />
     </FilterProvider>
   );
 }

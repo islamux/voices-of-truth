@@ -193,8 +193,39 @@ To manage the theme, we use the `next-themes` library, a robust and community-ac
 **The Provider:**
 The `ThemeProvider` from `next-themes` is now used in `src/app/[locale]/layout.tsx` to wrap the application and provide theme context.
 
+> **Senior Dev Tip: Avoiding Hydration Errors with a Custom Hook**
+>
+> When using a library like `next-themes`, the theme (`light` or `dark`) is only known on the client-side after the component has "mounted" in the browser. The server doesn't know the theme, so it renders a default state. This can cause a "hydration mismatch" error if the client renders something different from the server's initial HTML.
+>
+> To fix this, we need to ensure the theme-dependent UI (like the text "Dark Theme" or "Light Theme") only renders on the client. A common but repetitive pattern is to use `useState` and `useEffect` in every component that needs this behavior.
+>
+> A much cleaner, more reusable, and professional approach is to abstract this logic into a custom hook.
+>
+> **`src/hooks/useHasMounted.ts`**
+> ```typescript
+> import { useEffect, useState } from 'react';
+>
+> /**
+>  * A custom hook to check if a component has mounted.
+>  * This is useful for avoiding hydration mismatches in Next.js when rendering
+>  * client-side only UI.
+>  *
+>  * @returns {boolean} - True if the component has mounted, false otherwise.
+>  */
+> export function useHasMounted() {
+>   const [mounted, setMounted] = useState(false);
+>
+>   useEffect(() => {
+>     setMounted(true);
+>   }, []);
+>
+>   return mounted;
+> }
+> ```
+> Now, any component can use `const mounted = useHasMounted();` to safely render client-side-only content. This is a great example of the Don't Repeat Yourself (DRY) principle.
+
 **The `ThemeToggle` Component: `src/components/ThemeToggle.tsx`**
-The toggle component now uses the `useTheme` hook from `next-themes` to switch between light and dark modes.
+The toggle component now uses the `useTheme` hook from `next-themes` and our new `useHasMounted` hook to safely switch between light and dark modes.
 
 ```tsx
 // src/components/ThemeToggle.tsx
@@ -203,14 +234,29 @@ The toggle component now uses the `useTheme` hook from `next-themes` to switch b
 import { useTheme } from 'next-themes';
 import { useTranslation } from "react-i18next";
 import Button from './Button';
+import { useHasMounted } from '@/hooks/useHasMounted';
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation('common');
+  const mounted = useHasMounted();
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
+
+  // We wait for the component to be mounted before rendering the
+  // theme-specific UI to avoid hydration mismatch.
+  if (!mounted) {
+    return (
+      <Button
+        disabled
+        className="hover:bg-gray-200 dark:hover:bg-gray-700"
+      >
+        {t('theme')}
+      </Button>
+    );
+  }
 
   return (
     <Button

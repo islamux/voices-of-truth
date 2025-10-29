@@ -144,7 +144,7 @@ export async function generateStaticParams() {
 
 ### B. The `ThemeToggle` Component
 
-The toggle component uses the `useTheme` hook from `next-themes` to switch between light and dark modes.
+The toggle component uses the `useTheme` hook from `next-themes` to switch between light and dark modes. It also uses our custom `useHasMounted` hook to ensure the button's text (reflecting the current theme) is only rendered on the client, which is a best practice to prevent UI inconsistencies (hydration errors).
 
 ```tsx
 // src/components/ThemeToggle.tsx
@@ -153,14 +153,29 @@ The toggle component uses the `useTheme` hook from `next-themes` to switch betwe
 import { useTheme } from 'next-themes';
 import { useTranslation } from "react-i18next";
 import Button from './Button';
+import { useHasMounted } from '@/hooks/useHasMounted';
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation('common');
+  const mounted = useHasMounted();
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
+
+  // The useHasMounted hook ensures we don't render the theme-specific
+  // button text on the server, preventing a hydration mismatch.
+  if (!mounted) {
+    return (
+      <Button
+        disabled
+        className="hover:bg-gray-200 dark:hover:bg-gray-700"
+      >
+        {t('theme')}
+      </Button>
+    );
+  }
 
   return (
     <Button

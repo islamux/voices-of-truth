@@ -12,7 +12,7 @@ interface LocaleLayoutProps{
 export default async function LocaleLayout({children, params}:LocaleLayoutProps){
 
   const {locale} = await params; 
-  const {resources} = await getTranslation(locale);
+  const {resources} = await getTranslation(locale, ['common', 'header']);
 
   return (
     // Provide internationalization context to the application 

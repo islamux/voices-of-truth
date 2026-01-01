@@ -1,3 +1,4 @@
+- make the bio of each scholar is less , hide the more.
 - Analyze project
 - Suggestion of improvemnt
 - Make sure the try catch in localized lable 

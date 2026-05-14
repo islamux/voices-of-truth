@@ -19,7 +19,7 @@ export default async function RootLayout({
   const {locale} = await params;
   return (
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
-    <body>{children}</body>
+    <body className="bg-background dark:bg-gradient-to-br dark:from-gray-900 dark:to-black md:bg-[url('/assets/khwater.png')] md:bg-cover md:bg-center md:bg-fixed md:bg-no-repeat w-full min-h-screen">{children}</body>
     </html>
   );
 }

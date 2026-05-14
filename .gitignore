@@ -40,3 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .python-talqima-top.md
+
+# command center
+/cc-backups/
+command-center/node_modules/

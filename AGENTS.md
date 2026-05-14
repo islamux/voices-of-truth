@@ -150,6 +150,51 @@ Next.js 15 web application for browsing a directory of scholars and preachers, s
 | `src/lib/i18n.ts` | i18next configuration |
 | `tailwind.config.ts` | Tailwind theme configuration |
 
+## Command Center Integration
+
+This project uses a Command Center for task and milestone tracking. See `command-center/` for the full toolkit.
+
+### CLI Commands
+
+All commands must be run from the project root.
+
+| Command | Description |
+|---------|-------------|
+| `pnpm cc:status` | Project status overview |
+| `pnpm cc:list` | List and filter tasks |
+| `pnpm cc:start <id>` | Start a task |
+| `pnpm cc:complete <id>` | Mark task ready for review |
+| `pnpm cc:approve <id>` | Approve and mark done |
+| `pnpm cc:reject <id>` | Reject, send back |
+| `pnpm cc:reset <id>` | Reset task to todo |
+| `pnpm cc:block <id>` | Block a task |
+| `pnpm cc:unblock <id>` | Unblock a task |
+| `pnpm cc:agents` | List registered agents |
+| `pnpm cc:activity` | Recent activity feed |
+| `pnpm cc:mstone <id>` | Milestone overview |
+| `pnpm cc:task <id>` | Full task context |
+| `pnpm cc:activate <id>` | Move milestone to active |
+| `pnpm cc:complete-milestone <id>` | Complete a milestone |
+| `pnpm cc:register-agent <id> <name> <type>` | Register agent |
+| `pnpm cc:start-mcp` | Start MCP server (stdio) |
+| `pnpm cc:ui` | Launch TUI dashboard |
+
+### AI Rules
+
+All agents must follow the 5-phase protocol in `command-center/docs/ai-rules.md`:
+1. **Think & Plan** — Define assumptions, propose simplest solution
+2. **Analyze Impact** — Read relevant files, determine approach
+3. **Execute** — Write complete code, no placeholders
+4. **Verify** — Confirm success criteria, run build/lint
+5. **Sync** — Update tracker and docs
+
+### SOP
+
+1. Check tracker: `pnpm cc:status`
+2. Execute tasks through all 5 phases
+3. Log progress: `pnpm cc:complete <id> "summary"`
+4. Sync state: Update `project-tracker.json` if structure changed
+
 ## ESLint Configuration
 
 Project uses `eslint.config.mjs` extending `next/core-web-vitals` and `next/typescript`. Run `pnpm lint` to check code quality.

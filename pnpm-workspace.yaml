@@ -1,4 +1,3 @@
-ignoredBuiltDependencies:
-  - core-js
-  - sharp
-  - unrs-resolver
+packages:
+  - 'voices-of-truth-mcp'
+  - 'voices-of-truth-tui'

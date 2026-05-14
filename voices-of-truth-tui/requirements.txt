@@ -1,0 +1,4 @@
+textual>=0.95.0
+rich>=13.7.0
+watchdog>=4.0.0
+pydantic>=2.0.0

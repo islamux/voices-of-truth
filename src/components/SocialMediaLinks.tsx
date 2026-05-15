@@ -25,7 +25,7 @@ export default function SocialMediaLinks({socialMedia, name}:SocialMediaLinksPro
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-[rgb(var(--muted-text-rgb))] hover:text-[rgb(var(--foreground-rgb))] transition-colors mx-2"
+      className="text-muted-foreground hover:text-foreground transition-colors mx-2"
       aria-label={`${platform} link for ${name}`}
       key={link}
     >
@@ -39,7 +39,7 @@ export default function SocialMediaLinks({socialMedia, name}:SocialMediaLinksPro
 
 
   return(
-    <div className="mt-auto pt-3 border-t border-[rgb(var(--card-border-rgb))] w-full flex justify-center items-center">
+    <div className="mt-auto pt-3 border-t border-border w-full flex justify-center items-center">
     {socialMedia.map( (social)=>
       renderSocialIcon(social.platform, social.link, social.icon)
     )}

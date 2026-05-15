@@ -43,6 +43,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | File | Status | Description |
 |------|--------|-------------|
 | [best-practice-analysis-update](best-practice-analysis-update.md) | ✅ Current | Code review with SRP suggestions including `SocialIcon` extraction. |
+| [senior-project-analysis](senior-project-analysis.md) | ✅ Current | Senior-level architecture, risk, and migration-readiness analysis based on the current codebase. |
 | [17-component-refactoring-suggestions](17-component-refactoring-suggestions.md) | ⚡ Partial | Suggests extracting `useLocalizedScholar` and `SocialIcon`. Hook exists, icon suggestion pending. |
 | [domain-driven-architecture](domain-driven-architecture.md) | 💡 Speculative | DDD principles mapped to the project. Conceptual — no code changes made. |
 
@@ -56,4 +57,4 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 ---
 
-*Last updated: 2026-05-14*
+*Last updated: 2026-05-15*

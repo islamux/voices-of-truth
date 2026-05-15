@@ -9,7 +9,7 @@
   },
   "dashboard": {
     "current_focus": "Bug Fixes & Code Quality",
-    "active_milestone": "ms8",
+    "active_milestone": "ms1",
     "next_priority": "Supabase Data Migration",
     "blockers": "None",
     "health": "On Track"
@@ -24,7 +24,7 @@
         "phase": "1",
         "planned_start": "2026-05-14",
         "planned_end": "2026-05-18",
-        "actual_start": null,
+        "actual_start": "2026-05-15",
         "actual_end": null,
         "drift_days": 0,
         "is_key_milestone": false,
@@ -32,54 +32,87 @@
         "subtasks": [
           {
             "id": "ms1_001",
-            "label": "Fix light mode not working for all pages (only Header, Footer)",
-            "status": "todo",
-            "assignee": null,
+            "label": "Unify theme tokens and remove undefined CSS variable usage",
+            "status": "review",
+            "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
             "completed_at": null,
             "completed_by": null,
             "priority": "P1",
-            "notes": null,
+            "notes": "Replaced undefined raw RGB theme variables in ScholarCard, ScholarInfo, and SocialMediaLinks with Tailwind theme tokens. Verified no remaining references under src. pnpm lint and pnpm build passed.",
             "prompt": null,
-            "context_files": [],
-            "reference_docs": [],
-            "acceptance_criteria": [
-              "Light mode applies correctly to all components",
-              "not just Header and Footer"
+            "context_files": [
+              "src/app/globals.css",
+              "tailwind.config.ts",
+              "src/components/ScholarCard.tsx",
+              "src/components/SocialMediaLinks.tsx"
             ],
-            "constraints": [],
+            "reference_docs": [
+              "docs/senior-project-analysis.md",
+              "docs/theme-analysis.md",
+              "docs/03-styling-guide.md"
+            ],
+            "acceptance_criteria": [
+              "Undefined raw RGB theme variables are removed from component class names or formally defined in the theme layer",
+              "Scholar cards and social links use the same Tailwind/CSS-variable theme system as the rest of the app",
+              "Light and dark mode render card backgrounds, borders, text, and hover states consistently"
+            ],
+            "constraints": [
+              "Do not change scholar data or page behavior",
+              "Do not edit unrelated components",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
             "agent_target": null,
-            "execution_mode": "human",
+            "execution_mode": "agent",
             "depends_on": [],
             "last_run_id": null,
             "builder_prompt": null
           },
           {
             "id": "ms1_002",
-            "label": "Refactor FilterBar to use default export",
+            "label": "Verify ThemeProvider and full-page theme coverage",
             "status": "todo",
             "assignee": null,
             "blocked_by": null,
             "blocked_reason": null,
             "completed_at": null,
             "completed_by": null,
-            "priority": "P2",
+            "priority": "P1",
             "notes": null,
             "prompt": null,
-            "context_files": [],
-            "reference_docs": [],
-            "acceptance_criteria": [],
-            "constraints": [],
+            "context_files": [
+              "src/app/[locale]/layout.tsx",
+              "src/app/layout.tsx",
+              "src/components/PageLayout.tsx",
+              "src/components/ThemeToggle.tsx"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md",
+              "docs/fix-hydration-error.md",
+              "docs/theme-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "ThemeProvider wraps every visible page surface that depends on dark mode",
+              "ThemeToggle still avoids hydration mismatch with useHasMounted",
+              "Header, main content, footer, cards, and filters all respond to light and dark mode"
+            ],
+            "constraints": [
+              "Do not introduce a second theme provider",
+              "Do not change translation behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
             "agent_target": null,
-            "execution_mode": "human",
-            "depends_on": [],
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
             "last_run_id": null,
             "builder_prompt": null
           },
           {
             "id": "ms1_003",
-            "label": "Fix ThemeProvider for full page coverage",
+            "label": "Recheck root and locale layout ownership for lang and dir",
             "status": "todo",
             "assignee": null,
             "blocked_by": null,
@@ -89,19 +122,38 @@
             "priority": "P1",
             "notes": null,
             "prompt": null,
-            "context_files": [],
-            "reference_docs": [],
-            "acceptance_criteria": [],
-            "constraints": [],
+            "context_files": [
+              "src/app/layout.tsx",
+              "src/app/[locale]/layout.tsx",
+              "src/lib/i18n.ts",
+              "src/middleware.ts"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md",
+              "docs/04-feature-translation.md",
+              "docs/12-layout-system.md"
+            ],
+            "acceptance_criteria": [
+              "Locale ownership between root layout and locale layout is verified against current Next.js behavior",
+              "English pages render with LTR direction and Arabic pages render with RTL direction",
+              "No route-level locale regression is introduced for /en and /ar"
+            ],
+            "constraints": [
+              "Keep the existing /[locale] route contract",
+              "Do not add new locales",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
             "agent_target": null,
-            "execution_mode": "human",
-            "depends_on": [],
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_002"
+            ],
             "last_run_id": null,
             "builder_prompt": null
           },
           {
             "id": "ms1_004",
-            "label": "Ensure try-catch in localized labels",
+            "label": "Make filter controls reflect current URL state",
             "status": "todo",
             "assignee": null,
             "blocked_by": null,
@@ -111,19 +163,37 @@
             "priority": "P1",
             "notes": null,
             "prompt": null,
-            "context_files": [],
-            "reference_docs": [],
-            "acceptance_criteria": [],
-            "constraints": [],
+            "context_files": [
+              "src/app/[locale]/HomePageClient.tsx",
+              "src/context/FilterContext.tsx",
+              "src/components/filters/SearchInput.tsx",
+              "src/components/filters/FilterDropdown.tsx"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md",
+              "docs/prop-drilling-deep-dive.md"
+            ],
+            "acceptance_criteria": [
+              "Opening a filtered URL shows matching selected filter values in the controls",
+              "Search input value reflects the query search param",
+              "Clearing a filter removes its query param without desynchronizing UI and results"
+            ],
+            "constraints": [
+              "Keep URL query params as the source of truth",
+              "Do not move filtering back to the client",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
             "agent_target": null,
-            "execution_mode": "human",
-            "depends_on": [],
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
             "last_run_id": null,
             "builder_prompt": null
           },
           {
             "id": "ms1_005",
-            "label": "Simplify boilerplate code across components",
+            "label": "Replace noisy search navigation with safer URL updates",
             "status": "todo",
             "assignee": null,
             "blocked_by": null,
@@ -133,19 +203,74 @@
             "priority": "P2",
             "notes": null,
             "prompt": null,
-            "context_files": [],
-            "reference_docs": [],
-            "acceptance_criteria": [],
-            "constraints": [],
+            "context_files": [
+              "src/app/[locale]/HomePageClient.tsx",
+              "src/components/filters/SearchInput.tsx"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "Search changes do not create excessive browser history entries",
+              "Search still updates the URL and server-filtered results",
+              "Country, language, and category filters keep their existing shareable URL behavior"
+            ],
+            "constraints": [
+              "Prefer router.replace for filter updates unless a deliberate history entry is needed",
+              "Do not introduce a new state management library",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
             "agent_target": null,
-            "execution_mode": "human",
-            "depends_on": [],
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
             "last_run_id": null,
             "builder_prompt": null
           },
           {
             "id": "ms1_006",
-            "label": "Unify styling (CSS, theme, single source of truth)",
+            "label": "Add guardrails for invalid filter query params",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/page.tsx",
+              "src/types/index.ts",
+              "src/data/countries.ts",
+              "src/data/specializations.ts"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md",
+              "docs/data-organization.md"
+            ],
+            "acceptance_criteria": [
+              "Invalid country and category query values do not accidentally produce confusing empty results",
+              "Filter parsing behavior is explicit and easy to preserve during Supabase migration",
+              "Valid query values keep the same filtered output as before"
+            ],
+            "constraints": [
+              "Do not change public query param names",
+              "Do not change scholar data shape",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_005"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_007",
+            "label": "Clean tutorial comments and obvious naming or formatting issues",
             "status": "todo",
             "assignee": null,
             "blocked_by": null,
@@ -155,13 +280,1444 @@
             "priority": "P2",
             "notes": null,
             "prompt": null,
-            "context_files": [],
-            "reference_docs": [],
-            "acceptance_criteria": [],
-            "constraints": [],
+            "context_files": [
+              "src/components/FilterBar.tsx",
+              "src/context/FilterContext.tsx",
+              "src/app/[locale]/HomePageClient.tsx",
+              "src/components/LanguageSwitcher.tsx"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "Obvious tutorial-style comments are removed where they only narrate code",
+              "Naming typos visible in imports or component references are corrected when low risk",
+              "Formatting is made consistent only in files already touched by this milestone"
+            ],
+            "constraints": [
+              "Do not run a repo-wide formatter",
+              "Do not perform unrelated refactors",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
             "agent_target": null,
-            "execution_mode": "human",
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_006"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_008",
+            "label": "Verify build and lint, then sync Command Center state",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "package.json",
+              "project-tracker.json",
+              "command-center/docs/ai-rules.md"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "Build and lint commands are run when the package manager is available",
+              "Any verification blocker is recorded in the tracker instead of being hidden",
+              "All completed ms1 subtasks have accurate review or done status in project-tracker.json"
+            ],
+            "constraints": [
+              "Do not modify application behavior in this verification task",
+              "Do not mark a subtask done unless it has passed the agreed review flow",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_049"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_009",
+            "label": "Fix root layout locale params (lang/dir undefined)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "src/app/layout.tsx"
+            ],
+            "reference_docs": [
+              "docs/12-layout-system.md",
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "Root layout does not attempt to read locale from its own params",
+              "html lang and dir attributes are set correctly for each locale route",
+              "No hydration mismatch or console errors related to lang/dir"
+            ],
+            "constraints": [
+              "Do not change the [locale] route structure",
+              "Do not add new locales",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_010",
+            "label": "Fix SearchInput translation key mismatch",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": "t('searchByName') used but locale files define 'searchPlaceholder'",
+            "prompt": null,
+            "context_files": [
+              "src/components/filters/SearchInput.tsx",
+              "public/locales/en/common.json",
+              "public/locales/ar/common.json"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "SearchInput placeholder displays translated 'searchPlaceholder' text",
+              "Both English and Arabic locales render correctly"
+            ],
+            "constraints": [
+              "Do not change the search behavior or URL parameter names",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_005"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_011",
+            "label": "Fix Arabic text corrupted by Latin chars in comparative-religion.ts",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": "Line 100: البaطل → الباطل; Line 116: bَيْنَنَا → بَيْنَنَا",
+            "prompt": null,
+            "context_files": [
+              "src/data/scholars/comparative-religion.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "No Latin characters embedded in Arabic words in comparative-religion.ts",
+              "All Arabic text renders correctly in the UI"
+            ],
+            "constraints": [
+              "Do not change scholar data structure or other data files",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_012",
+            "label": "Add 9 missing social media icons to SocialMediaLinks",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": "Missing: FaTiktok, FaGlobe, SiPatreon, FaPaypal, FaApple, FaSoundcloud, FaAndroid, FaLinkedin, FaWhatsapp",
+            "prompt": null,
+            "context_files": [
+              "src/components/SocialMediaLinks.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md"
+            ],
+            "acceptance_criteria": [
+              "All 9 missing icon types render the correct icon instead of generic FaLink",
+              "No regressions for existing icons (Twitter, YouTube, Facebook, Instagram, Telegram)"
+            ],
+            "constraints": [
+              "Import only the icons actually used in the data files",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_013",
+            "label": "Fix ScholarAvatar onError fallback path (relative → absolute)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": "Relative path '../../public/avatars/default-avatar.png' resolves relative to page URL; should be '/avatars/default-avatar.png'",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarAvatar.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Avatar onError fallback loads correctly on all pages including nested routes",
+              "No 404 errors for the default avatar in production"
+            ],
+            "constraints": [
+              "Do not change the avatar styling or layout",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_014",
+            "label": "Localize category labels in filter (use s.ar when locale is ar)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Hardcoded s.en in page.tsx; Arabic users see English category names",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md",
+              "docs/data-organization.md"
+            ],
+            "acceptance_criteria": [
+              "Category filter shows Arabic names when locale is ar",
+              "Category filter shows English names when locale is en"
+            ],
+            "constraints": [
+              "Use the locale param already available in page.tsx",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_015",
+            "label": "Localize country names in filter (use c.ar when locale is ar)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Hardcoded c.en in page.tsx; Arabic users see English country names",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md",
+              "docs/data-organization.md"
+            ],
+            "acceptance_criteria": [
+              "Country filter shows Arabic names when locale is ar",
+              "Country filter shows English names when locale is en"
+            ],
+            "constraints": [
+              "Use the locale param already available in page.tsx",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_016",
+            "label": "Fix focus:right-2 → focus:ring-2 in SearchInput",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "focus:right-2 is a positioning utility, not a focus ring; no visible focus indicator on search input",
+            "prompt": null,
+            "context_files": [
+              "src/components/filters/SearchInput.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md"
+            ],
+            "acceptance_criteria": [
+              "Search input has a visible focus ring indicator",
+              "Focus ring follows the app's theme token system"
+            ],
+            "constraints": [
+              "Do not change the input's layout or position",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_010"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_017",
+            "label": "Fix txs → text-xs in ScholarInfo",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "'txs' is not a valid Tailwind class; likely typo for 'text-xs'",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarInfo.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md"
+            ],
+            "acceptance_criteria": [
+              "txs is replaced with a valid Tailwind typography class",
+              "Text sizing appears consistent with adjacent components"
+            ],
+            "constraints": [
+              "Do not change the component layout or behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_018",
+            "label": "Fix LanguageSwicher import typo in Header",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "'LanguageSwicher' is misspelled (missing 't'); should be 'LanguageSwitcher'",
+            "prompt": null,
+            "context_files": [
+              "src/components/Header.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Import alias is corrected to LanguageSwitcher",
+              "No functional change to the Header component"
+            ],
+            "constraints": [
+              "Do not change the default export or component behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_019",
+            "label": "Add empty state component for zero filter results",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "ScholarList renders nothing when scholars is empty; translation key 'noScholarsFound' exists in locale files but is unused",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarList.tsx",
+              "public/locales/en/scholar.json",
+              "public/locales/ar/scholar.json"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "A user-friendly empty state message is displayed when no scholars match filters",
+              "Message uses the existing 'noScholarsFound' translation key",
+              "Empty state respects current locale and theme"
+            ],
+            "constraints": [
+              "Do not change the scholar card rendering logic",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_020",
+            "label": "Move IconContext.Provider outside per-icon loop in SocialMediaLinks",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Wrapping each rendered icon in a new IconContext.Provider creates unnecessary React tree overhead",
+            "prompt": null,
+            "context_files": [
+              "src/components/SocialMediaLinks.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "IconContext.Provider wraps the entire icon container once",
+              "All icons still render at the correct size with consistent styling"
+            ],
+            "constraints": [
+              "Do not change the layout or appearance of social media links",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_012"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_021",
+            "label": "Remove unused specializations prop from HomePageClient",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "specializations prop is passed from page.tsx but never destructured or used in HomePageClient",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/HomePageClient.tsx",
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "specializations prop is removed from HomePageClientProps interface",
+              "specializations prop is removed from page.tsx where it's passed",
+              "No TypeScript or build errors after removal"
+            ],
+            "constraints": [
+              "Do not change filter or scholar rendering behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_022",
+            "label": "Fix double semicolon in scholars.ts",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Line 26: '];;' has a trailing unnecessary semicolon",
+            "prompt": null,
+            "context_files": [
+              "src/data/scholars.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Double semicolon is reduced to single semicolon",
+              "No change to the exported data"
+            ],
+            "constraints": [
+              "Do not change any other content in scholars.ts",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_023",
+            "label": "Move null-check before hook access in ScholarCard",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "useLocalizedScholar(scholar) is called before if (!scholar.name) guard — hook accesses scholar.name[currentLang] before null check",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarCard.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Null/undefined check on scholar.name runs before useLocalizedScholar hook",
+              "No runtime errors for scholars with missing names"
+            ],
+            "constraints": [
+              "Do not change the card layout or styling",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_024",
+            "label": "Fix next-env.d.ts permissions (777 → 644)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "File has world-writable 777 permissions; should be 644",
+            "prompt": null,
+            "context_files": [
+              "next-env.d.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "File permissions are changed to 644 (rw-r--r--)",
+              "No change to file content"
+            ],
+            "constraints": [
+              "Do not modify any other files",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
             "depends_on": [],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_025",
+            "label": "FilterDropdown: use value-only key instead of index",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "key={`${option.value}-${index}`} — value alone is sufficient and cleaner",
+            "prompt": null,
+            "context_files": [
+              "src/components/filters/FilterDropdown.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Option keys use only option.value instead of value+index",
+              "No React key warnings in the console"
+            ],
+            "constraints": [
+              "Do not change the dropdown behavior or appearance",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_026",
+            "label": "Add alt text for default avatar fallback",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "onError changes src to default avatar but alt still references original scholar name",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarAvatar.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Default avatar fallback has meaningful alt text",
+              "No accessibility violation for avatar images"
+            ],
+            "constraints": [
+              "Do not change the avatar styling or layout",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_013"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_027",
+            "label": "Replace hardcoded gray colors with CSS variable theme tokens in FilterBar",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "FilterBar uses bg-gray-100 dark:bg-gray-800 instead of bg-card/bg-background theme tokens",
+            "prompt": null,
+            "context_files": [
+              "src/components/FilterBar.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md",
+              "docs/theme-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "FilterBar uses CSS variable-based theme tokens (bg-card, bg-background) instead of hardcoded gray",
+              "Light and dark mode render consistently with the rest of the app"
+            ],
+            "constraints": [
+              "Do not change the filter layout or behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_028",
+            "label": "Document server-compatible components (ScholarInfo, FilterDropdown)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "These components have no 'use client' directive, no hooks, no event handlers but are used within client components",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarInfo.tsx",
+              "src/components/filters/FilterDropdown.tsx"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "A brief note is added to project-tracker or relevant doc about server-compatible components",
+              "No code changes to the components themselves"
+            ],
+            "constraints": [
+              "Do not add 'use client' directive to these components",
+              "Do not change component behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_007"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_029",
+            "label": "Wrap useSearchParams in Suspense boundary in HomePageClient",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": "Next.js 15 requires useSearchParams() to be wrapped in <Suspense> or build will fail",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/HomePageClient.tsx",
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [
+              "docs/senior-project-analysis.md"
+            ],
+            "acceptance_criteria": [
+              "useSearchParams is wrapped in a Suspense boundary",
+              "Build completes without errors"
+            ],
+            "constraints": [
+              "Do not change search/filter behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_004"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_030",
+            "label": "Add missing i18n keys for 3 specializations (islamicHistory, islamicJurisprudence, islamicThought)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Specializations with ids 6,7,8 have no translation keys in scholar.json locale files",
+            "prompt": null,
+            "context_files": [
+              "public/locales/en/scholar.json",
+              "public/locales/ar/scholar.json",
+              "src/data/specializations.ts"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "scholar.json locale files include keys for islamicHistory, islamicJurisprudence, islamicThought",
+              "Category filter displays translated names for all 11 specializations"
+            ],
+            "constraints": [
+              "Do not change specialization IDs or data structure",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_014"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_031",
+            "label": "Translate hardcoded languages: string in ScholarInfo",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "'languages:' is hardcoded without t(); Arabic users see English label",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarInfo.tsx",
+              "public/locales/en/scholar.json",
+              "public/locales/ar/scholar.json"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "languages label uses t() with a translation key",
+              "Arabic users see translated label"
+            ],
+            "constraints": [
+              "Do not change the component layout",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_032",
+            "label": "Replace RTL-incompatible space-x-* with gap-* in Header, LanguageSwitcher, SocialMediaLinks",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "space-x-* adds margin to the right (logical left) even in RTL; gap-* is direction-agnostic",
+            "prompt": null,
+            "context_files": [
+              "src/components/Header.tsx",
+              "src/components/LanguageSwitcher.tsx",
+              "src/components/SocialMediaLinks.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md",
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "All space-x-* and mx-* used for flex spacing are replaced with gap-*",
+              "RTL mode (Arabic) shows correct visual spacing",
+              "LTR mode (English) shows identical spacing to before"
+            ],
+            "constraints": [
+              "Do not change component layout or breakpoint behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_033",
+            "label": "Localize static metadata with generateMetadata using appTitle key",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Root layout hardcodes 'Voices of Truth'; appTitle key exists in locale files but unused",
+            "prompt": null,
+            "context_files": [
+              "src/app/layout.tsx",
+              "src/app/[locale]/layout.tsx",
+              "public/locales/en/common.json",
+              "public/locales/ar/common.json"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "Page title shows Arabic translation when viewing in Arabic locale",
+              "Page title shows English translation when viewing in English locale"
+            ],
+            "constraints": [
+              "Do not break the layout structure or theme system",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_034",
+            "label": "Extend search to include scholar bios for better discoverability",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Search query only checks name.en/ar; bios are not searched",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Searching for words found only in a scholar's bio returns that scholar",
+              "Search still matches names as before"
+            ],
+            "constraints": [
+              "Do not change the search UI or URL parameter",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_006"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_035",
+            "label": "Restructure ThemeProvider nesting outside I18nProviderClient to prevent remount",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "ThemeProvider inside I18nProviderClient means i18n re-renders can remount ThemeProvider, losing theme state",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/layout.tsx"
+            ],
+            "reference_docs": [
+              "docs/theme-analysis.md",
+              "docs/12-layout-system.md"
+            ],
+            "acceptance_criteria": [
+              "ThemeProvider wraps outside I18nProviderClient or is properly isolated",
+              "Theme state persists across locale switches",
+              "No hydration regressions"
+            ],
+            "constraints": [
+              "Do not remove either provider",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_002"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_036",
+            "label": "Fix unreliable next/image onError and unoptimized prop in ScholarAvatar",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "next/image onError is unreliable; unoptimized defeats image optimization entirely",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarAvatar.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Avatar fallback works reliably when image fails to load",
+              "Image optimization is not unnecessarily disabled"
+            ],
+            "constraints": [
+              "Do not change the avatar appearance or layout",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_013"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_037",
+            "label": "Tighten loose index signatures in Country and Specialization types",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "[key: string]: string | number allows arbitrary keys — any typo compiles fine, defeating type safety",
+            "prompt": null,
+            "context_files": [
+              "src/types/index.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Country and Specialization interfaces no longer have loose index signatures",
+              "TypeScript compiles without errors"
+            ],
+            "constraints": [
+              "Do not change the runtime data shape of Country or Specialization",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_038",
+            "label": "Remove unnecessary as Scholar[] type assertion in page.tsx",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "filteredScholars is already Scholar[] from filter on Scholar[]; the cast masks real typing issues",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "as Scholar[] cast is removed",
+              "TypeScript compiles without errors"
+            ],
+            "constraints": [
+              "Do not change scholar filtering logic",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_006"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_039",
+            "label": "Fix fragile relative import path in i18n.ts",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "'../../' relative path from src/lib/ depends on build output structure; should use path alias",
+            "prompt": null,
+            "context_files": [
+              "src/lib/i18n.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Import path uses @/ alias or absolute path instead of ../../ relative",
+              "i18n still loads locale files correctly"
+            ],
+            "constraints": [
+              "Do not change i18n logic or translation behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_040",
+            "label": "Remove commented-out code in ScholarInfo",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "Old implementation left in comments",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarInfo.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Commented-out old implementation is removed",
+              "Component still works correctly"
+            ],
+            "constraints": [
+              "Do not change active code logic",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_007"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_041",
+            "label": "Remove commented locale param destructuring in page.tsx",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "// const {locale} = await params; is left as dead commented code",
+            "prompt": null,
+            "context_files": [
+              "src/app/[locale]/page.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Commented-out locale param line is removed",
+              "TypeScript compiles without errors"
+            ],
+            "constraints": [
+              "Do not change active code logic",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_007"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_042",
+            "label": "Wire unused appTitle translation key into the page title",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "appTitle key defined in both common.json locale files but never referenced by any component",
+            "prompt": null,
+            "context_files": [
+              "public/locales/en/common.json",
+              "public/locales/ar/common.json"
+            ],
+            "reference_docs": [
+              "docs/04-feature-translation.md"
+            ],
+            "acceptance_criteria": [
+              "appTitle key is referenced by at least one component or metadata generator",
+              "Page title reflects locale"
+            ],
+            "constraints": [
+              "Do not change the locale file structure",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_033"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_043",
+            "label": "Fix fragile locale replace logic in LanguageSwitcher",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "pathname.replace replaces only first occurrence; if locale string appears elsewhere in path it would be corrupted",
+            "prompt": null,
+            "context_files": [
+              "src/components/LanguageSwitcher.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Locale replacement is robust and only affects the first path segment",
+              "No regressions in language switching"
+            ],
+            "constraints": [
+              "Do not change the component appearance or behavior",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_032"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_044",
+            "label": "Add remotePatterns config in next.config.ts for future image support",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "No images.domains or remotePatterns configured; remote images won't work with next/image",
+            "prompt": null,
+            "context_files": [
+              "next.config.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "remotePatterns is configured in next.config.ts",
+              "Build completes without errors"
+            ],
+            "constraints": [
+              "Use placeholder config that can be extended later",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_045",
+            "label": "Gate console.error behind NODE_ENV check in ScholarCard",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "console.error runs in production exposing scholar data to browser console",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarCard.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "console.error only runs in development mode",
+              "No functional change to error handling"
+            ],
+            "constraints": [
+              "Do not remove error logging entirely",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_023"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_046",
+            "label": "Add mobile background image variant or remove md-only restriction",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "Background image only shows on md+ screens; mobile users see plain background",
+            "prompt": null,
+            "context_files": [
+              "src/app/layout.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md"
+            ],
+            "acceptance_criteria": [
+              "Mobile users see a background (image or appropriate solid color)",
+              "Desktop appearance is unchanged"
+            ],
+            "constraints": [
+              "Do not change the page layout structure",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_047",
+            "label": "Fix inconsistent responsive text sizing in ScholarInfo",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "text-xs sm:text-xl makes country text jump from 12px to 20px — bigger than scholar name",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarInfo.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Country text size is visually consistent with scholar name and other info",
+              "Responsive behavior is smooth without jarring size jumps"
+            ],
+            "constraints": [
+              "Do not change the component layout",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_017"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_048",
+            "label": "Add visible ring/border class to ScholarAvatar",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "border-gray-300 set but no border or ring property makes it visible",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarAvatar.tsx"
+            ],
+            "reference_docs": [
+              "docs/03-styling-guide.md"
+            ],
+            "acceptance_criteria": [
+              "Avatar has a visible ring/border matching the app theme",
+              "Light and dark modes show appropriate border colors"
+            ],
+            "constraints": [
+              "Do not change the avatar size or shape",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_036"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms1_049",
+            "label": "Standardize margin spacing in ScholarInfo children",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P3",
+            "notes": "Inconsistent mb-1, mb-2, mb-3 spacing on name, country, bio, languages lines",
+            "prompt": null,
+            "context_files": [
+              "src/components/ScholarInfo.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [
+              "Vertical spacing between ScholarInfo children is consistent",
+              "No visual regression"
+            ],
+            "constraints": [
+              "Do not change the component layout significantly",
+              "After execution, move this task to review and update project-tracker.json immediately"
+            ],
+            "agent_target": null,
+            "execution_mode": "agent",
+            "depends_on": [
+              "ms1_047"
+            ],
             "last_run_id": null,
             "builder_prompt": null
           }
@@ -2302,6 +3858,16 @@
       "action": "Moved milestone \"Supabase Data Migration\" from backlog to active",
       "agent": "orchestrator",
       "date": "2026-05-14"
+    },
+    {
+      "date": "2026-05-15",
+      "action": "Refined ms1 into tracker-only Command Center execution subtasks from senior analysis",
+      "agent": "orchestrator"
+    },
+    {
+      "date": "2026-05-15",
+      "action": "Moved ms1_001 to review after theme token cleanup passed pnpm lint and pnpm build",
+      "agent": "orchestrator"
     }
   ],
   "_schema_version": 1

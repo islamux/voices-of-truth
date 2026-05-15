@@ -25,11 +25,11 @@ export default function ScholarCard({ scholar, countryName }: ScholarCardProps) 
   // Main card component rendering.
   return (
     <motion.div // Framer Motion div for animations.
-    className="border rounded-lg shadow-lg p-5 bg-[rgb(var(--card-bg-rgb))] border-[rgb(var(--card-border-rgb))] flex flex-col items-center text-center"
+    className="border border-border rounded-lg shadow-lg p-5 bg-card text-card-foreground flex flex-col items-center text-center"
     initial={{ opacity: 0, y: 20 }} // Initial animation state.
     animate={{ opacity: 1, y: 0 }} // Animate to this state.
     transition={{ duration: 0.4, ease: "easeOut" }} // Animation timing and easing.
-    whileHover={{ scale: 1.03, boxShadow: "0px 15px 25px rgba(var(--shadow-color-rgba))" }} // Hover animation.
+    whileHover={{ scale: 1.03 }} // Hover animation.
   >
     <ScholarAvatar avatarUrl={scholar.avatarUrl} name={name} />
     <ScholarInfo name={name} country={countryName} bio={bio} languages={languages} />
@@ -37,4 +37,3 @@ export default function ScholarCard({ scholar, countryName }: ScholarCardProps) 
     </motion.div>
   );
 }
-

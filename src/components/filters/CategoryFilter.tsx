@@ -11,16 +11,16 @@ import { useFilters } from "@/context/FilterContext";
 export default function CategoryFilter(){
 
 
-
   const { t } = useTranslation('scholar');
 
-  const { uniqueCategories, onCategoryChange } = useFilters();
+  const { uniqueCategories, onCategoryChange, currentFilters } = useFilters();
 
   return (
     <FilterDropdown 
     label={t('filterByCategory')}
     filterKey="category"
     options={uniqueCategories}
+    value={currentFilters.category} // Use the current value from URL
     onChange={onCategoryChange}
     />
   );

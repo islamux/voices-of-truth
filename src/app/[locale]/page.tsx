@@ -2,7 +2,12 @@ import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
-import { Scholar, Country, Specialization } from '@/types';
+import { Country, Specialization } from '@/types';
+import { Suspense } from 'react';
+
+// Precompute valid filter values for guardrails
+const validCountryIds = new Set(countries.map(c => c.id));
+const validCategoryIds = new Set(specializations.map(s => s.id));
 
 // Define the props for the page, including searchParams.
 interface HomePageProps {
@@ -10,50 +15,55 @@ interface HomePageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-/**
-  * This is the main page. It's now a server component that handles
-  * data fetching and filtering.
-  * */
-  export default async function HomePage({ searchParams }: HomePageProps) {
+  export default async function HomePage({ params, searchParams }: HomePageProps) {
 
-    // const {locale} = await params;
+    const {locale} = await params;
     const { query, country, lang, category } = await searchParams;
 
     const searchQuery = (query || '').toString().toLowerCase();
+    const countryId = country ? parseInt(country as string, 10) : NaN;
+    const categoryId = category ? parseInt(category as string, 10) : NaN;
+    const langValue = (lang || '').toString();
 
+    // Validate filter values against known data
+    const isValidCountry = !isNaN(countryId) && validCountryIds.has(countryId);
+    const isValidCategory = !isNaN(categoryId) && validCategoryIds.has(categoryId);
+    const isValidLang = langValue && scholars.some(s => s.language.includes(langValue));
 
-
-    // 2. Filter the scholars on the server
+    // Filter the scholars on the server
     const filteredScholars = scholars.filter(scholar => {
       const matchSearch = searchQuery
         ? scholar.name.en.toLowerCase().includes(searchQuery) ||
-        scholar.name.ar.toLowerCase().includes(searchQuery)
+        scholar.name.ar.toLowerCase().includes(searchQuery) ||
+        (scholar.bio?.en || '').toLowerCase().includes(searchQuery) ||
+        (scholar.bio?.ar || '').toLowerCase().includes(searchQuery)
         : true;
 
-      const matchCountry = country ? scholar.countryId === parseInt(country as string, 10) : true;
+      const matchCountry = isValidCountry ? scholar.countryId === countryId : true;
 
-      const matchesLang = lang ? scholar.language.includes(lang as string) : true;
+      const matchesLang = isValidLang ? scholar.language.includes(langValue) : true;
 
-      const matchesCategory = category ? scholar.categoryId === parseInt(category as string, 10) : true;
+      const matchesCategory = isValidCategory ? scholar.categoryId === categoryId : true;
 
       return matchSearch && matchCountry && matchesLang && matchesCategory;
     });
 
-    // 3. Prepare data for the client
+    // Prepare data for the client
     const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
-    const uniqueCountries = countries.map((c: Country) => ({ value: c.id.toString(), label: c.en }));
-    const uniqueCategories = specializations.map((s: Specialization) => ({ value: s.id.toString(), label: s.en }));
+    const uniqueCountries = countries.map((c: Country) => ({ value: c.id.toString(), label: locale === 'ar' ? c.ar : c.en }));
+    const uniqueCategories = specializations.map((s: Specialization) => ({ value: s.id.toString(), label: locale === 'ar' ? s.ar : s.en }));
 
-    // 4.  Pass the filterd data to the client component.
+    // Pass the filterd data to the client component.
     return (
-      <HomePageClient
-      scholars={filteredScholars as Scholar[]}
-      countries={countries}
-      specializations={specializations}
-      uniqueLanguages={uniqueLanguages}
-      uniqueCountries={uniqueCountries}
-      uniqueCategories={uniqueCategories}
-      />
+      <Suspense fallback={<div className="text-center py-12"><p className="text-muted-foreground">Loading...</p></div>}>
+        <HomePageClient
+        scholars={filteredScholars}
+        countries={countries}
+        uniqueLanguages={uniqueLanguages}
+        uniqueCountries={uniqueCountries}
+        uniqueCategories={uniqueCategories}
+        />
+      </Suspense>
     );
   }
 

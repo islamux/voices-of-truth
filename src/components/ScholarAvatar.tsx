@@ -1,25 +1,24 @@
+'use client';
+
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 
 interface ScholarAvatarProps{
   avatarUrl: string;
   name:string;
 }
 
-
 export default function ScholarAvatar({avatarUrl, name}:ScholarAvatarProps){
+  const [imgError, setImgError] = useState(false);
 
   return (
     <Image 
-    src={avatarUrl || '../../public/avatars/default-avatar.png'}
-    alt={`${name}'s avatar`}
+    src={imgError ? '/avatars/default-avatar.png' : (avatarUrl || '/avatars/default-avatar.png')}
+    alt={imgError ? 'Default avatar' : `${name}'s avatar`}
     width={112}
     height={112}
-    className="rounded-full mx-auto object-cover border-gray-300 dark:bg-slate-600 shadow-md mb-4"
-    onError={(e)=>{
-      e.currentTarget.src = '../../public/avatars/default-avatar.png'
-    }}
-    unoptimized
+     className="rounded-full mx-auto object-cover border-2 border-border dark:bg-muted shadow-md mb-4"
+    onError={() => setImgError(true)}
     />
   );
 } 

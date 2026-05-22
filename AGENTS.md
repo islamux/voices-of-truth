@@ -195,6 +195,16 @@ All agents must follow the 5-phase protocol in `command-center/docs/ai-rules.md`
 3. Log progress: `pnpm cc:complete <id> "summary"`
 4. Sync state: Update `project-tracker.json` if structure changed
 
+## GitHub Flow (`github_flow`)
+
+Alias for pushing changes and merging via PR. Run from the project root.
+
+| Step | Command(s) |
+|------|-----------|
+| 1. Add, commit, push | `git add -A && git commit -m "<message>" && git push` |
+| 2. Create and merge PR (keep branch) | `gh pr create --fill && gh pr merge --squash --auto && gh pr merge --squash` |
+| 3. Update main locally | `git checkout main && git pull` |
+
 ## ESLint Configuration
 
 Project uses `eslint.config.mjs` extending `next/core-web-vitals` and `next/typescript`. Run `pnpm lint` to check code quality.

@@ -11,7 +11,11 @@ This file provides guidelines for AI agents working on the Voices of Truth proje
 
 ## Project Overview
 
-Next.js 15 web application for browsing a directory of scholars and preachers, supporting Arabic/English i18n, dark/light themes, and server-side filtering.
+Next.js 16 web application for browsing a directory of scholars and preachers, supporting Arabic/English i18n, dark/light themes, and server-side filtering.
+
+## Package Manager
+
+**Use `pnpm` only. Never use `npm` or `yarn`.**
 
 ## Package Manager
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/lib/theme';
 import { useTranslation } from "react-i18next";
 import Button from './Button';
 import { useHasMounted } from '@/hooks/useHasMounted';

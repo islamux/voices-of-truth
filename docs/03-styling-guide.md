@@ -1,6 +1,6 @@
 # Styling Guide: Tailwind CSS and Custom Theming
 
-> **Status:** ✅ Current — Accurately describes current styling architecture.
+> **Status:** ⚡ Needs Update — Sections 3 (Theming Strategy) references `next-themes` which was replaced with custom `ThemeProvider` (see ADR-009 in adr.md).
 
 This guide provides a comprehensive overview of the styling architecture for this Next.js project. It covers the integration of Tailwind CSS and our custom, hook-based strategy for implementing light and dark themes.
 
@@ -177,7 +177,7 @@ The `ThemeProvider` from `next-themes` is used in `src/app/[locale]/layout.tsx` 
 // src/app/[locale]/layout.tsx
 import I18nProviderClient from "@/components/I18nProviderClient";
 import PageLayout from "@/components/PageLayout";
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/lib/theme';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 
 interface LocaleLayoutProps{

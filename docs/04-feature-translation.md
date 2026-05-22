@@ -1,6 +1,6 @@
 # 🌍 Guide: Implementing and Optimizing Multi-Language Support (i18next + Next.js)
 
-> **Status:** ✅ Current — Accurately describes current i18n architecture.
+> **Status:** ⚡ Needs Update — References `middleware.ts` which was renamed to `proxy.ts` in Next.js 16.
 
 > This unified guide explains how to **set up translation support** in a Next.js app  
 > using `i18next`, and how to **optimize performance** by improving the `I18nProviderClient` component.
@@ -15,7 +15,7 @@ Here’s how your app handles multiple languages using **Next.js App Router** an
    The user visits your site (e.g., `voices-of-truth.com`).
 
 2. **Middleware:**  
-   The middleware (`src/middleware.ts`) intercepts requests and ensures the URL contains a language code (`/en`, `/ar`, etc.).  
+   The proxy (`src/proxy.ts`) intercepts requests and ensures the URL contains a language code (`/en`, `/ar`, etc.).  
    - If missing, it detects the browser language and redirects to the correct locale (e.g., `/en`).
 
 3. **Server Layout:**  
@@ -42,7 +42,7 @@ Translations are **loaded once on the server** and sent to the client — avoidi
 Ensures all URLs contain a language prefix.
 
 ```typescript
-// src/middleware.ts
+// src/proxy.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -254,7 +254,7 @@ Add new keys by editing:
 
 | Step | File                     | Purpose                                                |
 | ---- | ------------------------ | ------------------------------------------------------ |
-| 1️⃣  | `middleware.ts`          | Ensures URLs always include locale                     |
+| 1️⃣  | `proxy.ts`              | Ensures URLs always include locale                     |
 | 2️⃣  | `lib/i18n.ts`            | Loads JSON translations from filesystem                |
 | 3️⃣  | `layout.tsx`             | Passes translations to client provider                 |
 | 4️⃣  | `I18nProviderClient.tsx` | Initializes i18next (optimized with `useMemo`)         |

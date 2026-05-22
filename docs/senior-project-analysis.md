@@ -10,8 +10,8 @@ The most important technical theme is consistency. The app uses good patterns in
 
 ## Current Product Shape
 
-- **Framework:** Next.js 15 App Router with React 19.
-- **Styling:** Tailwind CSS with class-based dark mode through `next-themes`.
+- **Framework:** Next.js 16 App Router with React 19.
+- **Styling:** Tailwind CSS with class-based dark mode via custom `ThemeProvider` in `src/lib/theme.tsx`.
 - **Localization:** `react-i18next`, `i18next`, dynamic `/[locale]` routes, and middleware-based locale redirection.
 - **Data source:** Static TypeScript arrays under `src/data/`, split by scholar specialization.
 - **Domain size today:** 26 scholars, 10 countries, and 11 specializations.

@@ -1,6 +1,6 @@
 # Tutorial: Building "Voices of Truth" From Scratch (Updated)
 
-> **Status:** ✅ Current — Accurately reflects current architecture (server-side filtering, FilterContext, next-themes).
+> **Status:** ⚡ Needs Update — Some sections reference `next-themes` which was replaced with custom `ThemeProvider` (see ADR-009). Install command below is updated.
 
 Welcome, junior developer! This document is your up-to-date guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
 
@@ -25,7 +25,7 @@ cd voices-of-truth
 Our project uses a few extra libraries for features like internationalization and icons.
 
 ```bash
-pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons tailwind-merge next-themes
+pnpm add i18next react-i18next i18next-resources-to-backend framer-motion react-icons tailwind-merge
 ```
 
 ---
@@ -153,7 +153,7 @@ This layout wraps all pages and provides the Theme and Translation contexts.
 // src/app/[locale]/layout.tsx
 import I18nProviderClient from "@/components/I18nProviderClient";
 import PageLayout from "@/components/PageLayout";
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/lib/theme';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 import type { Metadata } from "next";
 

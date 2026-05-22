@@ -6,12 +6,12 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 | File | Status | Description |
 |------|--------|-------------|
-| [01-build-from-scratch](01-build-from-scratch.md) | ✅ Current | Step-by-step rebuild guide covering architecture, layouts, context, and filtering. |
-| [03-styling-guide](03-styling-guide.md) | ✅ Current | Tailwind, PostCSS, CSS variables, dark mode strategy. |
-| [04-feature-translation](04-feature-translation.md) | ✅ Current | Multi-language i18n with middleware, server/client split, `react-i18next`. |
+| [01-build-from-scratch](01-build-from-scratch.md) | ⚡ Needs Update | Step-by-step rebuild guide. References `next-themes` (replaced with custom provider). |
+| [03-styling-guide](03-styling-guide.md) | ⚡ Needs Update | Tailwind, CSS variables, dark mode. References `next-themes` (replaced with custom provider). |
+| [04-feature-translation](04-feature-translation.md) | ⚡ Needs Update | Multi-language i18n. References `middleware.ts` (now `proxy.ts`). |
 | [12-layout-system](12-layout-system.md) | ✅ Current | Three-layer layout architecture (root → locale → PageLayout). |
 | [data-organization](data-organization.md) | ✅ Current | Scholar data model, file layout, category mapping, and data flow. |
-| [component-catalog](component-catalog.md) | ✅ Current | Complete component inventory with hierarchy diagram. |
+| [component-catalog](component-catalog.md) | ⚡ Needs Update | Component inventory. References `next-themes` (replaced with custom provider). |
 | [documentation-guide](documentation-guide.md) | ✅ Current | Best practices for project docs (README, CONTRIBUTING, CHANGELOG). |
 
 ## Proposals
@@ -28,7 +28,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 |------|--------|-------------|
 | [fix-hydration-error](fix-hydration-error.md) | ✅ Implemented | Theme hydration error fix using `useHasMounted()` guard. Applied in `ThemeToggle.tsx`. |
 | [prop-drilling-deep-dive](prop-drilling-deep-dive.md) | ✅ Implemented | Prop drilling refactored using `FilterContext`. `FilterContext.tsx` exists in codebase. |
-| [theme-analysis](theme-analysis.md) | ✅ Implemented | Theme migration guide. `next-themes` in use, tokens unified (ms1_002). |
+| [theme-analysis](theme-analysis.md) | ⚡ Needs Update | Theme migration guide. References `next-themes` which was replaced with custom `src/lib/theme.tsx`. |
 
 ## Reference
 
@@ -44,7 +44,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | File | Status | Description |
 |------|--------|-------------|
 | [best-practice-analysis-update](best-practice-analysis-update.md) | ✅ Current | Code review with SRP suggestions including `SocialIcon` extraction. |
-| [senior-project-analysis](senior-project-analysis.md) | ✅ Current | Senior-level architecture, risk, and migration-readiness analysis based on the current codebase. |
+| [senior-project-analysis](senior-project-analysis.md) | ⚡ Needs Update | Senior-level analysis. References `next-themes` and `middleware.ts`. |
 | [17-component-refactoring-suggestions](17-component-refactoring-suggestions.md) | ⚡ Partial | Suggests extracting `useLocalizedScholar` and `SocialIcon`. Hook exists, icon suggestion pending. |
 | [domain-driven-architecture](domain-driven-architecture.md) | 💡 Speculative | DDD principles mapped to the project. Conceptual — no code changes made. |
 

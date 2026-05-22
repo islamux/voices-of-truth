@@ -1,6 +1,6 @@
 import I18nProviderClient from "@/components/I18nProviderClient";
 import PageLayout from "@/components/PageLayout"; 
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/lib/theme';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 import type { Metadata } from "next";
 
@@ -30,12 +30,7 @@ export default async function LocaleLayout({children, params}:LocaleLayoutProps)
   const {resources} = await getTranslation(locale, ['common', 'header']);
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ThemeProvider>
     <I18nProviderClient locale={locale} resources={resources} >
       <PageLayout> {children} </PageLayout>
     </I18nProviderClient>

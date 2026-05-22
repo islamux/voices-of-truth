@@ -1,6 +1,6 @@
 # Component Catalog
 
-> **Status:** ✅ Current — Accurately lists all components in the codebase.
+> **Status:** ⚡ Needs Update — References `next-themes` (replaced with custom provider in `src/lib/theme.tsx`).
 
 This document catalogs every component in `src/components/`, organized by role.
 
@@ -43,7 +43,7 @@ This document catalogs every component in `src/components/`, organized by role.
 
 | Component | File | Role |
 |-----------|------|------|
-| `ThemeToggle` | `src/components/ThemeToggle.tsx` | Dark/light mode toggle using `next-themes` |
+| `ThemeToggle` | `src/components/ThemeToggle.tsx` | Dark/light mode toggle using custom `useTheme` hook |
 | `LanguageSwitcher` | `src/components/LanguageSwitcher.tsx` | Arabic/English locale switcher |
 | `I18nProviderClient` | `src/components/I18nProviderClient.tsx` | Client-side i18next provider wrapper |
 

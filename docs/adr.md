@@ -58,6 +58,13 @@
 **Decision:** Precompute validCountryIds/validCategoryIds sets. Invalid values are ignored (treated as unset, show all).
 **Consequence:** Bad URLs show all results instead of empty state. Graceful degradation.
 
+## ADR-009: Custom ThemeProvider over next-themes for Next.js 16
+
+**Date:** 2026-05-22
+**Context:** next-themes 0.4.6 renders `<script>` tags for flash prevention. React 19 / Next.js 16 rejects inline script tags inside React components with a console error. next-themes is unmaintained (no update since 2024).
+**Decision:** Replace next-themes with a custom ThemeProvider + useTheme in `src/lib/theme.tsx`. The flash-prevention script is moved to the root layout's `<head>` using `dangerouslySetInnerHTML` (before hydration, not inside React component tree).
+**Consequence:** No script-tag console errors. Zero external theme dependency. Flash prevention still works. Custom provider is ~70 lines vs next-themes' bundled dependency.
+
 ---
 
 > **See also:** [Improvement Plan](improvement-plan.md) — strategic priorities

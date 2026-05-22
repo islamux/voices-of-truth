@@ -19,7 +19,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | File | Status | Description |
 |------|--------|-------------|
 | [06-feature-favorites-proposal](06-feature-favorites-proposal.md) | 📋 Proposal | `localStorage`-based favorites system with `useFavorites` hook. Not implemented. |
-| [07-feature-loading-state-proposal](07-feature-loading-state-proposal.md) | 📋 Stale | Skeleton loading proposal. References non-existent code paths. |
+| [07-feature-loading-state-proposal](archive/07-feature-loading-state-proposal.md) | 🗄️ Archived | Superseded by Suspense boundary in page.tsx (ms1_029). |
 | [09-feature-reusable-button-component-proposal](09-feature-reusable-button-component-proposal.md) | ✅ Implemented | Reusable Button component. Now exists as `src/components/Button.tsx`. |
 
 ## Implemented Solutions
@@ -28,12 +28,13 @@ Documentation for the Voices of Truth — Scholar Directory project.
 |------|--------|-------------|
 | [fix-hydration-error](fix-hydration-error.md) | ✅ Implemented | Theme hydration error fix using `useHasMounted()` guard. Applied in `ThemeToggle.tsx`. |
 | [prop-drilling-deep-dive](prop-drilling-deep-dive.md) | ✅ Implemented | Prop drilling refactored using `FilterContext`. `FilterContext.tsx` exists in codebase. |
-| [theme-analysis](theme-analysis.md) | ⚡ Mostly | Identified ThemeProvider/OS-preference issues. `next-themes` now in use. |
+| [theme-analysis](theme-analysis.md) | ✅ Implemented | Theme migration guide. `next-themes` in use, tokens unified (ms1_002). |
 
 ## Reference
 
 | File | Status | Description |
 |------|--------|-------------|
+| [adr](adr.md) | ✅ Current | Architecture Decision Records for key design choices. |
 | [18-core-concept-children-prop](18-core-concept-children-prop.md) | ✅ Current | React `children` prop explained with Next.js layout examples. |
 | [19-normal-vs-arrow-functions-and-callback-vs-higher-order](19-normal-vs-arrow-functions-and-callback-vs-higher-order.md) | ✅ Current | Function syntax vs callbacks vs HOF + callback patterns. |
 | [improvement-plan](improvement-plan.md) | ✅ Current | Strategic 6-priority improvement plan with architecture recommendations. |
@@ -57,4 +58,4 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 ---
 
-*Last updated: 2026-05-15*
+*Last updated: 2026-05-22*

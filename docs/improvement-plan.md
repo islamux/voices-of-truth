@@ -725,7 +725,9 @@ To add new improvements:
 ---
 
 > **See also:**
+> - [Senior Project Analysis](senior-project-analysis.md) — complementary risk and migration-readiness analysis
 > - [Styling Guide](03-styling-guide.md) — theme setup for Priority 1 styling improvements
 > - [Component Refactoring Suggestions](17-component-refactoring-suggestions.md) — SRP refactors aligning with Priority 3
 > - [Prop Drilling Deep Dive](prop-drilling-deep-dive.md) — FilterContext linked to Priority 3 maintainability
 > - [Build From Scratch](01-build-from-scratch.md) — end-to-end architecture overview
+> - [ADR Log](adr.md) — key architectural decisions

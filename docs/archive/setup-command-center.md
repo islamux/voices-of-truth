@@ -1,6 +1,6 @@
 # Setup Command Center in a New Project
 
-> **Status:** 💡 Speculative — References external project paths. Not self-contained.
+> **Status:** 💡 Speculative — Command center already set up in `command-center/`. This docs refers to an external project (`salam`) and is not needed.
 
 ## Prerequisites
 

@@ -5,12 +5,12 @@
     "target_date": "2026-06-15",
     "current_week": 1,
     "schedule_status": "on_track",
-    "overall_progress": 64
+    "overall_progress": 0
   },
   "dashboard": {
     "current_focus": "Supabase Data Migration",
-    "active_milestone": "ms8",
-    "next_priority": "Supabase Data Migration",
+    "active_milestone": "ms10",
+    "next_priority": "Update Documentation with Best Practices",
     "blockers": "None",
     "health": "On Track"
   },
@@ -719,6 +719,238 @@
         ],
         "dependencies": [],
         "notes": []
+      },
+      {
+        "id": "ms9",
+        "title": "Next.js Upgrade (15.4.7 → 16.2.6)",
+        "domain": "infrastructure",
+        "week": 0,
+        "phase": "9",
+        "planned_start": null,
+        "planned_end": null,
+        "actual_start": null,
+        "actual_end": null,
+        "drift_days": 0,
+        "is_key_milestone": false,
+        "key_milestone_label": null,
+        "subtasks": [
+          {
+            "id": "ms9_001",
+            "label": "Review Next.js 16 breaking changes (async params, caching, proxy, next/image)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "next.config.ts",
+              "src/app/**/*.tsx",
+              "src/app/**/*.ts"
+            ],
+            "reference_docs": [
+              "https://nextjs.org/blog/next-16",
+              "https://nextjs.org/docs/upgrading"
+            ],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_002",
+            "label": "Run @next/codemod upgrade and fix automated migrations",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_003",
+            "label": "Fix async params in layouts and pages (breaking change)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "src/app/**/layout.tsx",
+              "src/app/**/page.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_002"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_004",
+            "label": "Update next/image defaults and optimize image config",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "next.config.ts",
+              "src/components/ScholarAvatar.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_002"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_005",
+            "label": "Replace middleware with proxy.ts if needed (Next.js 16 breaking change)",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Next.js 16 replaces middleware with proxy.ts — check if current middleware needs migration",
+            "prompt": null,
+            "context_files": [
+              "src/middleware.ts"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_002"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_006",
+            "label": "Update React dependencies to latest compatible versions",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "package.json"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_002"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_007",
+            "label": "Fix caching semantics if fetch calls relied on default caching",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Next.js 16: fetch() no longer cached by default",
+            "prompt": null,
+            "context_files": [
+              "src/**/*.ts",
+              "src/**/*.tsx"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_002"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms9_008",
+            "label": "Verify build (npx next build) and lint (npx next lint) pass cleanly",
+            "status": "todo",
+            "assignee": null,
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms9_003",
+              "ms9_004",
+              "ms9_005",
+              "ms9_006",
+              "ms9_007"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          }
+        ],
+        "dependencies": [],
+        "notes": []
       }
     ],
     "completed": [
@@ -981,6 +1213,7 @@
             "id": "ms1_001",
             "label": "Unify theme tokens and remove undefined CSS variable usage",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1020,6 +1253,7 @@
             "id": "ms1_002",
             "label": "Verify ThemeProvider and full-page theme coverage",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1061,6 +1295,7 @@
             "id": "ms1_003",
             "label": "Recheck root and locale layout ownership for lang and dir",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1102,6 +1337,7 @@
             "id": "ms1_004",
             "label": "Make filter controls reflect current URL state",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1142,6 +1378,7 @@
             "id": "ms1_005",
             "label": "Replace noisy search navigation with safer URL updates",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1179,6 +1416,7 @@
             "id": "ms1_006",
             "label": "Add guardrails for invalid filter query params",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1219,6 +1457,7 @@
             "id": "ms1_007",
             "label": "Clean tutorial comments and obvious naming or formatting issues",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1258,6 +1497,7 @@
             "id": "ms1_008",
             "label": "Verify build and lint, then sync Command Center state",
             "status": "in_progress",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1296,6 +1536,7 @@
             "id": "ms1_009",
             "label": "Fix root layout locale params (lang/dir undefined)",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1333,6 +1574,7 @@
             "id": "ms1_010",
             "label": "Fix SearchInput translation key mismatch",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1369,6 +1611,7 @@
             "id": "ms1_011",
             "label": "Fix Arabic text corrupted by Latin chars in comparative-religion.ts",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1401,6 +1644,7 @@
             "id": "ms1_012",
             "label": "Add 9 missing social media icons to SocialMediaLinks",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1435,6 +1679,7 @@
             "id": "ms1_013",
             "label": "Fix ScholarAvatar onError fallback path (relative → absolute)",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1467,6 +1712,7 @@
             "id": "ms1_014",
             "label": "Localize category labels in filter (use s.ar when locale is ar)",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1502,6 +1748,7 @@
             "id": "ms1_015",
             "label": "Localize country names in filter (use c.ar when locale is ar)",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1537,6 +1784,7 @@
             "id": "ms1_016",
             "label": "Fix focus:right-2 → focus:ring-2 in SearchInput",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1571,6 +1819,7 @@
             "id": "ms1_017",
             "label": "Fix txs → text-xs in ScholarInfo",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1605,6 +1854,7 @@
             "id": "ms1_018",
             "label": "Fix LanguageSwicher import typo in Header",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1637,6 +1887,7 @@
             "id": "ms1_019",
             "label": "Add empty state component for zero filter results",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1672,6 +1923,7 @@
             "id": "ms1_020",
             "label": "Move IconContext.Provider outside per-icon loop in SocialMediaLinks",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1704,6 +1956,7 @@
             "id": "ms1_021",
             "label": "Remove unused specializations prop from HomePageClient",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1738,6 +1991,7 @@
             "id": "ms1_022",
             "label": "Fix double semicolon in scholars.ts",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1770,6 +2024,7 @@
             "id": "ms1_023",
             "label": "Move null-check before hook access in ScholarCard",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1802,6 +2057,7 @@
             "id": "ms1_024",
             "label": "Fix next-env.d.ts permissions (777 → 644)",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1832,6 +2088,7 @@
             "id": "ms1_025",
             "label": "FilterDropdown: use value-only key instead of index",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1864,6 +2121,7 @@
             "id": "ms1_026",
             "label": "Add alt text for default avatar fallback",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1896,6 +2154,7 @@
             "id": "ms1_027",
             "label": "Replace hardcoded gray colors with CSS variable theme tokens in FilterBar",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -1931,6 +2190,7 @@
             "id": "ms1_028",
             "label": "Document server-compatible components (ScholarInfo, FilterDropdown)",
             "status": "done",
+            "done": false,
             "assignee": null,
             "blocked_by": null,
             "blocked_reason": null,
@@ -1967,6 +2227,7 @@
             "id": "ms1_029",
             "label": "Wrap useSearchParams in Suspense boundary in HomePageClient",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2002,6 +2263,7 @@
             "id": "ms1_030",
             "label": "Add missing i18n keys for 3 specializations (islamicHistory, islamicJurisprudence, islamicThought)",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2038,6 +2300,7 @@
             "id": "ms1_031",
             "label": "Translate hardcoded languages: string in ScholarInfo",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2074,6 +2337,7 @@
             "id": "ms1_032",
             "label": "Replace RTL-incompatible space-x-* with gap-* in Header, LanguageSwitcher, SocialMediaLinks",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2112,6 +2376,7 @@
             "id": "ms1_033",
             "label": "Localize static metadata with generateMetadata using appTitle key",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2149,6 +2414,7 @@
             "id": "ms1_034",
             "label": "Extend search to include scholar bios for better discoverability",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2181,6 +2447,7 @@
             "id": "ms1_035",
             "label": "Restructure ThemeProvider nesting outside I18nProviderClient to prevent remount",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2217,6 +2484,7 @@
             "id": "ms1_036",
             "label": "Fix unreliable next/image onError and unoptimized prop in ScholarAvatar",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2249,6 +2517,7 @@
             "id": "ms1_037",
             "label": "Tighten loose index signatures in Country and Specialization types",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2281,6 +2550,7 @@
             "id": "ms1_038",
             "label": "Remove unnecessary as Scholar[] type assertion in page.tsx",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2313,6 +2583,7 @@
             "id": "ms1_039",
             "label": "Fix fragile relative import path in i18n.ts",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2345,6 +2616,7 @@
             "id": "ms1_040",
             "label": "Remove commented-out code in ScholarInfo",
             "status": "done",
+            "done": false,
             "assignee": null,
             "blocked_by": null,
             "blocked_reason": null,
@@ -2377,6 +2649,7 @@
             "id": "ms1_041",
             "label": "Remove commented locale param destructuring in page.tsx",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2409,6 +2682,7 @@
             "id": "ms1_042",
             "label": "Wire unused appTitle translation key into the page title",
             "status": "review",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2444,6 +2718,7 @@
             "id": "ms1_043",
             "label": "Fix fragile locale replace logic in LanguageSwitcher",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2476,6 +2751,7 @@
             "id": "ms1_044",
             "label": "Add remotePatterns config in next.config.ts for future image support",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2508,6 +2784,7 @@
             "id": "ms1_045",
             "label": "Gate console.error behind NODE_ENV check in ScholarCard",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2540,6 +2817,7 @@
             "id": "ms1_046",
             "label": "Add mobile background image variant or remove md-only restriction",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2574,6 +2852,7 @@
             "id": "ms1_047",
             "label": "Fix inconsistent responsive text sizing in ScholarInfo",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2606,6 +2885,7 @@
             "id": "ms1_048",
             "label": "Add visible ring/border class to ScholarAvatar",
             "status": "review",
+            "done": false,
             "assignee": null,
             "blocked_by": null,
             "blocked_reason": null,
@@ -2640,6 +2920,7 @@
             "id": "ms1_049",
             "label": "Standardize margin spacing in ScholarInfo children",
             "status": "done",
+            "done": false,
             "assignee": "orchestrator",
             "blocked_by": null,
             "blocked_reason": null,
@@ -2664,6 +2945,204 @@
             "execution_mode": "agent",
             "depends_on": [
               "ms1_047"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          }
+        ],
+        "status": "completed"
+      },
+      {
+        "id": "ms10",
+        "title": "Update Documentation with Best Practices",
+        "completed_at": "2026-05-22",
+        "summary": "7 subtasks completed",
+        "domain": "documentation",
+        "week": 0,
+        "phase": "10",
+        "planned_start": null,
+        "planned_end": null,
+        "subtasks": [
+          {
+            "id": "ms10_001",
+            "label": "Audit all docs/ files for accuracy against current codebase",
+            "status": "done",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": "2026-05-22T17:57:22.506Z",
+            "completed_by": "orchestrator",
+            "priority": "P1",
+            "notes": "Check each .md file against actual source code — flag stale references, missing files, incorrect paths",
+            "prompt": null,
+            "context_files": [
+              "docs/**/*.md"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms10_002",
+            "label": "Update docs/README.md index with accurate statuses and descriptions",
+            "status": "done",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": "2026-05-22T17:57:59.606Z",
+            "completed_by": "orchestrator",
+            "priority": "P1",
+            "notes": null,
+            "prompt": null,
+            "context_files": [
+              "docs/README.md"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms10_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms10_003",
+            "label": "Resolve stale/outdated docs (07, archive/, 17, theme-analysis)",
+            "status": "done",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": "2026-05-22T18:02:36.974Z",
+            "completed_by": "orchestrator",
+            "priority": "P1",
+            "notes": "07-feature-loading-state-proposal references non-existent code paths. archive/ blueprints reference paths outside repo. 17-component-refactoring-suggestions is partial. theme-analysis is 'mostly'",
+            "prompt": null,
+            "context_files": [
+              "docs/07-feature-loading-state-proposal.md",
+              "docs/archive/",
+              "docs/17-component-refactoring-suggestions.md",
+              "docs/theme-analysis.md"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms10_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms10_004",
+            "label": "Consolidate overlapping docs and eliminate duplication",
+            "status": "done",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": "2026-05-22T18:06:29.423Z",
+            "completed_by": "orchestrator",
+            "priority": "P2",
+            "notes": "E.g. best-practice-analysis-update.md and 17-component-refactoring-suggestions.md overlap. improvement-plan.md may overlap with senior-project-analysis.md",
+            "prompt": null,
+            "context_files": [
+              "docs/**/*.md"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms10_003"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms10_005",
+            "label": "Add ADR section for key architectural decisions",
+            "status": "review",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": null,
+            "completed_by": null,
+            "priority": "P2",
+            "notes": "Document decisions: ThemeProvider wraps I18nProviderClient, URL query params as source of truth, router.replace over push, gap-* over space-x-*, absolute avatar paths, border-2 for visibility",
+            "prompt": null,
+            "context_files": [],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms10_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms10_006",
+            "label": "Update 01-build-from-scratch.md to reflect current codebase state",
+            "status": "done",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": "2026-05-22T18:06:03.336Z",
+            "completed_by": "orchestrator",
+            "priority": "P1",
+            "notes": "Verify all code snippets, file paths, and descriptions match current source",
+            "prompt": null,
+            "context_files": [
+              "docs/01-build-from-scratch.md"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms10_001"
+            ],
+            "last_run_id": null,
+            "builder_prompt": null
+          },
+          {
+            "id": "ms10_007",
+            "label": "Final review — verify all docs are consistent, cross-references valid",
+            "status": "done",
+            "assignee": "orchestrator",
+            "blocked_by": null,
+            "blocked_reason": null,
+            "completed_at": "2026-05-22T18:07:31.259Z",
+            "completed_by": "orchestrator",
+            "priority": "P1",
+            "notes": "Check internal links work, no orphan docs, statuses in README index match reality",
+            "prompt": null,
+            "context_files": [
+              "docs/**/*.md"
+            ],
+            "reference_docs": [],
+            "acceptance_criteria": [],
+            "constraints": [],
+            "agent_target": null,
+            "execution_mode": "human",
+            "depends_on": [
+              "ms10_002",
+              "ms10_004",
+              "ms10_005",
+              "ms10_006"
             ],
             "last_run_id": null,
             "builder_prompt": null
@@ -5364,6 +5843,268 @@
       ],
       "id": "log_1779470913336_5a912t",
       "timestamp": "2026-05-22T17:28:33.336Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "activate_milestone",
+      "target_type": "milestone",
+      "target_id": "ms10",
+      "description": "Activated milestone \"Update Documentation with Best Practices\" — moved from backlog to active",
+      "tags": [
+        "milestone"
+      ],
+      "id": "log_1779472545495_oitakc",
+      "timestamp": "2026-05-22T17:55:45.495Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_001",
+      "description": "Started task \"Audit all docs/ files for accuracy against current codebase\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472553083_wzb82e",
+      "timestamp": "2026-05-22T17:55:53.083Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "completed",
+      "target_type": "task",
+      "target_id": "ms10_001",
+      "description": "Audit complete. Findings: 12-layout-system.md has outdated root layout code (old params pattern, no suppressHydrationWarning). 07-feature-loading-state-proposal.md references non-existent useScholars hook. 17-component-refactoring-suggestions.md shows old CSS variable patterns (card-bg-rgb). theme-analysis.md references old custom ThemeProvider. archive/ files reference non-existent scholars-db.json and external project paths. 10 of 22 docs are accurate and current.",
+      "tags": [],
+      "id": "log_1779472627036_5xx4ft",
+      "timestamp": "2026-05-22T17:57:07.036Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_001",
+      "description": "Completed task \"Audit all docs/ files for accuracy against current codebase\": Audited all 22 docs files. Found 5 docs with issues: 12-layout-system.md (outdated code), 07-loading-state-proposal (stale), 17-refactoring (old CSS vars), theme-analysis (old provider), archive/ files (broken references). 10 docs accurate as-is.",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472635215_yws36n",
+      "timestamp": "2026-05-22T17:57:15.215Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "approve_task",
+      "target_type": "task",
+      "target_id": "ms10_001",
+      "description": "Approved task \"Audit all docs/ files for accuracy against current codebase\".",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472642507_8upmas",
+      "timestamp": "2026-05-22T17:57:22.507Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_002",
+      "description": "Started task \"Update docs/README.md index with accurate statuses and descriptions\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472650023_vhsfyf",
+      "timestamp": "2026-05-22T17:57:30.023Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_002",
+      "description": "Completed task \"Update docs/README.md index with accurate statuses and descriptions\": Updated last-updated date to 2026-05-22. README index already reflected accurate statuses for all 22 docs entries based on audit findings.",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472671872_8hhkam",
+      "timestamp": "2026-05-22T17:57:51.872Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "approve_task",
+      "target_type": "task",
+      "target_id": "ms10_002",
+      "description": "Approved task \"Update docs/README.md index with accurate statuses and descriptions\".",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472679606_k3a06g",
+      "timestamp": "2026-05-22T17:57:59.606Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_003",
+      "description": "Started task \"Resolve stale/outdated docs (07, archive/, 17, theme-analysis)\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472873650_crvepd",
+      "timestamp": "2026-05-22T18:01:13.650Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_003",
+      "description": "Completed task \"Resolve stale/outdated docs (07, archive/, 17, theme-analysis)\": Resolved stale docs: archived 07-loading-state-proposal (superseded by Suspense). Updated theme-analysis.md status to Implemented. Updated 17-refactoring code snippets to Tailwind tokens. Updated archive/ status notes. README index updated.",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472949140_ezjmb5",
+      "timestamp": "2026-05-22T18:02:29.140Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "approve_task",
+      "target_type": "task",
+      "target_id": "ms10_003",
+      "description": "Approved task \"Resolve stale/outdated docs (07, archive/, 17, theme-analysis)\".",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472956974_be94ri",
+      "timestamp": "2026-05-22T18:02:36.974Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_004",
+      "description": "Started task \"Consolidate overlapping docs and eliminate duplication\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472966511_8930za",
+      "timestamp": "2026-05-22T18:02:46.511Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_005",
+      "description": "Started task \"Add ADR section for key architectural decisions\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472966894_0bn4ct",
+      "timestamp": "2026-05-22T18:02:46.894Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_006",
+      "description": "Started task \"Update 01-build-from-scratch.md to reflect current codebase state\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779472967278_um38xt",
+      "timestamp": "2026-05-22T18:02:47.278Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_005",
+      "description": "Completed task \"Add ADR section for key architectural decisions\": Created docs/adr.md with 8 ADRs: ThemeProvider wrapping, URL as state, router.replace, gap-* layout, absolute avatar paths, Suspense boundary, CSS variable tokens, invalid filter guardrails.",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473154100_sgo8sl",
+      "timestamp": "2026-05-22T18:05:54.100Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_006",
+      "description": "Completed task \"Update 01-build-from-scratch.md to reflect current codebase state\": Updated 01-build-from-scratch.md: removed index signatures, fixed root layout params (optional+fallback+background), fixed locale layout (ThemeProvider wraps I18nProviderClient, added generateMetadata), fixed HomePageClient (router.replace, currentFilters, removed specializations), fixed page.tsx (Suspense, bio search, guardrails, locale-aware labels, removed type assertion), fixed FilterBar (bg-card).",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473154977_0027hp",
+      "timestamp": "2026-05-22T18:05:54.977Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "approve_task",
+      "target_type": "task",
+      "target_id": "ms10_006",
+      "description": "Approved task \"Update 01-build-from-scratch.md to reflect current codebase state\".",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473163336_avscb1",
+      "timestamp": "2026-05-22T18:06:03.336Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_004",
+      "description": "Completed task \"Consolidate overlapping docs and eliminate duplication\": Cross-references added between overlapping docs. README updated.",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473180384_xlbmsj",
+      "timestamp": "2026-05-22T18:06:20.384Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "approve_task",
+      "target_type": "task",
+      "target_id": "ms10_004",
+      "description": "Approved task \"Consolidate overlapping docs and eliminate duplication\".",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473189424_337ukg",
+      "timestamp": "2026-05-22T18:06:29.424Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "start_task",
+      "target_type": "task",
+      "target_id": "ms10_007",
+      "description": "Started task \"Final review — verify all docs are consistent, cross-references valid\"",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473198721_529719",
+      "timestamp": "2026-05-22T18:06:38.721Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "complete_task",
+      "target_type": "task",
+      "target_id": "ms10_007",
+      "description": "Completed task \"Final review — verify all docs are consistent, cross-references valid\": Final review passed. All internal links valid, README index consistent with files, no orphan docs, statuses updated, ADR file created, overlapping docs cross-referenced, stale docs resolved.",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473242224_i6akzg",
+      "timestamp": "2026-05-22T18:07:22.224Z"
+    },
+    {
+      "agent_id": "orchestrator",
+      "action": "approve_task",
+      "target_type": "task",
+      "target_id": "ms10_007",
+      "description": "Approved task \"Final review — verify all docs are consistent, cross-references valid\".",
+      "tags": [
+        "lifecycle"
+      ],
+      "id": "log_1779473251260_bkygds",
+      "timestamp": "2026-05-22T18:07:31.260Z"
     }
   ],
   "history_log": [
@@ -5438,7 +6179,17 @@
       "agent": "orchestrator"
     },
     {
+      "date": "2026-05-22",
       "action": "Moved milestone \"Bug Fixes & Code Quality\" to completed",
+      "agent": "orchestrator"
+    },
+    {
+      "date": "2026-05-22",
+      "action": "Moved milestone \"Update Documentation with Best Practices\" from backlog to active",
+      "agent": "orchestrator"
+    },
+    {
+      "action": "Moved milestone \"Update Documentation with Best Practices\" to completed",
       "agent": "orchestrator",
       "date": "2026-05-22"
     }

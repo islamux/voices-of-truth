@@ -1,6 +1,6 @@
 # Component Refactoring Suggestions
 
-> **Status:** ⚡ Partial — `useLocalizedScholar` hook extracted; `SocialIcon` extraction pending.
+> **Status:** ⚡ Partial — `useLocalizedScholar` hook extracted (done). `SocialIcon` extraction still pending. Old CSS variable patterns shown below (`--card-bg-rgb`) were refactored to Tailwind theme tokens in ms1_002.
 
 This document provides an analysis of the current component structure and offers recommendations for breaking them down into smaller, more maintainable pieces. This process is key to long-term code health and scalability.
 
@@ -80,7 +80,7 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ scholar, countries }) => {
 
   return (
     <motion.div
-      className="border rounded-lg shadow-lg p-5 bg-[rgb(var(--card-bg-rgb))] border-[rgb(var(--card-border-rgb))] flex flex-col items-center text-center"
+      className="border rounded-lg shadow-lg p-5 bg-card border-border flex flex-col items-center text-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
@@ -134,4 +134,6 @@ The recommendation above to extract a `useLocalizedScholar` hook is excellent fo
 ---
 
 > **See also:**
+> - [Best Practice Analysis](best-practice-analysis-update.md) — broader SRP and DRY analysis
 > - [Prop Drilling Deep Dive](prop-drilling-deep-dive.md) — context-based state management to reduce prop passing
+> - [ADR Log](adr.md) — architectural decisions on theme tokens and styling

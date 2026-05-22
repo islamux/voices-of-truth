@@ -2,14 +2,12 @@ export interface Country {
   id: number;
   en: string;
   ar: string;
-  [key: string]: string | number;
 }
 
 export interface Specialization {
   id: number;
   en: string;
   ar: string;
-  [key: string]: string | number;
 }
 
 export interface Scholar {

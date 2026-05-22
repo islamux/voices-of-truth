@@ -6,7 +6,7 @@ import FilterDropdown from "./FilterDropdown";
 
 export default function CountryFilter() {
   // Call the hook to get the data and functions directly from the context.
-  const { uniqueCountries, onCountryChange } = useFilters();
+  const { uniqueCountries, onCountryChange, currentFilters } = useFilters();
   const { t } = useTranslation('common');
 
   return (
@@ -14,6 +14,7 @@ export default function CountryFilter() {
       label={t('filterByCountry')}
       filterKey="country"
       options={uniqueCountries} // Use the data from context
+      value={currentFilters.country} // Use the current value from URL
       onChange={onCountryChange}  // Use the function from context
     />
   );

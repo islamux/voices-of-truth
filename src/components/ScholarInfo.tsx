@@ -3,20 +3,17 @@ interface ScholarInfoProps{
   country :string;
   bio: string | null | undefined;
   languages: string[];
+  languagesLabel: string;
 }
 
-export default function ScholarInfo({name, country,bio,languages}:ScholarInfoProps){
-  // const ScholarInfo: React.FC<ScholarInfoProps> = ({
-  //   name, country, bio, languages
-  // }) =>{
+export default function ScholarInfo({name, country,bio,languages,languagesLabel}:ScholarInfoProps){
   return (
     <>
     <h3
-    className="text-lg sm:text-xl font-semibold text-[rgb(var(--foreground-rgb))] mb-1">{name}</h3>
-    <p className="text-xs sm:text-xl text-[rgb(var(--muted-text-rgb))] mb-2 italic px-2">{country}</p>
-    {bio && <p className="text-xs sm:text-xs text-[rgb(var(--muted-text-rgb))] mb-2 italic px-2">{bio}</p>}
-    <p className="txs sm:text-sm text-[rgb(var(--muted-text-rgb))] mb-3"> languages:{languages.join(', ')} </p>
+    className="text-lg sm:text-xl font-semibold text-foreground mb-2">{name}</h3>
+    <p className="text-sm sm:text-base text-muted-foreground mb-2 italic px-2">{country}</p>
+    {bio && <p className="text-xs sm:text-sm text-muted-foreground mb-2 italic px-2">{bio}</p>}
+    <p className="text-xs sm:text-sm text-muted-foreground mb-2"> {languagesLabel}: {languages.join(', ')} </p>
     </>
   );
   };
-

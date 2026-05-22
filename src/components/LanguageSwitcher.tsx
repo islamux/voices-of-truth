@@ -1,10 +1,9 @@
-// src/components/LanguageSwitcher.tsx (Refactored)
 'use client';
 
 import { useTranslation } from "react-i18next";
 import { useRouter, usePathname } from 'next/navigation';
 import Button from "./Button";
-import { supportedLngs } from "@/lib/i18n"; // 1. Import our source of truth for language codes
+import { supportedLngs } from "@/lib/i18n";
 
 export default function LanguageSwitcher() {
   const { t, i18n } = useTranslation('common');
@@ -14,22 +13,21 @@ export default function LanguageSwitcher() {
 
   const changeLanguage = (newLang: string) => {
     if (currentLang === newLang) return;
-    const newPath = pathname.replace(`/${currentLang}`, `/${newLang}`);
+    const segments = pathname.split('/');
+    segments[1] = newLang;
+    const newPath = segments.join('/');
     router.push(newPath);
   };
 
   return (
-    <div className="flex items-center space-x-1">
-    {/* Map over the supported language CODES */}
+    <div className="flex items-center gap-1">
     {supportedLngs.map((langCode) => (
-      // langCode is like 'en', 'fr', 'de', etc.
       <Button
       key={langCode}
       onClick={() => changeLanguage(langCode)}
       disabled={currentLang === langCode}
       className="enabled:hover:bg-gray-200 dark:enabled:hover:bg-gray-700"
     >
-      {/* Use the language code directly to get the translation */}
       {t(langCode)}
       </Button>
     ))}

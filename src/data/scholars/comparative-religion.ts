@@ -97,7 +97,7 @@ export const comparativeReligionScholars: Scholar[] = [
     avatarUrl: '/avatars/mu3awath.jpg',
     bio: {
       en: 'Islamic advocacy channel to respond to suspicions raised about the great Islam. My mission is to respond to the people of falsehood, demolish their falsehood, and show the truth with evidence and proof.',
-      ar: 'قناة إسلامية دعوية للرد على الشبهات المثارة حول الإسلام العظيم. مهمتى هي الرد على أهل البaطل وهدم باطلهم وإظهار الحق بالدليل والبرهان'
+      ar: 'قناة إسلامية دعوية للرد على الشبهات المثارة حول الإسلام العظيم. مهمتى هي الرد على أهل الباطل وهدم باطلهم وإظهار الحق بالدليل والبرهان'
     },
     categoryId: 1
   },
@@ -113,7 +113,7 @@ export const comparativeReligionScholars: Scholar[] = [
     avatarUrl: '/avatars/kabtain-ahmad.jpg',
     bio: {
       en: 'Say, "O People of the Scripture, come to a word that is equitable between us and you - that we will not worship except Allah and not associate anything with Him and not take one another as lords instead of Allah." But if they turn away, then say, "Bear witness that we are Muslims [submitting to Him]."',
-      ar: 'قُلْ يَا أَهْلَ الْكِتَابِ تَعَالَوْا إِلَىٰ كَلِمَةٍ سَوَاءٍ bَيْنَنَا وَبَيْنَكُمْ أَلَّا نَعْبُدَ إِلَّا اللَّهَ وَلَا نُشْرِكَ بِهِ شَيْئًا وَلَا يَتَّخِذَ بَعْضُنَا بَعْضًا أَرْبَابًا مِّن دُونِ اللَّهِ ۚ فَإِن تَوَلَّوْا فَقُولُوا اشْهَدُوا بِأَنَّا مُسْلِمُونَ (64) آل عمران'
+      ar: 'قُلْ يَا أَهْلَ الْكِتَابِ تَعَالَوْا إِلَىٰ كَلِمَةٍ سَوَاءٍ بَيْنَنَا وَبَيْنَكُمْ أَلَّا نَعْبُدَ إِلَّا اللَّهَ وَلَا نُشْرِكَ بِهِ شَيْئًا وَلَا يَتَّخِذَ بَعْضُنَا بَعْضًا أَرْبَابًا مِّن دُونِ اللَّهِ ۚ فَإِن تَوَلَّوْا فَقُولُوا اشْهَدُوا بِأَنَّا مُسْلِمُونَ (64) آل عمران'
     },
     categoryId: 1
   },

@@ -1,20 +1,14 @@
-// src/app/[locale]/HomePageClient.tsx (Refactored)
-
 'use client';
 
-import { Scholar, Country, Specialization } from "@/types";
+import { Scholar, Country } from "@/types";
 import ScholarList from "@/components/ScholarList";
 import FilterBar from "@/components/FilterBar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-// Import the provider we just created!
 import { FilterProvider } from '@/context/FilterContext';
 
 interface HomePageClientProps {
   scholars: Scholar[];
   countries: Country[];
-  specializations:Specialization[];
-  // Data is now pre-processed by the server and passed as props
   uniqueCountries: { value: string; label: string }[];
   uniqueCategories: { value: string; label: string }[];
   uniqueLanguages: string[];
@@ -40,14 +34,24 @@ export default function HomePageClient({
     }
     const search = current.toString();
     const query = search ? `?${search}` : '';
-    router.push(`${pathname}${query}`);
+    router.replace(`${pathname}${query}`);
   };
 
-  // No more mapping! The data is ready to be used directly in the context value.
+  const currentQuery = searchParams.get('query') || '';
+  const currentCountry = searchParams.get('country') || '';
+  const currentLang = searchParams.get('lang') || '';
+  const currentCategory = searchParams.get('category') || '';
+
   const filterContextValue = {
     uniqueCountries,
     uniqueLanguages,
     uniqueCategories,
+    currentFilters: {
+      query: currentQuery,
+      country: currentCountry,
+      lang: currentLang,
+      category: currentCategory,
+    },
     onCountryChange: (value: string) => handleFilterChange('country', value),
     onLanguageChange: (value: string) => handleFilterChange('lang', value),
     onCategoryChange: (value: string) => handleFilterChange('category', value),
@@ -55,10 +59,9 @@ export default function HomePageClient({
   };
 
   return (
-    // Wrap the components in the provider and pass the context value.
     <FilterProvider value={filterContextValue}>
-    <FilterBar /> {/* Notice: No more props are being drilled! */}
-    <ScholarList scholars={scholars} countries={countries} />
+      <FilterBar />
+      <ScholarList scholars={scholars} countries={countries} />
     </FilterProvider>
   );
 }

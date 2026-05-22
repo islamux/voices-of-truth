@@ -17,6 +17,10 @@ Next.js 16 web application for browsing a directory of scholars and preachers, s
 
 **Use `pnpm` only. Never use `npm` or `yarn`.**
 
+## Package Manager
+
+**Use `pnpm` only. Never use `npm` or `yarn`.** If `pnpm install` fails due to network issues, try `npx next build` and `npx next lint` directly as a workaround instead of switching package managers.
+
 ## Build Commands
 
 | Command | Description |

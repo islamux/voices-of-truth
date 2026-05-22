@@ -86,6 +86,11 @@ Here are refined suggestions based on reading the actual code.
         ```
         Then, in `SocialMediaLinks.tsx`, you would import `SOCIAL_ICON_MAP` and directly look up the component: `const IconComponent = SOCIAL_ICON_MAP[social.icon];`. This approach is safer, provides autocompletion in your editor, and makes it obvious if you've used an invalid icon name.
 
+## See Also
+
+- [Component Refactoring Suggestions](17-component-refactoring-suggestions.md) — deeper SRP analysis for ScholarCard and SocialMediaLinks
+- [ADR Log](adr.md) — key architectural decisions documented
+
 ## Conclusion
 
 This deep-dive confirms that the project's foundation is very strong. The suggestions above are not critical fixes, but rather professional refinements that will improve the code's maintainability, scalability, and robustness as the project continues to grow.

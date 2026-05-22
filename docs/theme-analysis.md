@@ -1,6 +1,7 @@
 # Theme Implementation Analysis & Recommendations
 
-> **Status:** ⚡ Mostly Implemented — `next-themes` is in use, `globals.css` uses `.dark` selector, tailwind config has HSL variables. Semantic color classes (`bg-primary`, etc.) not yet deployed in components.
+> **Status:** ✅ Implemented — `next-themes` is in use (migrated from custom provider). Theme tokens unified across all components (ms1_002). Semantic classes (`bg-card`, `text-foreground`, `border-border`, etc.) deployed across all components.
+> **Note:** This doc contains the original migration guide (Steps 1-5) which were followed during implementation. Keep as reference.
 
 As a senior developer, I've reviewed the current theming implementation in the project. This document outlines what's working well, identifies key areas for improvement, and provides a clear, step-by-step guide to refactor it for better maintainability and adherence to Next.js community best practices.
 
@@ -262,3 +263,4 @@ This is a significant improvement and aligns with the best practices of the Next
 > **See also:**
 > - [Styling Guide](03-styling-guide.md) — comprehensive theming and CSS variable setup
 > - [Hydration Error Fix](fix-hydration-error.md) — the `useHasMounted()` guard applied in ThemeToggle
+> - [ADR Log](adr.md) — decisions on theme tokens and ThemeProvider nesting

@@ -2,6 +2,13 @@
 
 This file provides guidelines for AI agents working on the Voices of Truth project.
 
+## Branch Naming Convention
+
+- Format: `{type}/{description}` (kebab-case)
+- Types: `ms<N>/` for milestone tasks, `feat/`, `fix/`, `chore/`, `docs/`
+- Create a new branch from `main` before starting any plan
+- Example: `ms1/bug-fixes-code-quality`, `feat/add-search`, `fix/broken-layout`
+
 ## Project Overview
 
 Next.js 15 web application for browsing a directory of scholars and preachers, supporting Arabic/English i18n, dark/light themes, and server-side filtering.

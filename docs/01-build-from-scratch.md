@@ -97,14 +97,12 @@ export interface Country {
   id: number;
   en: string;
   ar: string;
-  [key: string]: string | number;
 }
 
 export interface Specialization {
   id: number;
   en: string;
   ar: string;
-  [key: string]: string | number;
 }
 ```
 
@@ -131,17 +129,17 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: Promise<{locale:string}>;
+  params: Promise<{locale?: string}>;
 }
 
 export default async function RootLayout({
   children,
   params,
 }: RootLayoutProps) {
-  const {locale} = await params;
+  const {locale = 'en'} = await params;
   return (
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
-    <body>{children}</body>
+    <body className="bg-background dark:bg-gradient-to-br dark:from-gray-900 dark:to-black bg-[url('/assets/khwater.png')] bg-cover bg-center bg-fixed bg-no-repeat w-full min-h-screen">{children}</body>
     </html>
   );
 }
@@ -157,26 +155,36 @@ import I18nProviderClient from "@/components/I18nProviderClient";
 import PageLayout from "@/components/PageLayout";
 import { ThemeProvider } from 'next-themes';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
+import type { Metadata } from "next";
 
 interface LocaleLayoutProps{
   children : React.ReactNode;
   params: Promise<{locale: string}>;
 }
 
+export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
+  const { locale } = await params;
+  const { t } = await getTranslation(locale, 'common');
+  return {
+    title: t('appTitle'),
+    description: t('appTitle'),
+  };
+}
+
 export default async function LocaleLayout({children, params}:LocaleLayoutProps){
   const {locale} = await params;
-  const {resources} = await getTranslation(locale);
+  const {resources} = await getTranslation(locale, ['common', 'header']);
 
   return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
     <I18nProviderClient locale={locale} resources={resources} >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <PageLayout> {children} </PageLayout>
-      </ThemeProvider>
+      <PageLayout> {children} </PageLayout>
+    </I18nProviderClient>
     </I18nProviderClient>
   );
 }
@@ -283,48 +291,61 @@ import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
-import { Scholar } from '@/types';
+import { Suspense } from 'react';
 
 interface HomePageProps {
-    //  [key: string] : [value: string | string[] | undefined] // syntax here not correct but only for explanation.
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default function HomePage({ searchParams }: HomePageProps) {
+export default function HomePage({ searchParams, params: { locale } }: HomePageProps & { params: { locale: string } }) {
   const { query, country, lang, category } = searchParams;
 
   const searchQuery = (query || '').toString().toLowerCase();
 
+  // Precompute valid IDs to silently ignore invalid filter values
+  const validCountryIds = new Set(countries.map(c => c.id));
+  const validCategoryIds = new Set(specializations.map(s => s.id));
+
   const filteredScholars = scholars.filter(scholar => {
     const matchSearch = searchQuery
       ? scholar.name.en.toLowerCase().includes(searchQuery) ||
-      scholar.name.ar.toLowerCase().includes(searchQuery)
+        scholar.name.ar.toLowerCase().includes(searchQuery) ||
+        (scholar.bio?.en?.toLowerCase().includes(searchQuery) ?? false) ||
+        (scholar.bio?.ar?.toLowerCase().includes(searchQuery) ?? false)
       : true;
 
-    const matchCountry = country ? scholar.countryId === parseInt(country as string, 10) : true;
+    const countryId = parseInt(country as string, 10);
+    const matchCountry = country ? (validCountryIds.has(countryId) && scholar.countryId === countryId) : true;
 
     const matchesLang = lang ? scholar.language.includes(lang as string) : true;
 
-    const matchesCategory = category ? scholar.categoryId === parseInt(category as string, 10) : true;
+    const categoryId = parseInt(category as string, 10);
+    const matchesCategory = category ? (validCategoryIds.has(categoryId) && scholar.categoryId === categoryId) : true;
 
     return matchSearch && matchCountry && matchesLang && matchesCategory;
   });
 
-  // --- Data Preparation on the Server ---
+  // Data Preparation on the Server — labels are locale-aware
   const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
-  const uniqueCountries = countries.map(c => ({ value: c.id.toString(), label: c.en }));
-  const uniqueCategories = specializations.map(s => ({ value: s.id.toString(), label: s.en }));
+  const uniqueCountries = countries.map(c => ({
+    value: c.id.toString(),
+    label: locale === 'ar' && c.ar ? c.ar : c.en,
+  }));
+  const uniqueCategories = specializations.map(s => ({
+    value: s.id.toString(),
+    label: locale === 'ar' && s.ar ? s.ar : s.en,
+  }));
 
   return (
-    <HomePageClient
-      scholars={filteredScholars as Scholar[]}
-      countries={countries}
-      specializations={specializations}
-      // Pass the pre-processed data to the client
-      uniqueLanguages={uniqueLanguages}
-      uniqueCountries={uniqueCountries}
-      uniqueCategories={uniqueCategories}
-    />
+    <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
+      <HomePageClient
+        scholars={filteredScholars}
+        countries={countries}
+        uniqueLanguages={uniqueLanguages}
+        uniqueCountries={uniqueCountries}
+        uniqueCategories={uniqueCategories}
+      />
+    </Suspense>
   );
 }
 ```
@@ -428,17 +449,27 @@ export default function HomePageClient({
       current.set(key, value);
     }
 
-    const search = current.toString(); // Reconstruct the search string after modification
-    const query = search ? `?${search}` : ''; // Explain: only add '?' if there are search params (? here is the separator between pathname and query)
-    router.push(`${pathname}${query}`);
+    const search = current.toString();
+    const query = search ? `?${search}` : '';
+    router.replace(`${pathname}${query}`); // Use replace to avoid history bloat on every filter change
   };
 
-  // The data is already prepared, so we just pass it to the context.
+  // Read current filter values from URL params
+  const currentQuery = searchParams.get('query') || '';
+  const currentCountry = searchParams.get('country') || '';
+  const currentLang = searchParams.get('lang') || '';
+  const currentCategory = searchParams.get('category') || '';
+
   const filterContextValue = {
-  // Pre-processed data from the server . 
-    uniqueCountries, 
-    uniqueLanguages,  
-    uniqueCategories, 
+    uniqueCountries,
+    uniqueLanguages,
+    uniqueCategories,
+    currentFilters: {                   // Provide current URL state to filter controls
+      query: currentQuery,
+      country: currentCountry,
+      lang: currentLang,
+      category: currentCategory,
+    },
     onCountryChange: (value: string) => handleFilterChange('country', value),
     onLanguageChange: (value: string) => handleFilterChange('lang', value),
     onCategoryChange: (value: string) => handleFilterChange('category', value),
@@ -471,7 +502,7 @@ import SearchInput from './filters/SearchInput';
 // No props needed!
 export default function FilterBar(){
   return (
-    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md mb-6 flex flex-col sm:flex-row gap-4 items-center">
+    <div className="p-4 bg-card rounded-lg shadow-md mb-6 flex flex-col sm:flex-row gap-4 items-center">
       <SearchInput />
       <CountryFilter />
       <LanguageFilter />

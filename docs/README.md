@@ -8,7 +8,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 |------|--------|-------------|
 | [01-build-from-scratch](01-build-from-scratch.md) | ⚡ Needs Update | Step-by-step rebuild guide. References `next-themes` (replaced with custom provider). |
 | [03-styling-guide](03-styling-guide.md) | ⚡ Needs Update | Tailwind, CSS variables, dark mode. References `next-themes` (replaced with custom provider). |
-| [04-feature-translation](04-feature-translation.md) | ⚡ Needs Update | Multi-language i18n. References `middleware.ts` (now `proxy.ts`). |
+| [04-feature-translation](04-feature-translation.md) | ⚡ Needs Update | Multi-language i18n. References `middleware.ts` (no longer exists in Next.js 16). |
 | [12-layout-system](12-layout-system.md) | ✅ Current | Three-layer layout architecture (root → locale → PageLayout). |
 | [data-organization](data-organization.md) | ✅ Current | Scholar data model, file layout, category mapping, and data flow. |
 | [component-catalog](component-catalog.md) | ⚡ Needs Update | Component inventory. References `next-themes` (replaced with custom provider). |
@@ -28,7 +28,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 |------|--------|-------------|
 | [fix-hydration-error](fix-hydration-error.md) | ✅ Implemented | Theme hydration error fix using `useHasMounted()` guard. Applied in `ThemeToggle.tsx`. |
 | [prop-drilling-deep-dive](prop-drilling-deep-dive.md) | ✅ Implemented | Prop drilling refactored using `FilterContext`. `FilterContext.tsx` exists in codebase. |
-| [theme-analysis](theme-analysis.md) | ⚡ Needs Update | Theme migration guide. References `next-themes` which was replaced with custom `src/lib/theme.tsx`. |
+| [theme-analysis](theme-analysis.md) | ✅ Implemented | Theme migration guide. Custom `ThemeProvider` in `src/lib/theme.tsx`, semantic tokens deployed. |
 
 ## Reference
 
@@ -44,7 +44,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | File | Status | Description |
 |------|--------|-------------|
 | [best-practice-analysis-update](best-practice-analysis-update.md) | ✅ Current | Code review with SRP suggestions including `SocialIcon` extraction. |
-| [senior-project-analysis](senior-project-analysis.md) | ⚡ Needs Update | Senior-level analysis. References `next-themes` and `middleware.ts`. |
+| [senior-project-analysis](senior-project-analysis.md) | ✅ Current | Senior-level analysis of architecture, code quality, and improvements. |
 | [17-component-refactoring-suggestions](17-component-refactoring-suggestions.md) | ⚡ Partial | Suggests extracting `useLocalizedScholar` and `SocialIcon`. Hook exists, icon suggestion pending. |
 | [domain-driven-architecture](domain-driven-architecture.md) | 💡 Speculative | DDD principles mapped to the project. Conceptual — no code changes made. |
 
@@ -58,4 +58,4 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 ---
 
-*Last updated: 2026-05-22*
+*Last updated: 2026-05-31*

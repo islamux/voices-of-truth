@@ -11,7 +11,7 @@
     "current_focus": "",
     "active_milestone": "",
     "next_priority": "ms2 — Performance & Font Optimization",
-        "blockers": null,
+        "blockers": "",
         "health": "Healthy"
   },
   "milestones": {

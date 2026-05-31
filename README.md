@@ -1,130 +1,107 @@
-# 📚 Voices of Truth - دليل العلماء والدعاة
+# Voices of Truth - دليل العلماء والدعاة
 
-![Next.js](https://img.shields.io/badge/Next.js-15+-blue?logo=next.js&style=flat-square)
-![Platform](https://img.shields.io/badge/Platform-Web-blueviolet?style=flat-square)
-![License](https://img.shields.io/badge/License-GNU%20GPL-red?logo=gnu&style=flat-square)
+> A directory of renowned Islamic scholars and preachers worldwide, with bilingual Arabic/English support.
 
-> **Voices of Truth** is a web app for browsing a directory of renowned scholars and preachers worldwide, supporting Arabic and English, built using Next.js, React, and Tailwind CSS.  
-> Built with ❤️ by [islamux](mailto:fathi733@gmail.coom)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-GNU%20GPL-red)](LICENSE)
 
----
+## Features
 
-## 🚀 Features
+- Server-side filtering by country, specialization, language, and name search
+- Arabic (RTL) and English (LTR) internationalization via react-i18next
+- Dark/light theme with custom `ThemeProvider` (no flicker, localStorage persistence)
+- Responsive grid layout with Framer Motion card animations
+- URL query params as the single source of truth for filter state
+- FilterContext for clean state management without prop drilling
 
-- 🎨 Beautiful, user-friendly interface
-- 🌙 Dark & Light mode support via a custom, hook-based theme provider
-- 🌍 Internationalization with instant language switching (Arabic RTL & English LTR)
-- 📱 Fully responsive for all devices
-- 🔍 Server-side filtering by category, country, and language
-- 🔍 Search scholars by name
-- ✨ Smooth animations with Framer Motion
-- 📝 Local (mock) data source for fast demo/development
-
----
-
-## 📚 Documentation & Learning Hub
-
-All project documentation, tutorials, and guides are located in the `docs` directory. For a structured learning path, from setting up the project to understanding its core architecture, please start here:
-
-**[➡️ Go to the Documentation Hub](./docs/README.md)**
-
----
-
-## 📦 Requirements
+## Prerequisites
 
 - Node.js 18+
-- pnpm (preferred package manager)
-
-If you don't have pnpm installed, you can install it globally:
-```bash
-npm install -g pnpm
-```
-
----
-
-## 🧪 How to Use
-
-First, clone the repository and navigate into the project directory:
+- pnpm
 
 ```bash
-git clone https://github.com/islamux/voices-of-truth.git
-cd voices-of-truth
+node --version  # Should be 18+
+pnpm --version  # Should be 8+
 ```
 
-Then, install the dependencies using pnpm:
+## Quick Start
 
 ```bash
 pnpm install
+pnpm dev
+# Open http://localhost:3000/en or http://localhost:3000/ar
 ```
 
-Finally, you can run the following scripts:
+## Scripts
 
-*   **`pnpm dev`**: Runs the development server. Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/ar](http://localhost:3000/ar) in your browser.
-*   **`pnpm build`**: Builds the application for production.
-*   **`pnpm start`**: Starts the production server.
-*   **`pnpm lint`**: Runs ESLint to check for code quality issues.
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Dev server with Turbopack |
+| `pnpm build` | Production build |
+| `pnpm start` | Production server |
+| `pnpm lint` | Run ESLint |
+| `pnpm cc:status` | Command center status |
+| `pnpm cc:start <id>` | Start tracked task |
+| `pnpm cc:complete <id>` | Complete tracked task |
 
-
----
-
-## 📂 File Structure
+## Project Structure
 
 ```
-vocies-of-truth/
-├── docs/                     # All project documentation and guides
-│   ├── 01_BUILD_FROM_SCRATCH.md
-│   └── ...
-├── public/
-│   ├── avatars/              # Scholar avatar images
-│   └── locales/              # Translation files (i18next)
+voices-of-truth/
 ├── src/
 │   ├── app/
-│   │   ├── [locale]/           # Dynamic routes for language
-│   │   │   ├── HomePageClient.tsx
-│   │   │   ├── layout.tsx
-│   │   │   └── page.tsx      # Server Component for data filtering
-│   │   ├── globals.css
-│   │   └── layout.tsx          # Root layout
+│   │   ├── [locale]/           # Dynamic locale routes
+│   │   │   ├── layout.tsx      # Locale layout (ThemeProvider + i18n)
+│   │   │   ├── page.tsx        # Server: data fetching & filtering
+│   │   │   └── HomePageClient.tsx  # Client: search params, filters
+│   │   ├── layout.tsx          # Root layout (theme script, lang/dir)
+│   │   └── globals.css         # Tailwind + shadcn-style CSS vars
 │   ├── components/
 │   │   ├── filters/            # Individual filter components
-│   │   ├── FilterBar.tsx
-│   │   ├── PageLayout.tsx
-│   │   ├── ScholarCard.tsx
-│   │   └── ...
+│   │   ├── FilterBar.tsx       # Filter composition
+│   │   ├── ScholarCard.tsx     # Scholar display card
+│   │   ├── ScholarList.tsx     # Scholar grid
+│   │   ├── Header.tsx          # App header
+│   │   ├── Footer.tsx          # App footer
+│   │   ├── PageLayout.tsx      # Layout wrapper
+│   │   ├── ThemeToggle.tsx     # Dark/light toggle
+│   │   ├── LanguageSwitcher.tsx # EN/AR switcher
+│   │   ├── Button.tsx          # Reusable button (twMerge)
+│   │   └── I18nProviderClient.tsx # Client i18n instance
+│   ├── context/FilterContext.tsx   # Filter state context
 │   ├── data/
-│   │   └── scholars.ts
+│   │   ├── scholars.ts         # Combined scholar list
+│   │   ├── scholars/           # 11 categories, each in own file
+│   │   ├── countries.ts        # Country data (10 countries)
+│   │   └── specializations.ts  # 11 specialization categories
+│   ├── hooks/
+│   │   ├── useHasMounted.ts    # Hydration mismatch guard
+│   │   └── useLocalizedScholar.ts # Localized name/bio resolver
 │   ├── lib/
-│   │   └── i18n.ts
-│   ├── middleware.ts
-│   └── types/
-│       └── index.ts
-├── package.json
-└── ...
+│   │   ├── i18n.ts             # i18next server config
+│   │   └── theme.tsx           # Custom ThemeProvider + useTheme
+│   └── types/index.ts          # Scholar, Country, Specialization
+├── public/
+│   ├── avatars/                # Scholar avatar images
+│   └── locales/{en,ar}/       # Translation JSON files
+├── command-center/             # Task tracking, MCP, TUI
+└── docs/                       # Documentation
 ```
 
----
+## Architecture
 
-## 🧠 How It Works
+- **Server-Centric Filtering**: `page.tsx` receives `searchParams`, validates against known data, filters scholars server-side, passes results to client.
+- **URL as State**: Filter values (query, country, lang, category) live in URL search params. `HomePageClient` reads/writes via `useSearchParams` + `router.replace`.
+- **FilterContext**: Provides `currentFilters`, `onCountryChange`, etc. to all filter components without prop drilling.
+- **Custom Theme**: `ThemeProvider` with `useTheme()` hook, localStorage persistence, system preference detection, and inline script in root layout for flash-free theme application.
+- **i18n**: Server-side `getTranslation()` creates i18next instances per request. Client-side `I18nProviderClient` hydrates with preloaded resources.
 
-- **Server-Centric Architecture**: Leverages Next.js 15 Server Components for data fetching and filtering (`src/app/[locale]/page.tsx`), ensuring a fast initial load and optimal performance.
-- **Client-Side Interactivity**: Uses Client Components (`'use client'`) for interactive UI elements like filters and theme switching.
-- **URL as State**: The URL query parameters are the single source of truth for the filter state, enabling shareable and bookmarkable links.
-- **Internationalization**: Powered by `react-i18next` with language detection middleware and local JSON translation files.
-- **Styling**: Styled with Tailwind CSS, using a custom hook-based provider for light and dark themes.
+## License
 
----
+GNU GPL. See [LICENSE](LICENSE).
 
-## 📜 License
+## Author
 
-This project is licensed under the **GNU GPL**.
-Feel free to use and modify.  
-Read more: [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
-
----
-
-## ✨ Author
-
-**[@islamux](https://github.com/islamux)**  
-💻 Muslim Developer • Linux Terminal Lover • Open Source Enthusiast  
-🕊️ "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ" – الأنبياء 107  
-*Using technology to spread peace and benefit all of humanity.*
+**Fathi Al-Qadasi (islamux)** - [GitHub](https://github.com/islamux)

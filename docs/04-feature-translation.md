@@ -1,6 +1,6 @@
 # 🌍 Guide: Implementing and Optimizing Multi-Language Support (i18next + Next.js)
 
-> **Status:** ⚡ Needs Update — References `middleware.ts` which was renamed to `proxy.ts` in Next.js 16.
+> **Status:** ✅ Updated — Locale routing via dynamic `[locale]` segment (no middleware). Custom `ThemeProvider` replaces `next-themes`.
 
 > This unified guide explains how to **set up translation support** in a Next.js app  
 > using `i18next`, and how to **optimize performance** by improving the `I18nProviderClient` component.
@@ -14,9 +14,9 @@ Here’s how your app handles multiple languages using **Next.js App Router** an
 1. **User Request:**  
    The user visits your site (e.g., `voices-of-truth.com`).
 
-2. **Middleware:**  
-   The proxy (`src/proxy.ts`) intercepts requests and ensures the URL contains a language code (`/en`, `/ar`, etc.).  
-   - If missing, it detects the browser language and redirects to the correct locale (e.g., `/en`).
+2. **Dynamic Route:**  
+   The `[locale]` dynamic route segment captures the language code from the URL (`/en`, `/ar`, etc.).  
+   The root layout reads `params.locale` and sets `<html lang>` and `dir` accordingly.
 
 3. **Server Layout:**  
    The root layout (`src/app/[locale]/layout.tsx`) fetches translations using `getTranslation()` from `lib/i18n.ts`.
@@ -37,45 +37,7 @@ Translations are **loaded once on the server** and sent to the client — avoidi
 
 ## ⚙️ 2. Step-by-Step Implementation
 
-### 🧩 Step 1: Middleware Setup
-
-Ensures all URLs contain a language prefix.
-
-```typescript
-// src/proxy.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-const locales = ['en', 'ar'];
-const defaultLocale = 'en';
-
-function getLocale(request: NextRequest): string {
-  // Detect language from Accept-Language header
-  return defaultLocale;
-}
-
-export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const missingLocale = locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
-  );
-
-  if (missingLocale) {
-    const locale = getLocale(request);
-    return NextResponse.redirect(
-      new URL(`/${locale}${pathname === '/' ? '' : pathname}`, request.url)
-    );
-  }
-}
-
-export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|avatars|locales).*)'],
-};
-````
-
----
-
-### 🧠 Step 2: i18n Helper Function
+### 🧠 Step 1: i18n Helper Function
 
 Loads translation JSON files from the `/public/locales` directory.
 
@@ -112,26 +74,32 @@ export async function getTranslation(lng: string, ns: string | string[] = 'commo
 
 ---
 
-### 🏗️ Step 3: Root Layout
+### 🏗️ Step 2: Locale Layout
 
-Connects the server and client sides by fetching translations and providing them to the app.
+Connects the server and client sides by fetching translations and providing them to the app. Uses the custom `ThemeProvider` from `src/lib/theme.tsx` (no external dependency).
 
 ```tsx
 // src/app/[locale]/layout.tsx
-import { getTranslation } from '../../lib/i18n';
-import I18nProviderClient from '../../components/I18nProviderClient';
+import I18nProviderClient from "@/components/I18nProviderClient";
+import PageLayout from "@/components/PageLayout";
+import { ThemeProvider } from '@/lib/theme';
+import { getTranslation, supportedLngs } from "@/lib/i18n";
 
-export default async function RootLayout({ children, params }) {
-  const { locale } = params;
-  const { resources } = await getTranslation(locale);
+export default async function LocaleLayout({ children, params }) {
+  const { locale } = await params;
+  const { resources } = await getTranslation(locale, ['common', 'header']);
 
   return (
-    <I18nProviderClient locale={locale} resources={resources}>
-      <ThemeProvider>
-        <Layout>{children}</Layout>
-      </ThemeProvider>
-    </I18nProviderClient>
+    <ThemeProvider>
+      <I18nProviderClient locale={locale} resources={resources}>
+        <PageLayout>{children}</PageLayout>
+      </I18nProviderClient>
+    </ThemeProvider>
   );
+}
+
+export async function generateStaticParams() {
+  return supportedLngs.map(locale => ({ locale }));
 }
 ```
 
@@ -146,13 +114,13 @@ Let’s fix that using **React’s `useMemo` hook**.
 
 ---
 
-### ⚡ Step 1: Open the File
+### ⚡ Step 3: Open the File
 
 `src/components/I18nProviderClient.tsx`
 
 ---
 
-### ⚙️ Step 2: Import `useMemo`
+### ⚙️ Step 4: Import `useMemo`
 
 Add it to your imports:
 
@@ -162,7 +130,7 @@ import { useMemo } from 'react';
 
 ---
 
-### 🧠 Step 3: Memoize the i18n Instance
+### 🧠 Step 5: Memoize the i18n Instance
 
 Wrap the instance creation and initialization in `useMemo`.
 
@@ -254,11 +222,11 @@ Add new keys by editing:
 
 | Step | File                     | Purpose                                                |
 | ---- | ------------------------ | ------------------------------------------------------ |
-| 1️⃣  | `proxy.ts`              | Ensures URLs always include locale                     |
-| 2️⃣  | `lib/i18n.ts`            | Loads JSON translations from filesystem                |
-| 3️⃣  | `layout.tsx`             | Passes translations to client provider                 |
+| 1️⃣  | `[locale]` dynamic route | Locale captured from URL path segment                  |
+| 2️⃣  | `lib/i18n.ts`           | Loads JSON translations from filesystem                |
+| 3️⃣  | `layout.tsx`            | Passes translations to client provider                 |
 | 4️⃣  | `I18nProviderClient.tsx` | Initializes i18next (optimized with `useMemo`)         |
-| 5️⃣  | `useTranslation()`       | Used in Client Components to display localized strings |
+| 5️⃣  | `useTranslation()`      | Used in Client Components to display localized strings |
 
 ---
 

@@ -22,8 +22,8 @@
 - pnpm
 
 ```bash
-node --version  # Should be 18+
-pnpm --version  # Should be 8+
+node --version  # Should be 20.9+
+pnpm --version  # Should be 11+
 ```
 
 ## Quick Start

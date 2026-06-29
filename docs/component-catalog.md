@@ -1,6 +1,6 @@
 # Component Catalog
 
-> **Status:** ⚡ Needs Update — References `next-themes` (replaced with custom provider in `src/lib/theme.tsx`).
+> **Status:** ✅ Current — Accurately reflects current component structure. `ThemeToggle` uses custom `useTheme` hook from `src/lib/theme.tsx`.
 
 This document catalogs every component in `src/components/`, organized by role.
 

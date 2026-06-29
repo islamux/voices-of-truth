@@ -1,6 +1,6 @@
 # Command Center Blueprint - Textual TUI Edition
 
-> **Status:** 🔵 Blueprint — External tool specification for a Textual TUI. Not part of this project; see `command-center/` for the implemented version. — External design document. Not implemented in this project.
+> **Status:** 🗑️ Removed — Command center project has been deleted from this repository. Historical reference only.
 
 > A complete build specification for an AI-agent-powered project command center with Textual TUI.
 > Feed this document to any capable coding agent (Claude Code, Codex, Cursor, etc.)

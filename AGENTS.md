@@ -2,7 +2,7 @@
 
 ## Project
 
-Next.js 16.2.6 web application for browsing a directory of Islamic scholars and preachers worldwide. Supports Arabic/English i18n (react-i18next), dark/light themes (custom hook-based provider), and server-side filtering via URL query params.
+Next.js 16.2.9 web application for browsing a directory of Islamic scholars and preachers worldwide. Supports Arabic/English i18n (react-i18next), dark/light themes (custom hook-based provider), and server-side filtering via URL query params.
 
 ## Commands
 
@@ -12,12 +12,6 @@ Next.js 16.2.6 web application for browsing a directory of Islamic scholars and 
 | `pnpm build` | Production build |
 | `pnpm start` | Production server |
 | `pnpm lint` | ESLint (next/core-web-vitals, next/typescript) |
-| `pnpm cc:status` | Command center status overview |
-| `pnpm cc:start <id>` | Start a task |
-| `pnpm cc:complete <id>` | Complete a task |
-| `pnpm cc:task <id>` | Full task context |
-| `pnpm cc:ui` | Launch TUI dashboard |
-| `pnpm cc:start-mcp` | Start MCP server (stdio) |
 
 ## Code Rules
 
@@ -80,23 +74,6 @@ import ScholarCard from './ScholarCard';
 | `src/lib/theme.tsx` | Custom theme provider |
 | `src/lib/i18n.ts` | i18next server config |
 | `src/types/index.ts` | TypeScript types |
-
-## Command Center
-
-See `command-center/` for task tracking, milestones, MCP server, and TUI.
-
-### AI Rules (5-phase protocol per `command-center/docs/ai-rules.md`)
-1. **Think & Plan** — Define assumptions, propose simplest solution
-2. **Analyze Impact** — Read relevant files, determine approach
-3. **Execute** — Write complete code, no placeholders
-4. **Verify** — Confirm success criteria, run build/lint
-5. **Sync** — Update tracker and docs
-
-### SOP
-1. Check tracker: `pnpm cc:status`
-2. Execute tasks through all 5 phases
-3. Log progress: `pnpm cc:complete <id> "summary"`
-4. Sync state: Update `project-tracker.json` if structure changed
 
 ## GitHub Flow
 

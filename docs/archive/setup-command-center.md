@@ -1,6 +1,6 @@
 # Setup Command Center in a New Project
 
-> **Status:** 💡 Speculative — Command center already set up in `command-center/`. This docs refers to an external project (`salam`) and is not needed.
+> **Status:** 🗑️ Removed — Command center project has been deleted from this repository. Historical reference only.
 
 ## Prerequisites
 

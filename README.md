@@ -2,9 +2,9 @@
 
 > A directory of renowned Islamic scholars and preachers worldwide, with bilingual Arabic/English support.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.9-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-GNU%20GPL-red)](LICENSE)
 
 ## Features
@@ -18,7 +18,7 @@
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 20.9+
 - pnpm
 
 ```bash
@@ -42,9 +42,6 @@ pnpm dev
 | `pnpm build` | Production build |
 | `pnpm start` | Production server |
 | `pnpm lint` | Run ESLint |
-| `pnpm cc:status` | Command center status |
-| `pnpm cc:start <id>` | Start tracked task |
-| `pnpm cc:complete <id>` | Complete tracked task |
 
 ## Project Structure
 
@@ -86,7 +83,6 @@ voices-of-truth/
 ├── public/
 │   ├── avatars/                # Scholar avatar images
 │   └── locales/{en,ar}/       # Translation JSON files
-├── command-center/             # Task tracking, MCP, TUI
 └── docs/                       # Documentation
 ```
 

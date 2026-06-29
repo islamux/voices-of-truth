@@ -48,14 +48,6 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | [17-component-refactoring-suggestions](17-component-refactoring-suggestions.md) | ⚡ Partial | Suggests extracting `useLocalizedScholar` and `SocialIcon`. Hook exists, icon suggestion pending. |
 | [domain-driven-architecture](domain-driven-architecture.md) | 💡 Speculative | DDD principles mapped to the project. Conceptual — no code changes made. |
 
-## Blueprints
-
-| File | Status | Description |
-|------|--------|-------------|
-| [command-center-blueprint-textual](archive/command-center-blueprint-textual.md) | 🔵 Blueprint (Archived) | Build spec for a Textual TUI command center with MCP server. External — not part of this project. |
-| [command-center-blueprint-voices-of-truth](archive/command-center-blueprint-voices-of-truth.md) | 🔵 Blueprint (Archived) | Adapted command center blueprint for this project. References `scholars-db.json` which doesn't exist. |
-| [setup-command-center](archive/setup-command-center.md) | 💡 Speculative (Archived) | Instructions to install command center from external project. References paths outside this repo. |
-
 ---
 
 *Last updated: 2026-05-31*

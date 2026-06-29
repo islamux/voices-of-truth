@@ -1,6 +1,6 @@
 # Voices of Truth - Scholar Browser Command Center
 
-> **Status:** 🔵 Blueprint — Design document. Command center was implemented differently in `command-center/` directory (MCP server + TUI). `scholars-db.json` does not exist; static data lives in `src/data/`.
+> **Status:** 🗑️ Removed — Command center project has been deleted from this repository. Historical reference only.
 
 > A build specification for managing the Voices of Truth scholar directory.
 > Adapted from the Command Center Blueprint for this Next.js project.

@@ -1,6 +1,6 @@
 # Tutorial: Building "Voices of Truth" From Scratch (Updated)
 
-> **Status:** ⚡ Needs Update — Some sections reference `next-themes` which was replaced with custom `ThemeProvider` (see ADR-009). Install command below is updated.
+> **Status:** ✅ Updated — Sections updated for Next.js 16.2.9, Tailwind v4, custom `ThemeProvider`, and `useSyncExternalStore`-based `useHasMounted`.
 
 Welcome, junior developer! This document is your up-to-date guide to rebuilding the "Voices of Truth" project. The goal is for you to understand the architecture, data flow, and component-based structure of a modern Next.js application.
 
@@ -176,16 +176,11 @@ export default async function LocaleLayout({children, params}:LocaleLayoutProps)
   const {resources} = await getTranslation(locale, ['common', 'header']);
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-    <I18nProviderClient locale={locale} resources={resources} >
-      <PageLayout> {children} </PageLayout>
-    </I18nProviderClient>
-    </I18nProviderClient>
+    <ThemeProvider>
+      <I18nProviderClient locale={locale} resources={resources}>
+        <PageLayout> {children} </PageLayout>
+      </I18nProviderClient>
+    </ThemeProvider>
   );
 }
 
@@ -196,52 +191,88 @@ export async function generateStaticParams() {
 }
 ```
 
-### C. The Theme System: Using `next-themes`
+### C. The Theme System: Custom `ThemeProvider`
 
-To manage the theme, we use the `next-themes` library, a robust and community-accepted solution. This simplifies our code, handles edge cases like "flash of incorrect theme" (FOUC), and syncs themes across tabs automatically.
+The project uses a **custom** `ThemeProvider` defined in `src/lib/theme.tsx` instead of the `next-themes` library. This was done for Next.js 16 / React 19 compatibility — `next-themes` injects `<script>` tags during rendering, which React 19 rejects. The custom provider is ~70 lines and handles:
 
-**The Provider:**
-The `ThemeProvider` from `next-themes` is now used in `src/app/[locale]/layout.tsx` to wrap the application and provide theme context.
+- **Theme state**: `'light' | 'dark' | 'system'` via React Context.
+- **localStorage persistence**: Reads saved preference on init via lazy `useState` initializer, writes on change via `localStorage.setItem`.
+- **System preference detection**: Defaults to `system` and listens for OS-level changes via `window.matchMedia`.
+- **Flash prevention**: An inline `<script>` in `src/app/layout.tsx` applies the theme before React hydrates (see below).
 
-> **Senior Dev Tip: Avoiding Hydration Errors with a Custom Hook**
+**The Provider (`src/lib/theme.tsx`):**
+
+```tsx
+'use client';
+
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+
+type Theme = 'light' | 'dark' | 'system';
+
+function getSystemTheme(): 'light' | 'dark' { /* ... */ }
+function applyTheme(theme: Theme) { /* ... */ }
+
+function getInitialTheme(): Theme {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('theme') as Theme | null;
+      if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
+    } catch {}
+  }
+  return 'system';
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => { if (theme === 'system') applyTheme('system'); };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [theme]);
+
+  const setTheme = useCallback((newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem('theme', newTheme);
+    applyTheme(newTheme);
+  }, []);
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+```
+
+> **Senior Dev Tip: Avoiding Hydration Errors with `useSyncExternalStore`**
 >
-> When using a library like `next-themes`, the theme (`light` or `dark`) is only known on the client-side after the component has "mounted" in the browser. The server doesn't know the theme, so it renders a default state. This can cause a "hydration mismatch" error if the client renders something different from the server's initial HTML.
+> The theme (`light` or `dark`) is only known on the client-side after the component has "mounted" in the browser. The server doesn't know the theme, so it renders a default state. This can cause a "hydration mismatch" error if the client renders something different from the server's initial HTML.
 >
-> To fix this, we need to ensure the theme-dependent UI (like the text "Dark Theme" or "Light Theme") only renders on the client. A common but repetitive pattern is to use `useState` and `useEffect` in every component that needs this behavior.
->
-> A much cleaner, more reusable, and professional approach is to abstract this logic into a custom hook.
+> To fix this, we use a `useHasMounted` hook that leverages React's `useSyncExternalStore` API (available since React 18). This avoids calling `setState` inside a `useEffect` (which new ESLint rules flag as problematic) and provides a clean server/client split:
 >
 > **`src/hooks/useHasMounted.ts`**
 > ```typescript
-> import { useEffect, useState } from 'react';
+> import { useSyncExternalStore } from 'react';
 >
-> /**
->  * A custom hook to check if a component has mounted.
->  * This is useful for avoiding hydration mismatches in Next.js when rendering
->  * client-side only UI.
->  *
->  * @returns {boolean} - True if the component has mounted, false otherwise.
->  */
 > export function useHasMounted() {
->   const [mounted, setMounted] = useState(false);
->
->   useEffect(() => {
->     setMounted(true);
->   }, []);
->
->   return mounted;
+>   return useSyncExternalStore(() => () => {}, () => true, () => false);
 > }
 > ```
-> Now, any component can use `const mounted = useHasMounted();` to safely render client-side-only content. This is a great example of the Don't Repeat Yourself (DRY) principle.
+>
+> - **Server**: Returns `false` (third argument `getServerSnapshot`).
+> - **Client**: Returns `true` (second argument `getSnapshot`).
+> - No `useEffect`, no cascading renders, no ESLint warnings.
 
 **The `ThemeToggle` Component: `src/components/ThemeToggle.tsx`**
-The toggle component now uses the `useTheme` hook from `next-themes` and our new `useHasMounted` hook to safely switch between light and dark modes.
+The toggle component uses the `useTheme` hook from `@/lib/theme` and the `useHasMounted` hook to safely switch between light and dark modes.
 
 ```tsx
 // src/components/ThemeToggle.tsx
 'use client';
 
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/lib/theme';
 import { useTranslation } from "react-i18next";
 import Button from './Button';
 import { useHasMounted } from '@/hooks/useHasMounted';
@@ -255,8 +286,8 @@ export default function ThemeToggle() {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  // We wait for the component to be mounted before rendering the
-  // theme-specific UI to avoid hydration mismatch.
+  // The useHasMounted hook ensures we don't render the theme-specific
+  // button text on the server, preventing a hydration mismatch.
   if (!mounted) {
     return (
       <Button
@@ -279,6 +310,36 @@ export default function ThemeToggle() {
 }
 ```
 
+### D. Flash Prevention
+
+To prevent a flash of the wrong theme on page load, an inline script in `src/app/layout.tsx` runs before React hydration:
+
+```tsx
+const themeScript = `
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme') || 'system';
+      var resolved = theme === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : theme;
+      document.documentElement.classList.add(resolved);
+      document.documentElement.style.colorScheme = resolved;
+    } catch(e) {}
+  })();
+`;
+
+return (
+  <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
+    <head>
+      <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+    </head>
+    ...
+  </html>
+);
+```
+
+This script runs synchronously before any React code, ensuring the correct theme class is present on the very first paint.
+
 ---
 
 ## Step 4: Server-Side Data Filtering & Preparation
@@ -291,53 +352,63 @@ import HomePageClient from './HomePageClient';
 import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
+import { Country, Specialization } from '@/types';
 import { Suspense } from 'react';
 
+// Precompute valid filter values for guardrails
+const validCountryIds = new Set(countries.map(c => c.id));
+const validCategoryIds = new Set(specializations.map(s => s.id));
+
 interface HomePageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function HomePage({ searchParams, params: { locale } }: HomePageProps & { params: { locale: string } }) {
-  const { query, country, lang, category } = searchParams;
+export default async function HomePage({ params, searchParams }: HomePageProps) {
+  const {locale} = await params;
+  const { query, country, lang, category } = await searchParams;
 
   const searchQuery = (query || '').toString().toLowerCase();
+  const countryId = country ? parseInt(country as string, 10) : NaN;
+  const categoryId = category ? parseInt(category as string, 10) : NaN;
+  const langValue = (lang || '').toString();
 
-  // Precompute valid IDs to silently ignore invalid filter values
-  const validCountryIds = new Set(countries.map(c => c.id));
-  const validCategoryIds = new Set(specializations.map(s => s.id));
+  // Validate filter values against known data
+  const isValidCountry = !isNaN(countryId) && validCountryIds.has(countryId);
+  const isValidCategory = !isNaN(categoryId) && validCategoryIds.has(categoryId);
+  const isValidLang = langValue && scholars.some(s => s.language.includes(langValue));
 
+  // Filter the scholars on the server
   const filteredScholars = scholars.filter(scholar => {
     const matchSearch = searchQuery
       ? scholar.name.en.toLowerCase().includes(searchQuery) ||
         scholar.name.ar.toLowerCase().includes(searchQuery) ||
-        (scholar.bio?.en?.toLowerCase().includes(searchQuery) ?? false) ||
-        (scholar.bio?.ar?.toLowerCase().includes(searchQuery) ?? false)
+        (scholar.bio?.en || '').toLowerCase().includes(searchQuery) ||
+        (scholar.bio?.ar || '').toLowerCase().includes(searchQuery)
       : true;
 
-    const countryId = parseInt(country as string, 10);
-    const matchCountry = country ? (validCountryIds.has(countryId) && scholar.countryId === countryId) : true;
+    const matchCountry = isValidCountry ? scholar.countryId === countryId : true;
 
-    const matchesLang = lang ? scholar.language.includes(lang as string) : true;
+    const matchesLang = isValidLang ? scholar.language.includes(langValue) : true;
 
-    const categoryId = parseInt(category as string, 10);
-    const matchesCategory = category ? (validCategoryIds.has(categoryId) && scholar.categoryId === categoryId) : true;
+    const matchesCategory = isValidCategory ? scholar.categoryId === categoryId : true;
 
     return matchSearch && matchCountry && matchesLang && matchesCategory;
   });
 
-  // Data Preparation on the Server — labels are locale-aware
+  // Prepare data for the client — labels are locale-aware
   const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
-  const uniqueCountries = countries.map(c => ({
+  const uniqueCountries = countries.map((c: Country) => ({
     value: c.id.toString(),
-    label: locale === 'ar' && c.ar ? c.ar : c.en,
+    label: locale === 'ar' ? c.ar : c.en,
   }));
-  const uniqueCategories = specializations.map(s => ({
+  const uniqueCategories = specializations.map((s: Specialization) => ({
     value: s.id.toString(),
-    label: locale === 'ar' && s.ar ? s.ar : s.en,
+    label: locale === 'ar' ? s.ar : s.en,
   }));
 
   return (
-    <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
+    <Suspense fallback={<div className="text-center py-12"><p className="text-muted-foreground">Loading...</p></div>}>
       <HomePageClient
         scholars={filteredScholars}
         countries={countries}

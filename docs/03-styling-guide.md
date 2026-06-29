@@ -1,13 +1,13 @@
 # Styling Guide: Tailwind CSS and Custom Theming
 
-> **Status:** ⚡ Needs Update — Sections 3 (Theming Strategy) references `next-themes` which was replaced with custom `ThemeProvider` (see ADR-009 in adr.md).
+> **Status:** ✅ Current — Tailwind v4 with CSS-based config, custom `ThemeProvider` (no `next-themes`).
 
 This guide provides a comprehensive overview of the styling architecture for this Next.js project. It covers the integration of Tailwind CSS and our custom, hook-based strategy for implementing light and dark themes.
 
 ## 1. Core Styling Technologies
 
-- **[Tailwind CSS](https://tailwindcss.com/)**: A utility-first CSS framework that enables rapid UI development by composing pre-built utility classes directly in your markup.
-- **[PostCSS](https://postcss.org/)**: A tool for transforming CSS with JavaScript plugins. We use it as the engine that processes Tailwind CSS directives. Next.js automatically includes `autoprefixer` to add vendor prefixes for cross-browser compatibility.
+- **[Tailwind CSS v4](https://tailwindcss.com/)**: A utility-first CSS framework that enables rapid UI development by composing pre-built utility classes directly in your markup. Configuration is CSS-based via the `@theme` directive instead of a JavaScript config file.
+- **[PostCSS](https://postcss.org/)**: A tool for transforming CSS with JavaScript plugins. We use it as the engine that processes Tailwind CSS via the `@tailwindcss/postcss` plugin. Vendor prefixes are handled automatically by Tailwind v4.
 - **CSS Custom Properties (Variables)**: Used to manage dynamic values for theming (e.g., switching between light and dark mode colors).
 
 ## 2. Configuration Deep Dive
@@ -23,76 +23,42 @@ This file configures the PostCSS pipeline. It's very simple, as Next.js handles 
 /** @type {import('postcss-load-config').Config} */
 const config = {
   plugins: {
-    tailwindcss: {},
+    '@tailwindcss/postcss': {},
   },
 };
 
 export default config;
 ```
 
-- **`tailwindcss: {}`**: Integrates Tailwind CSS as a PostCSS plugin. `autoprefixer` is included automatically by Next.js.
+- **`'@tailwindcss/postcss': {}`**: Integrates Tailwind CSS v4 as a PostCSS plugin. Autoprefixing is built into Tailwind v4 — no separate `autoprefixer` dependency needed.
 
-### `tailwind.config.ts`
+### Theme Configuration via CSS (`globals.css`)
 
-This is the heart of your Tailwind setup. It defines which files to scan for classes and configures the dark mode strategy.
+Tailwind v4 replaces the JavaScript `tailwind.config.ts` with a CSS-based configuration system. There is **no `tailwind.config.ts`** file in this project. Theme tokens (colors, spacing, etc.) are defined in `src/app/globals.css` using the `@theme` directive.
 
-```typescript
-// tailwind.config.ts
-import type { Config } from "tailwindcss";
+```css
+/* src/app/globals.css */
+@import "tailwindcss";
 
-const config: Config = {
-  content: [
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}", 
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  darkMode: 'class', 
-  theme: {
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-    },
-  },
-  plugins: [], 
-};
-export default config;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  /* ... see globals.css for full list */
+}
 ```
 
-- **`content`**: Tells Tailwind to scan all relevant files to generate only the CSS that is actually used, keeping the final bundle small.
-- **`darkMode: 'class'`**: This is the key to our theme-switching implementation. It instructs Tailwind to apply dark mode styles (e.g., `dark:bg-black`) whenever a `dark` class is present on a parent element (in our case, the `<html>` tag).
+- **`@import "tailwindcss"`**: Replaces the old `@tailwind base/components/utilities` directives. Tailwind v4 automatically injects all layers through this single import.
+- **`@custom-variant dark (...)`**: Defines the dark mode variant. The selector `&:where(.dark, .dark *)` applies dark styles when the `.dark` class is present on a parent element (set on `<html>` by the `ThemeProvider`).
+- **`@theme` block**: Registers custom design tokens as CSS custom properties, making them available as Tailwind utility classes (e.g., `bg-card`, `text-foreground`, `border-border`).
 
 ### `src/app/globals.css`
 
@@ -102,76 +68,80 @@ This file is the entry point for our global styles. It's where Tailwind's direct
 
 ```css
 /* src/app/globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+}
 
 @layer base {
   :root {
-    /* Light mode (default) - HSL format: hue saturation lightness */
+    /* Light mode (default) — HSL format: hue saturation lightness */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.24.9%;
- 84%   }
+    /* ... see globals.css for full list */
+  }
 
   .dark {
-    /* Dark mode - HSL format */
+    /* Dark mode — HSL format */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* ... see globals.css for full list */
   }
-}
 
-@layer base {
   body {
     @apply bg-background text-foreground;
   }
 }
 ```
 
-- **`@tailwind` directives**: These inject Tailwind's base styles, component classes, and utility classes.
-- **`:root`**: Defines the default (light theme) color values.
-- **`.dark`**: Defines the color values that will be applied when the `dark` class is active on the `<html>` element. Our `ThemeProvider` is responsible for adding and removing this class.
+- **`@import "tailwindcss"`**: Tailwind v4 single-entry import (replaces `@tailwind base/components/utilities`).
+- **`@theme` block**: Registers color tokens so Tailwind utility classes like `bg-card` and `text-foreground` work.
+- **`@custom-variant dark`**: Configures class-based dark mode so `dark:bg-gray-800` activates when `.dark` is on `<html>`.
+- **`@layer base`**: Defines the raw HSL variable values. `:root` = light theme, `.dark` = dark theme. The `ThemeProvider` toggles the `.dark` class on `<html>`.
 
-## 3. Theming Strategy: Using `next-themes`
+## 3. Theming Strategy: Custom `ThemeProvider`
 
-To manage the theme, we use the `next-themes` library, a robust and community-accepted solution. This simplifies our code, handles edge cases like "flash of incorrect theme" (FOUC), and syncs themes across tabs automatically.
+This project uses a **custom** `ThemeProvider` and `useTheme` hook in `src/lib/theme.tsx`, rather than a third-party library like `next-themes`. This was done for Next.js 16 / React 19 compatibility — `next-themes` injects `<script>` tags during rendering, which React 19 rejects.
+
+The custom provider is ~70 lines and handles:
+
+- **Theme state**: `'light' | 'dark' | 'system'` via React Context.
+- **localStorage persistence**: Reads saved preference on init, writes on change.
+- **System preference detection**: Defaults to `system` and listens for OS-level changes via `matchMedia`.
+- **Flash prevention**: An inline `<script>` in `src/app/layout.tsx` applies the theme before React hydrates (see root layout).
 
 ### A. The Provider
 
-The `ThemeProvider` from `next-themes` is used in `src/app/[locale]/layout.tsx` to wrap the application and provide theme context.
+The `ThemeProvider` from `src/lib/theme.tsx` is used in `src/app/[locale]/layout.tsx`. It takes no props — its behavior is self-contained.
 
 ```tsx
 // src/app/[locale]/layout.tsx
@@ -187,19 +157,14 @@ interface LocaleLayoutProps{
 
 export default async function LocaleLayout({children, params}:LocaleLayoutProps){
   const {locale} = await params;
-  const {resources} = await getTranslation(locale);
+  const {resources} = await getTranslation(locale, ['common', 'header']);
 
   return (
-    <I18nProviderClient locale={locale} resources={resources} >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
+    <ThemeProvider>
+      <I18nProviderClient locale={locale} resources={resources}>
         <PageLayout> {children} </PageLayout>
-      </ThemeProvider>
-    </I18nProviderClient>
+      </I18nProviderClient>
+    </ThemeProvider>
   );
 }
 
@@ -212,13 +177,13 @@ export async function generateStaticParams() {
 
 ### B. The `ThemeToggle` Component
 
-The toggle component uses the `useTheme` hook from `next-themes` to switch between light and dark modes. It also uses our custom `useHasMounted` hook to ensure the button's text (reflecting the current theme) is only rendered on the client, which is a best practice to prevent UI inconsistencies (hydration errors).
+The toggle component uses the `useTheme` hook from `@/lib/theme` to switch between light and dark modes. It also uses the `useHasMounted` hook (backed by `useSyncExternalStore`) to ensure the button's text is only rendered on the client, preventing hydration mismatches.
 
 ```tsx
 // src/components/ThemeToggle.tsx
 'use client';
 
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/lib/theme';
 import { useTranslation } from "react-i18next";
 import Button from './Button';
 import { useHasMounted } from '@/hooks/useHasMounted';
@@ -255,6 +220,37 @@ export default function ThemeToggle() {
   );
 }
 ```
+
+### C. Flash Prevention
+
+To prevent a flash of the wrong theme on page load, an inline script in `src/app/layout.tsx` runs before React hydration. It reads `localStorage` and applies the correct class to `<html>` immediately:
+
+```tsx
+// src/app/layout.tsx (inside the <head>)
+const themeScript = `
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme') || 'system';
+      var resolved = theme === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : theme;
+      document.documentElement.classList.add(resolved);
+      document.documentElement.style.colorScheme = resolved;
+    } catch(e) {}
+  })();
+`;
+
+return (
+  <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
+    <head>
+      <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+    </head>
+    ...
+  </html>
+);
+```
+
+This script runs synchronously before any React code, ensuring the correct theme class is present on the very first paint. The `suppressHydrationWarning` on `<html>` prevents React from complaining that the server-rendered class list differs from the client. Once the `ThemeProvider` hydrates, it takes over all subsequent theme management.
 
 ## 4. Usage in Components
 

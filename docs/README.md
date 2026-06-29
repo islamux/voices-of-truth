@@ -6,12 +6,12 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 | File | Status | Description |
 |------|--------|-------------|
-| [01-build-from-scratch](01-build-from-scratch.md) | ⚡ Needs Update | Step-by-step rebuild guide. References `next-themes` (replaced with custom provider). |
-| [03-styling-guide](03-styling-guide.md) | ⚡ Needs Update | Tailwind, CSS variables, dark mode. References `next-themes` (replaced with custom provider). |
-| [04-feature-translation](04-feature-translation.md) | ⚡ Needs Update | Multi-language i18n. References `middleware.ts` (no longer exists in Next.js 16). |
+| [01-build-from-scratch](01-build-from-scratch.md) | ✅ Updated | Step-by-step rebuild guide. Custom `ThemeProvider`, `useSyncExternalStore`, Tailwind v4. |
+| [03-styling-guide](03-styling-guide.md) | ✅ Current | Tailwind v4 CSS config, custom `ThemeProvider`, flash-prevention script. |
+| [04-feature-translation](04-feature-translation.md) | ✅ Updated | Multi-language i18n via `[locale]` dynamic route (no middleware). |
 | [12-layout-system](12-layout-system.md) | ✅ Current | Three-layer layout architecture (root → locale → PageLayout). |
 | [data-organization](data-organization.md) | ✅ Current | Scholar data model, file layout, category mapping, and data flow. |
-| [component-catalog](component-catalog.md) | ⚡ Needs Update | Component inventory. References `next-themes` (replaced with custom provider). |
+| [component-catalog](component-catalog.md) | ✅ Current | Component inventory. `ThemeToggle` uses custom `useTheme` hook. |
 | [documentation-guide](documentation-guide.md) | ✅ Current | Best practices for project docs (README, CONTRIBUTING, CHANGELOG). |
 
 ## Proposals
@@ -50,4 +50,4 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 ---
 
-*Last updated: 2026-05-31*
+*Last updated: 2026-06-29*

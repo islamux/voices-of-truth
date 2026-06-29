@@ -1,7 +1,7 @@
 # Theme Implementation Analysis & Recommendations
 
-> **Status:** ✅ Implemented — Replaced `next-themes` with custom `ThemeProvider` in `src/lib/theme.tsx` (Next.js 16 compatibility). Theme tokens unified across all components (ms1_002). Semantic classes (`bg-card`, `text-foreground`, `border-border`, etc.) deployed across all components.
-> **Note:** This doc contains the original migration guide which recommended `next-themes`. The project now uses a custom provider — see ADR-009 in [adr.md](adr.md) for rationale.
+> **Status:** ✅ Implemented — Replaced `next-themes` with custom `ThemeProvider` in `src/lib/theme.tsx` (Next.js 16 compatibility). Theme tokens unified across all components (ms1_002). Semantic classes (`bg-card`, `text-foreground`, `border-border`, etc.) deployed across all components. Tailwind v4 CSS-based `@theme` config replaces `tailwind.config.ts`.
+> **Note:** This doc contains the original migration guide which recommended `next-themes`. The project now uses a custom provider — see ADR-009 in [adr.md](adr.md) for rationale. The `tailwind.config.ts` approach described in this doc has been superseded by Tailwind v4's CSS-based `@theme` directive.
 
 As a senior developer, I've reviewed the current theming implementation in the project. This document outlines what's working well, identifies key areas for improvement, and provides a clear, step-by-step guide to refactor it for better maintainability and adherence to Next.js community best practices.
 

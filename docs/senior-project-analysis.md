@@ -1,10 +1,12 @@
 # Senior Project Analysis
 
-Last reviewed: 2026-05-15
+> **Status:** ✅ Current — This is a snapshot analysis from 2026-05-15. Items marked below as risks were reviewed and several have been addressed (see inline notes). Some references to removed artifacts (command center, `project-tracker.json`) remain as historical context.
+
+Last reviewed: 2026-06-29 (snapshot date: 2026-05-15)
 
 ## Executive Summary
 
-Voices of Truth is a focused Next.js 15 scholar directory with a clear product surface: localized browsing, URL-driven filters, server-side filtering, theme switching, and a static TypeScript data source. The current codebase is small enough to move quickly, but it already has the main architectural ingredients of a maintainable application: typed domain models, category-split data files, locale-based routing, reusable UI components, and a docs hub.
+Voices of Truth is a focused Next.js 16 scholar directory with a clear product surface: localized browsing, URL-driven filters, server-side filtering, theme switching, and a static TypeScript data source. The current codebase is small enough to move quickly, but it already has the main architectural ingredients of a maintainable application: typed domain models, category-split data files, locale-based routing, reusable UI components, and a docs hub.
 
 The most important technical theme is consistency. The app uses good patterns in several places, but some older decisions remain beside newer ones: Tailwind theme tokens coexist with undefined raw CSS variables, server/client boundaries are mostly clean but not fully intentional, and some documentation reflects earlier implementation stages. The next senior move is not a large rewrite. It is to stabilize the foundations before the planned Supabase migration.
 
@@ -12,12 +14,12 @@ The most important technical theme is consistency. The app uses good patterns in
 
 - **Framework:** Next.js 16 App Router with React 19.
 - **Styling:** Tailwind CSS with class-based dark mode via custom `ThemeProvider` in `src/lib/theme.tsx`.
-- **Localization:** `react-i18next`, `i18next`, dynamic `/[locale]` routes, and middleware-based locale redirection.
+- **Localization:** `react-i18next`, `i18next`, dynamic `/[locale]` routes (no middleware).
 - **Data source:** Static TypeScript arrays under `src/data/`, split by scholar specialization.
 - **Domain size today:** 26 scholars, 10 countries, and 11 specializations.
 - **Filtering:** Server-side filtering in `src/app/[locale]/page.tsx`, driven by URL search params.
 - **Client interactivity:** Filter controls, language switching, theme toggling, and animated cards.
-- **Project process:** Command Center metadata exists in `project-tracker.json`; the active focus is bug fixes/code quality with Supabase migration queued as the next major priority.
+- **Project process:** Project tracker and command center artifacts have been removed from the repository.
 
 ## Architecture Map
 
@@ -67,7 +69,9 @@ The main issue is not component count; it is uneven maturity. Some files are nic
 
 ## Key Risks and Findings
 
-### P1: Theme Variables Are Inconsistent
+### P1: Theme Variables Are Inconsistent (Addressed)
+
+> ✅ This was resolved in a prior refactor (ms1_002). All components now use Tailwind theme tokens (`bg-card`, `text-foreground`, `border-border`). No raw RGB variables remain.
 
 Several components use raw CSS variables such as `--card-bg-rgb`, `--card-border-rgb`, `--muted-text-rgb`, `--foreground-rgb`, and `--shadow-color-rgba`. The active theme tokens in `globals.css` are HSL variables such as `--card`, `--border`, `--muted-foreground`, and `--foreground`.
 
@@ -96,7 +100,9 @@ Recommendation:
 - Keep root layout minimal and move locale-derived document behavior into the locale layout where possible.
 - If `<html lang>` must be controlled per locale, verify the exact Next.js behavior with a production build before relying on it.
 
-### P1: Filter Controls Do Not Reflect Current URL State
+### P1: Filter Controls Do Not Reflect Current URL State (Addressed)
+
+> ✅ Filters now read their current values from `useSearchParams` via `FilterContext.currentFilters`. See ADR-002 and ADR-003.
 
 Filters write to the URL but the controls do not currently read their selected values from `useSearchParams`. Search input and selects are effectively uncontrolled from the current URL.
 
@@ -110,7 +116,9 @@ Recommendation:
 - Pass current filter values through `FilterContext` or let each filter read `useSearchParams`.
 - Set `value` on `SearchInput` and each `FilterDropdown`.
 
-### P2: Search Updates Route on Every Keypress
+### P2: Search Updates Route on Every Keypress (Addressed)
+
+> ✅ `FilterContext` now uses `router.replace` instead of `router.push`. See ADR-003.
 
 `SearchInput` calls `router.push` through context on every `onChange`.
 
@@ -125,7 +133,9 @@ Recommendation:
 - Use `router.replace` for filter changes, especially search.
 - Debounce search input or submit search explicitly after a short delay.
 
-### P2: Query Parsing Needs Guardrails
+### P2: Query Parsing Needs Guardrails (Addressed)
+
+> ✅ Precomputed `validCountryIds`/`validCategoryIds` sets with explicit validation. Invalid values fall through silently (show all results). See ADR-008.
 
 `country` and `category` are parsed with `parseInt` directly. Invalid values become `NaN`, which safely returns no matches, but this is accidental rather than explicit.
 
@@ -252,6 +262,5 @@ Indexes to plan early:
 
 ## Verification Notes
 
-- Command Center CLI could not be run in this shell because `pnpm` is not installed.
-- Tracker status was reviewed directly from `project-tracker.json`.
 - Analysis was based on current files under `src/app`, `src/components`, `src/context`, `src/data`, `src/lib`, project configuration, and existing documentation.
+- Command center (`project-tracker.json`, `.cc-backups/`) has since been removed from the repository.

@@ -44,3 +44,9 @@ next-env.d.ts
 # command center
 /cc-backups/
 command-center/node_modules/
+
+# opencode workspace cache
+.opencode/
+
+# editor personal settings
+.vscode/

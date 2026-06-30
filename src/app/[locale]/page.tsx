@@ -4,12 +4,12 @@ import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
 import { Country, Specialization } from '@/types';
 import { Suspense } from 'react';
+import { normalizeArabic } from '@/lib/search';
 
-// Precompute valid filter values for guardrails
 const validCountryIds = new Set(countries.map(c => c.id));
 const validCategoryIds = new Set(specializations.map(s => s.id));
 
-// Define the props for the page, including searchParams.
+
 interface HomePageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -18,25 +18,25 @@ interface HomePageProps {
   export default async function HomePage({ params, searchParams }: HomePageProps) {
 
     const {locale} = await params;
-    const { query, country, lang, category } = await searchParams;
+    const { query, country, lang, category, page } = await searchParams;
 
-    const searchQuery = (query || '').toString().toLowerCase();
+    const searchQuery = normalizeArabic((query || '').toString().toLowerCase());
     const countryId = country ? parseInt(country as string, 10) : NaN;
     const categoryId = category ? parseInt(category as string, 10) : NaN;
     const langValue = (lang || '').toString();
+    const currentPage = Math.max(1, parseInt(page as string, 10) || 1);
+    const PER_PAGE = 12;
 
-    // Validate filter values against known data
     const isValidCountry = !isNaN(countryId) && validCountryIds.has(countryId);
     const isValidCategory = !isNaN(categoryId) && validCategoryIds.has(categoryId);
     const isValidLang = langValue && scholars.some(s => s.language.includes(langValue));
 
-    // Filter the scholars on the server
     const filteredScholars = scholars.filter(scholar => {
       const matchSearch = searchQuery
-        ? scholar.name.en.toLowerCase().includes(searchQuery) ||
-        scholar.name.ar.toLowerCase().includes(searchQuery) ||
-        (scholar.bio?.en || '').toLowerCase().includes(searchQuery) ||
-        (scholar.bio?.ar || '').toLowerCase().includes(searchQuery)
+        ? normalizeArabic(scholar.name.en.toLowerCase()).includes(searchQuery) ||
+        normalizeArabic(scholar.name.ar.toLowerCase()).includes(searchQuery) ||
+        normalizeArabic((scholar.bio?.en || '').toLowerCase()).includes(searchQuery) ||
+        normalizeArabic((scholar.bio?.ar || '').toLowerCase()).includes(searchQuery)
         : true;
 
       const matchCountry = isValidCountry ? scholar.countryId === countryId : true;
@@ -48,20 +48,24 @@ interface HomePageProps {
       return matchSearch && matchCountry && matchesLang && matchesCategory;
     });
 
-    // Prepare data for the client
     const uniqueLanguages = [...new Set(scholars.flatMap(s => s.language))];
     const uniqueCountries = countries.map((c: Country) => ({ value: c.id.toString(), label: locale === 'ar' ? c.ar : c.en }));
     const uniqueCategories = specializations.map((s: Specialization) => ({ value: s.id.toString(), label: locale === 'ar' ? s.ar : s.en }));
 
-    // Pass the filterd data to the client component.
+    const totalPages = Math.ceil(filteredScholars.length / PER_PAGE);
+    const safePage = Math.min(currentPage, totalPages || 1);
+    const paginatedScholars = filteredScholars.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
+
     return (
       <Suspense fallback={<div className="text-center py-12"><p className="text-muted-foreground">Loading...</p></div>}>
         <HomePageClient
-        scholars={filteredScholars}
+        scholars={paginatedScholars}
         countries={countries}
         uniqueLanguages={uniqueLanguages}
         uniqueCountries={uniqueCountries}
         uniqueCategories={uniqueCategories}
+        currentPage={safePage}
+        totalPages={totalPages}
         />
       </Suspense>
     );

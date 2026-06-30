@@ -63,16 +63,21 @@ import ScholarCard from './ScholarCard';
 
 | Path | Purpose |
 |------|---------|
-| `src/app/[locale]/page.tsx` | Server component: filtering & data prep |
+| `src/app/[locale]/page.tsx` | Server: filtering, Arabic search, pagination |
 | `src/app/[locale]/HomePageClient.tsx` | Client: search params, FilterProvider |
-| `src/app/[locale]/layout.tsx` | Locale layout: ThemeProvider + I18nProviderClient |
+| `src/app/[locale]/layout.tsx` | Locale layout: ThemeProvider + I18nProviderClient + ErrorBoundary |
+| `src/app/[locale]/not-found.tsx` | Custom 404 page |
 | `src/app/layout.tsx` | Root layout: theme script, html dir/lang |
+| `src/app/sitemap.ts` | Dynamic sitemap |
 | `src/components/FilterBar.tsx` | Filter bar composition |
 | `src/components/ScholarCard.tsx` | Scholar card with motion |
+| `src/components/Pagination.tsx` | Page navigation (12 per page) |
+| `src/components/ErrorBoundary.tsx` | Class-based error boundary |
 | `src/components/filters/` | Individual filter components |
 | `src/context/FilterContext.tsx` | Filter state context + `useFilters` hook |
 | `src/lib/theme.tsx` | Custom theme provider |
 | `src/lib/i18n.ts` | i18next server config |
+| `src/lib/search.ts` | Arabic diacritics normalization |
 | `src/types/index.ts` | TypeScript types |
 
 ## GitHub Flow

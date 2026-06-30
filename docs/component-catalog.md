@@ -39,6 +39,18 @@ This document catalogs every component in `src/components/`, organized by role.
 |-----------|------|------|
 | `Button` | `src/components/Button.tsx` | Reusable styled button |
 
+## Error Handling
+
+| Component | File | Role |
+|-----------|------|------|
+| `ErrorBoundary` | `src/components/ErrorBoundary.tsx` | Class-based error boundary with try-again button; wraps `PageLayout` |
+
+## Pagination
+
+| Component | File | Role |
+|-----------|------|------|
+| `Pagination` | `src/components/Pagination.tsx` | Page navigation controls; reads/writes `?page=` search param |
+
 ## Theme & i18n
 
 | Component | File | Role |
@@ -50,22 +62,24 @@ This document catalogs every component in `src/components/`, organized by role.
 ## Component Hierarchy
 
 ```
-PageLayout
-├── Header
-│   ├── LanguageSwitcher
-│   └── ThemeToggle
-├── Page Content (children prop)
-│   ├── FilterBar
-│   │   ├── SearchInput
-│   │   ├── CountryFilter
-│   │   ├── LanguageFilter
-│   │   └── CategoryFilter
-│   └── ScholarList
-│       └── ScholarCard (×N)
-│           ├── ScholarAvatar
-│           ├── ScholarInfo
-│           └── SocialMediaLinks
-└── Footer
+ErrorBoundary
+└── PageLayout
+    ├── Header
+    │   ├── LanguageSwitcher
+    │   └── ThemeToggle
+    ├── Page Content (children prop)
+    │   ├── FilterBar
+    │   │   ├── SearchInput
+    │   │   ├── CountryFilter
+    │   │   ├── LanguageFilter
+    │   │   └── CategoryFilter
+    │   ├── ScholarList
+    │   │   └── ScholarCard (×N)
+    │   │       ├── ScholarAvatar
+    │   │       ├── ScholarInfo
+    │   │       └── SocialMediaLinks
+    │   └── Pagination
+    └── Footer
 ```
 
 ---

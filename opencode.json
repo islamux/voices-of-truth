@@ -1,4 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git"]
+  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git"],
+  "rules": [
+    "When told to update @docs/, @AGENTS.md, or @README.md: apply best-practice documentation rules. Verify every referenced function, file path, flag, and config key against the actual source code. Fix any docs-vs-code drift. Use consistent terminology. Keep it concise and accurate — no filler or unverifiable claims."
+  ],
+  "command": {
+    "update docs": {
+      "description": "Update docs/ AGENTS.md README.md with best-practice audit",
+      "template": "Update @docs/, @AGENTS.md, and @README.md with best-practice documentation rules. Verify every referenced function, file path, flag, and config key against the actual source code. Fix any docs-vs-code drift. Use consistent terminology. Keep it concise and accurate with no filler or unverifiable claims."
+    }
+  }
 }

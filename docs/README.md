@@ -29,6 +29,13 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | [fix-hydration-error](fix-hydration-error.md) | ✅ Implemented | Theme hydration error fix using `useHasMounted()` guard. Applied in `ThemeToggle.tsx`. |
 | [prop-drilling-deep-dive](prop-drilling-deep-dive.md) | ✅ Implemented | Prop drilling refactored using `FilterContext`. `FilterContext.tsx` exists in codebase. |
 | [theme-analysis](theme-analysis.md) | ✅ Implemented | Theme migration guide. Custom `ThemeProvider` in `src/lib/theme.tsx`, semantic tokens deployed. |
+| | | |
+| **New (post-upgrade)** | | |
+| [ErrorBoundary](../src/components/ErrorBoundary.tsx) | ✅ Implemented | Class-based error boundary wrapping `PageLayout` |
+| [Pagination](../src/components/Pagination.tsx) | ✅ Implemented | Server-side pagination (12 per page) with `?page=` search param |
+| [search.ts](../src/lib/search.ts) | ✅ Implemented | `normalizeArabic()` diacritics-stripping utility for Arabic search |
+| [sitemap.ts](../src/app/sitemap.ts) | ✅ Implemented | Dynamic sitemap with `/en` and `/ar` URLs, env-aware base |
+| [not-found.tsx](../src/app/%5Blocale%5D/not-found.tsx) | ✅ Implemented | Custom 404 page with "Go home" link |
 
 ## Reference
 
@@ -50,4 +57,4 @@ Documentation for the Voices of Truth — Scholar Directory project.
 
 ---
 
-*Last updated: 2026-06-29*
+*Last updated: 2026-06-30*

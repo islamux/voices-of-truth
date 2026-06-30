@@ -51,18 +51,22 @@ voices-of-truth/
 │   ├── app/
 │   │   ├── [locale]/           # Dynamic locale routes
 │   │   │   ├── layout.tsx      # Locale layout (ThemeProvider + i18n)
-│   │   │   ├── page.tsx        # Server: data fetching & filtering
-│   │   │   └── HomePageClient.tsx  # Client: search params, filters
+│   │   │   ├── page.tsx        # Server: data fetching, filtering, pagination
+│   │   │   ├── HomePageClient.tsx  # Client: search params, filters
+│   │   │   └── not-found.tsx   # Custom 404 page
 │   │   ├── layout.tsx          # Root layout (theme script, lang/dir)
+│   │   ├── sitemap.ts          # Dynamic sitemap
 │   │   └── globals.css         # Tailwind + shadcn-style CSS vars
 │   ├── components/
 │   │   ├── filters/            # Individual filter components
 │   │   ├── FilterBar.tsx       # Filter composition
 │   │   ├── ScholarCard.tsx     # Scholar display card
 │   │   ├── ScholarList.tsx     # Scholar grid
-│   │   ├── Header.tsx          # App header
+│   │   ├── Header.tsx          # App header (RTL-aware)
 │   │   ├── Footer.tsx          # App footer
 │   │   ├── PageLayout.tsx      # Layout wrapper
+│   │   ├── Pagination.tsx      # Page navigation controls
+│   │   ├── ErrorBoundary.tsx   # Class-based error boundary
 │   │   ├── ThemeToggle.tsx     # Dark/light toggle
 │   │   ├── LanguageSwitcher.tsx # EN/AR switcher
 │   │   ├── Button.tsx          # Reusable button (twMerge)
@@ -74,10 +78,11 @@ voices-of-truth/
 │   │   ├── countries.ts        # Country data (10 countries)
 │   │   └── specializations.ts  # 11 specialization categories
 │   ├── hooks/
-│   │   ├── useHasMounted.ts    # Hydration mismatch guard
+│   │   ├── useHasMounted.ts    # Hydration mismatch guard (useSyncExternalStore)
 │   │   └── useLocalizedScholar.ts # Localized name/bio resolver
 │   ├── lib/
 │   │   ├── i18n.ts             # i18next server config
+│   │   ├── search.ts           # Arabic diacritics normalization
 │   │   └── theme.tsx           # Custom ThemeProvider + useTheme
 │   └── types/index.ts          # Scholar, Country, Specialization
 ├── public/

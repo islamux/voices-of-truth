@@ -3,6 +3,7 @@
 import { Scholar, Country } from "@/types";
 import ScholarList from "@/components/ScholarList";
 import FilterBar from "@/components/FilterBar";
+import Pagination from "@/components/Pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FilterProvider } from '@/context/FilterContext';
 
@@ -12,6 +13,8 @@ interface HomePageClientProps {
   uniqueCountries: { value: string; label: string }[];
   uniqueCategories: { value: string; label: string }[];
   uniqueLanguages: string[];
+  currentPage: number;
+  totalPages: number;
 }
 
 export default function HomePageClient({
@@ -19,7 +22,9 @@ export default function HomePageClient({
   countries,
   uniqueCountries,
   uniqueCategories,
-  uniqueLanguages
+  uniqueLanguages,
+  currentPage,
+  totalPages,
 }: HomePageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -62,6 +67,7 @@ export default function HomePageClient({
     <FilterProvider value={filterContextValue}>
       <FilterBar />
       <ScholarList scholars={scholars} countries={countries} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </FilterProvider>
   );
 }

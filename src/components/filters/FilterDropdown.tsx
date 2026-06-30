@@ -13,8 +13,6 @@ export default function FilterDropdown({label, filterKey, options, value, onChan
 
   const {t} = useTranslation('common');
 
-  // Render the dropdown filterKey
-  
   return(
     <div  className="w-full sm:w-auto">
      <label htmlFor={`${filterKey}-filter`} className="block text-sm font-medium text-muted-foreground mb-1">

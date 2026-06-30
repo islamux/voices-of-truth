@@ -20,7 +20,7 @@ export default function CategoryFilter(){
     label={t('filterByCategory')}
     filterKey="category"
     options={uniqueCategories}
-    value={currentFilters.category} // Use the current value from URL
+    value={currentFilters.category}
     onChange={onCategoryChange}
     />
   );

@@ -16,7 +16,6 @@ export default async function RootLayout({
   children,
   params,
 }: RootLayoutProps) {
-  // Default to English if no locale is provided
   const {locale = 'en'} = await params;
   const themeScript = `
     (function() {

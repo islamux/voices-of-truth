@@ -15,10 +15,6 @@ interface I18nProviderClientProps {
 
 export default function I18nProviderClient({  children,  locale,  resources}:I18nProviderClientProps) {
 
-  // Create a new i18n instance for each render to avoid sharing state between requests
-  // Memoize the instance to avoid re-creating it on every render
-  // This is important for performance and to avoid issues with concurrent requests
-
   const   i18Memoize = useMemo(() => {
     const i18n = createInstance();
     i18n

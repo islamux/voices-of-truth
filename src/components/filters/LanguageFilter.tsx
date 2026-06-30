@@ -12,7 +12,6 @@ export default function LanguageFilter(){
   const { uniqueLanguages, onLanguageChange, currentFilters } = useFilters();
 
   const languageOptions =  useMemo( ()=>
-    // Memoize the options to avoid unnecessary re-renders 
     uniqueLanguages.map( lang => ({value: lang, label: lang})),
     [uniqueLanguages]
   );
@@ -23,7 +22,7 @@ export default function LanguageFilter(){
     label={t('filterByLanguage')}
     filterKey="language"
     options={languageOptions}
-    value={currentFilters.lang} // Use the current value from URL
+    value={currentFilters.lang}
     onChange={onLanguageChange}
     />
   );

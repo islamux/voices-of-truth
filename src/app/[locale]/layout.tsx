@@ -1,5 +1,6 @@
 import I18nProviderClient from "@/components/I18nProviderClient";
-import PageLayout from "@/components/PageLayout"; 
+import PageLayout from "@/components/PageLayout";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from '@/lib/theme';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 import type { Metadata } from "next";
@@ -18,12 +19,6 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   };
 }
 
-interface LocaleLayoutProps{
-  children : React.ReactNode;
-  params: Promise<{locale: string}>;
-
-}
-
 export default async function LocaleLayout({children, params}:LocaleLayoutProps){
 
   const {locale} = await params; 
@@ -32,13 +27,12 @@ export default async function LocaleLayout({children, params}:LocaleLayoutProps)
   return (
     <ThemeProvider>
     <I18nProviderClient locale={locale} resources={resources} >
-      <PageLayout> {children} </PageLayout>
+      <ErrorBoundary><PageLayout> {children} </PageLayout></ErrorBoundary>
     </I18nProviderClient>
     </ThemeProvider>
   );
 }
 
-// Generate static params for each supported locale
 export async function generateStaticParams() {
   return supportedLngs.map(function(locale) {
     return { locale :locale};

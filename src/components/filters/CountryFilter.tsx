@@ -1,11 +1,8 @@
-// src/components/filters/CountryFilter.tsx (Refactored)
-
-import { useFilters } from '@/context/FilterContext'; // Import our custom hook
+import { useFilters } from '@/context/FilterContext';
 import { useTranslation } from "react-i18next";
 import FilterDropdown from "./FilterDropdown";
 
 export default function CountryFilter() {
-  // Call the hook to get the data and functions directly from the context.
   const { uniqueCountries, onCountryChange, currentFilters } = useFilters();
   const { t } = useTranslation('common');
 
@@ -13,9 +10,9 @@ export default function CountryFilter() {
     <FilterDropdown
       label={t('filterByCountry')}
       filterKey="country"
-      options={uniqueCountries} // Use the data from context
-      value={currentFilters.country} // Use the current value from URL
-      onChange={onCountryChange}  // Use the function from context
+      options={uniqueCountries}
+      value={currentFilters.country}
+      onChange={onCountryChange}
     />
   );
 }

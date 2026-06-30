@@ -11,5 +11,6 @@
   "islamicJurisprudence": "Islamic Jurisprudence",
   "islamicThought": "Islamic Thought",
   "languages": "Languages",
-  "filterByCategory": "Filter by Category"
+  "filterByCategory": "Filter by Category",
+  "noScholarsFound": "No scholars found matching your criteria."
 }

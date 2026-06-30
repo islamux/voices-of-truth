@@ -1,15 +1,19 @@
 import type { MetadataRoute } from 'next';
 
+const baseUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://voices-of-truth.vercel.app/en',
+      url: `${baseUrl}/en`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,
     },
     {
-      url: 'https://voices-of-truth.vercel.app/ar',
+      url: `${baseUrl}/ar`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,

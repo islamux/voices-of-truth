@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://voices-of-truth.vercel.app/sitemap.xml

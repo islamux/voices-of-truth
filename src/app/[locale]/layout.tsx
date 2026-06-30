@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   const { t } = await getTranslation(locale, 'common');
   return {
     title: t('appTitle'),
-    description: t('appTitle'),
+    description: 'A bilingual directory of renowned Islamic scholars and preachers worldwide.',
   };
 }
 

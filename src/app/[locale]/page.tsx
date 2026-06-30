@@ -57,7 +57,7 @@ interface HomePageProps {
     const paginatedScholars = filteredScholars.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
 
     return (
-      <Suspense fallback={<div className="text-center py-12"><p className="text-muted-foreground">Loading...</p></div>}>
+      <Suspense fallback={<div className="text-center py-12"><div className="animate-pulse space-y-4"><div className="h-8 w-48 bg-muted rounded mx-auto" /><div className="h-4 w-64 bg-muted rounded mx-auto" /><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8"><div className="h-72 bg-card rounded-lg" /><div className="h-72 bg-card rounded-lg" /><div className="h-72 bg-card rounded-lg" /></div></div></div>}>
         <HomePageClient
         scholars={paginatedScholars}
         countries={countries}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { Scholar, Country } from '@/types';
 import ScholarList from '@/components/ScholarList';
 import FilterBar from '@/components/FilterBar';
@@ -33,20 +34,28 @@ export default function HomePageClient({
   const searchParams = useSearchParams();
   const { t } = useTranslation('common');
 
-  const handleFilterChange = (key: string, value: string) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    if (!value) {
-      current.delete(key);
-    } else {
-      current.set(key, value);
-    }
-    if (key !== "page") {
-      current.delete("page");
-    }
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-    router.replace(`${pathname}${query}`);
-  };
+  const handleFilterChange = useCallback(
+    (key: string, value: string) => {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      if (!value) {
+        current.delete(key);
+      } else {
+        current.set(key, value);
+      }
+      if (key !== "page") {
+        current.delete("page");
+      }
+      const search = current.toString();
+      const query = search ? `?${search}` : '';
+      router.replace(`${pathname}${query}`);
+    },
+    [pathname, router, searchParams],
+  );
+
+  const onSearchChange = useCallback(
+    (value: string) => handleFilterChange('query', value),
+    [handleFilterChange],
+  );
 
   const currentQuery = searchParams.get('query') || '';
   const currentCountry = searchParams.get('country') || '';
@@ -66,7 +75,7 @@ export default function HomePageClient({
     onCountryChange: (value: string) => handleFilterChange('country', value),
     onLanguageChange: (value: string) => handleFilterChange('lang', value),
     onCategoryChange: (value: string) => handleFilterChange('category', value),
-    onSearchChange: (value: string) => handleFilterChange('query', value),
+    onSearchChange,
   };
 
   return (

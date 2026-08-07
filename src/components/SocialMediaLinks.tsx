@@ -57,7 +57,7 @@ export default function SocialMediaLinks({
               href={social.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-base text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-base text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent relative z-10"
               aria-label={`${social.platform} link for ${name}`}
             >
               <Icon />

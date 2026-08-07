@@ -1,19 +1,40 @@
-interface ScholarInfoProps{
+interface ScholarInfoProps {
   name: string;
-  country :string;
+  country: string;
   bio: string | null | undefined;
   languages: string[];
   languagesLabel: string;
 }
 
-export default function ScholarInfo({name, country,bio,languages,languagesLabel}:ScholarInfoProps){
+export default function ScholarInfo({
+  name,
+  country,
+  bio,
+  languages,
+  languagesLabel,
+}: ScholarInfoProps) {
   return (
     <>
-    <h3
-    className="text-lg sm:text-xl font-semibold text-foreground mb-2">{name}</h3>
-    <p className="text-sm sm:text-base text-muted-foreground mb-2 italic px-2">{country}</p>
-    {bio && <p className="text-xs sm:text-sm text-muted-foreground mb-2 italic px-2">{bio}</p>}
-    <p className="text-xs sm:text-sm text-muted-foreground mb-2"> {languagesLabel}: {languages.join(', ')} </p>
+      <h3 className="font-display text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+        {name}
+      </h3>
+      {country && <p className="mt-1 text-sm text-muted-foreground">{country}</p>}
+      {bio && (
+        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+          {bio}
+        </p>
+      )}
+      <p className="mt-4 text-xs text-muted-foreground">{languagesLabel}</p>
+      <div className="mt-1.5 flex flex-wrap justify-center gap-1.5">
+        {languages.map((lang) => (
+          <span
+            key={lang}
+            className="rounded-full bg-secondary px-2.5 py-0.5 text-xs text-secondary-foreground ring-1 ring-border"
+          >
+            {lang}
+          </span>
+        ))}
+      </div>
     </>
   );
-  };
+}

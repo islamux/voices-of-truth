@@ -1,11 +1,13 @@
 'use client';
 
-import { Scholar, Country } from "@/types";
-import ScholarList from "@/components/ScholarList";
-import FilterBar from "@/components/FilterBar";
-import Pagination from "@/components/Pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Scholar, Country } from '@/types';
+import ScholarList from '@/components/ScholarList';
+import FilterBar from '@/components/FilterBar';
+import Pagination from '@/components/Pagination';
+import WaveformMark from '@/components/WaveformMark';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FilterProvider } from '@/context/FilterContext';
+import { useTranslation } from 'react-i18next';
 
 interface HomePageClientProps {
   scholars: Scholar[];
@@ -29,6 +31,7 @@ export default function HomePageClient({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useTranslation('common');
 
   const handleFilterChange = (key: string, value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -65,6 +68,14 @@ export default function HomePageClient({
 
   return (
     <FilterProvider value={filterContextValue}>
+      <section className="mb-10 max-w-2xl">
+        <div className="mb-4 flex items-center gap-2 text-accent">
+          <WaveformMark className="h-5 w-5" />
+          <span className="text-eyebrow">{t('appTitle')}</span>
+        </div>
+        <h1 className="text-display text-foreground">{t('headerTagline')}</h1>
+      </section>
+
       <FilterBar />
       <ScholarList scholars={scholars} countries={countries} />
       <Pagination currentPage={currentPage} totalPages={totalPages} />

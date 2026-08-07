@@ -13,9 +13,24 @@ interface LocaleLayoutProps{
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
   const { locale } = await params;
   const { t } = await getTranslation(locale, 'common');
+  const description =
+    locale === 'ar'
+      ? 'دليل ثنائي اللغة لأبرز العلماء والدعاة المسلمين حول العالم.'
+      : 'A bilingual directory of renowned Islamic scholars and preachers worldwide.';
   return {
-    title: t('appTitle'),
-    description: 'A bilingual directory of renowned Islamic scholars and preachers worldwide.',
+    title: { absolute: t('appTitle') },
+    description,
+    openGraph: {
+      title: t('appTitle'),
+      description,
+      locale: locale === 'ar' ? 'ar_AR' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title: t('appTitle'),
+      description,
+    },
   };
 }
 

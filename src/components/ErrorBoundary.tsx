@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -11,7 +12,28 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+function ErrorFallback({ onReset }: { onReset: () => void }) {
+  const { t } = useTranslation('common');
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 px-6 py-24 text-center">
+      <h2 className="font-display text-2xl font-semibold text-foreground">
+        {t('errorTitle')}
+      </h2>
+      <p className="max-w-md text-muted-foreground">{t('errorDescription')}</p>
+      <button
+        onClick={onReset}
+        className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+      >
+        {t('tryAgain')}
+      </button>
+    </div>
+  );
+}
+
+export default class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -28,18 +50,9 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Something went wrong</h2>
-          <p className="text-muted-foreground mb-4">
-            An unexpected error occurred. Please try refreshing the page.
-          </p>
-          <button
-            onClick={() => this.setState({ hasError: false, error: null })}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
-          >
-            Try again
-          </button>
-        </div>
+        <ErrorFallback
+          onReset={() => this.setState({ hasError: false, error: null })}
+        />
       );
     }
 

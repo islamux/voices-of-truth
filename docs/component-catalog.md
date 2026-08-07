@@ -4,6 +4,13 @@
 
 This document catalogs every component in `src/components/`, organized by role.
 
+## Brand
+
+| Component | File | Role |
+|-----------|------|------|
+| `Logo` | `src/components/Logo.tsx` | Wordmark + waveform brand mark; links to the locale home |
+| `WaveformMark` | `src/components/WaveformMark.tsx` | Reusable voice/waveform SVG mark (used in logo, footer, hero, favicon) |
+
 ## Layout & Shell
 
 | Component | File | Role |

@@ -40,6 +40,9 @@ export default function HomePageClient({
     } else {
       current.set(key, value);
     }
+    if (key !== "page") {
+      current.delete("page");
+    }
     const search = current.toString();
     const query = search ? `?${search}` : '';
     router.replace(`${pathname}${query}`);

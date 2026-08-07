@@ -1,18 +1,20 @@
 'use client';
 
-import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "./LanguageSwitcher";
-import ThemeToggle from "./ThemeToggle";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
+import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 
 export default function Header() {
-  const { t, i18n } = useTranslation('header');
-  const dir = i18n.dir();
-
+  const { t } = useTranslation('common');
   return (
-    <header className="p-4 bg-background shadow-md text-foreground" dir={dir}>
-      <div className="container mx-auto flex flex-wrap justify-between items-center">
-        <h1 className="text-xl sm:text-2xl font-semibold">{t('headerTitle')}</h1>
-        <div className="flex items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
+    <header
+      className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/65"
+      aria-label={t('appTitle')}
+    >
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+        <Logo />
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
         </div>

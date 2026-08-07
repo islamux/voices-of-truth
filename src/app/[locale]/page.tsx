@@ -57,7 +57,27 @@ interface HomePageProps {
     const paginatedScholars = filteredScholars.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
 
     return (
-      <Suspense fallback={<div className="text-center py-12"><div className="animate-pulse space-y-4"><div className="h-8 w-48 bg-muted rounded mx-auto" /><div className="h-4 w-64 bg-muted rounded mx-auto" /><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8"><div className="h-72 bg-card rounded-lg" /><div className="h-72 bg-card rounded-lg" /><div className="h-72 bg-card rounded-lg" /></div></div></div>}>
+      <Suspense fallback={
+        <div className="animate-pulse">
+          <div className="mb-10 max-w-2xl">
+            <div className="mb-4 h-4 w-40 rounded bg-muted" />
+            <div className="h-9 w-72 rounded-lg bg-muted" />
+          </div>
+          <div className="mb-8 rounded-2xl border border-border bg-card p-4">
+            <div className="h-10 w-full rounded-md bg-muted" />
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center rounded-2xl border border-border bg-card p-6">
+                <div className="h-28 w-28 rounded-full bg-muted" />
+                <div className="mt-5 h-5 w-32 rounded bg-muted" />
+                <div className="mt-2 h-4 w-24 rounded bg-muted" />
+                <div className="mt-5 h-px w-full bg-muted" />
+              </div>
+            ))}
+          </div>
+        </div>
+      }>
         <HomePageClient
         scholars={paginatedScholars}
         countries={countries}

@@ -1,39 +1,64 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
-interface  FilterDropdownProps{
+interface FilterDropdownProps {
   label: string;
   filterKey: string;
-  options: Array<{value: string, label: string}>;
+  options: Array<{ value: string; label: string }>;
   value: string;
   onChange: (value: string) => void;
 }
 
-export default function FilterDropdown({label, filterKey, options, value, onChange}:FilterDropdownProps){
+function Chevron() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
 
-  const {t} = useTranslation('common');
+export default function FilterDropdown({
+  label,
+  filterKey,
+  options,
+  value,
+  onChange,
+}: FilterDropdownProps) {
+  const { t } = useTranslation('common');
 
-  return(
-    <div  className="w-full sm:w-auto">
-     <label htmlFor={`${filterKey}-filter`} className="block text-sm font-medium text-muted-foreground mb-1">
-    {label}
-    </label>
-
-    <select 
-    id={`${filterKey}-filter`}
-    value={value}
-    onChange={ (e)=> onChange(e.target.value) }
-     className="p-2.5 border border-border rounded-md bg-background text-foreground w-full focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors"
-  >
-    <option value="">
-    {t('all')}
-    </option>
-    {options.map( (option)=>(
-      <option key={option.value} value={option.value}>
-      {option.label}
-      </option>
-    ))}
-    </select>
+  return (
+    <div className="w-full sm:w-auto sm:min-w-[160px]">
+      <label
+        htmlFor={`${filterKey}-filter`}
+        className="mb-1 block text-xs font-medium text-muted-foreground"
+      >
+        {label}
+      </label>
+      <div className="relative">
+        <select
+          id={`${filterKey}-filter`}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-10 w-full appearance-none rounded-md border border-border bg-background ps-3 pe-9 text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          <option value="">{t('all')}</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute inset-y-0 end-3 flex items-center text-muted-foreground">
+          <Chevron />
+        </span>
+      </div>
     </div>
-  );  
-};
+  );
+}

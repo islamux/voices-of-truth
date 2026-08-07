@@ -7,7 +7,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | File | Status | Description |
 |------|--------|-------------|
 | [01-build-from-scratch](01-build-from-scratch.md) | ✅ Updated | Step-by-step rebuild guide. Custom `ThemeProvider`, `useSyncExternalStore`, Tailwind v4. |
-| [03-styling-guide](03-styling-guide.md) | ✅ Current | Tailwind v4 CSS config, custom `ThemeProvider`, flash-prevention script. |
+| [03-styling-guide](03-styling-guide.md) | ✅ Current | Tailwind v4 CSS config, OKLCH tokens, custom `ThemeProvider`, `next/font` (Latin + Arabic). |
 | [04-feature-translation](04-feature-translation.md) | ✅ Updated | Multi-language i18n via `[locale]` dynamic route (no middleware). |
 | [12-layout-system](12-layout-system.md) | ✅ Current | Three-layer layout architecture (root → locale → PageLayout). |
 | [data-organization](data-organization.md) | ✅ Current | Scholar data model, file layout, category mapping, and data flow. |
@@ -28,7 +28,7 @@ Documentation for the Voices of Truth — Scholar Directory project.
 |------|--------|-------------|
 | [fix-hydration-error](fix-hydration-error.md) | ✅ Implemented | Theme hydration error fix using `useHasMounted()` guard. Applied in `ThemeToggle.tsx`. |
 | [prop-drilling-deep-dive](prop-drilling-deep-dive.md) | ✅ Implemented | Prop drilling refactored using `FilterContext`. `FilterContext.tsx` exists in codebase. |
-| [theme-analysis](theme-analysis.md) | ✅ Implemented | Theme migration guide. Custom `ThemeProvider` in `src/lib/theme.tsx`, semantic tokens deployed. |
+| [theme-analysis](archive/theme-analysis.md) | 🗄️ Archived | Historical next-themes / `tailwind.config.ts` migration guide. Superseded by the OKLCH redesign — see [03-styling-guide](03-styling-guide.md). |
 | | | |
 | **New (post-upgrade)** | | |
 | [ErrorBoundary](../src/components/ErrorBoundary.tsx) | ✅ Implemented | Class-based error boundary wrapping `PageLayout` |

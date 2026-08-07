@@ -11,9 +11,11 @@
 
 - Server-side filtering by country, specialization, language, and name search
 - Arabic (RTL) and English (LTR) internationalization via react-i18next
+- "Contemporary Voices" design system: OKLCH tokens, custom waveform brand mark, favicon + web manifest
+- Bilingual typography via `next/font` — Space Grotesk + IBM Plex (Latin), Amiri + Markazi Text (Arabic)
 - Dark/light theme with custom `ThemeProvider` (no flicker, localStorage persistence)
-- Responsive grid layout with Framer Motion card animations
-- URL query params as the single source of truth for filter state
+- Responsive grid with staggered Framer Motion animations (`prefers-reduced-motion` aware)
+- URL query params as the single source of truth for filter state (filters reset pagination)
 - FilterContext for clean state management without prop drilling
 
 ## Prerequisites
@@ -53,25 +55,33 @@ voices-of-truth/
 │   │   │   ├── layout.tsx      # Locale layout (ThemeProvider + i18n)
 │   │   │   ├── page.tsx        # Server: data fetching, filtering, pagination
 │   │   │   ├── HomePageClient.tsx  # Client: search params, filters
-│   │   │   └── not-found.tsx   # Custom 404 page
-│   │   ├── layout.tsx          # Root layout (theme script, lang/dir)
-│   │   ├── sitemap.ts          # Dynamic sitemap
-│   │   └── globals.css         # Tailwind + shadcn-style CSS vars
+│   │   │   ├── loading.tsx     # Route loading skeleton
+│   │   │   ├── error.tsx       # Route error UI (i18n)
+│   │   │   └── not-found.tsx   # Custom 404 page (i18n)
+│   │   ├── layout.tsx          # Root layout: theme script, lang/dir, next/font
+│   │   ├── globals.css         # Tailwind v4 @theme + OKLCH tokens
+│   │   ├── sitemap.ts          # Dynamic sitemap (env-aware base)
+│   │   ├── robots.ts           # Robots rules + sitemap reference
+│   │   ├── icon.svg            # Favicon (waveform mark)
+│   │   └── manifest.ts         # Web manifest
 │   ├── components/
 │   │   ├── filters/            # Individual filter components
-│   │   ├── FilterBar.tsx       # Filter composition
+│   │   ├── FilterBar.tsx       # Filter composition (search + selects + reset)
 │   │   ├── ScholarCard.tsx     # Scholar display card
-│   │   ├── ScholarList.tsx     # Scholar grid
-│   │   ├── Header.tsx          # App header (RTL-aware)
+│   │   ├── ScholarList.tsx     # Scholar grid (staggered motion)
+│   │   ├── Header.tsx          # App header (sticky, RTL-aware)
 │   │   ├── Footer.tsx          # App footer
-│   │   ├── PageLayout.tsx      # Layout wrapper
-│   │   ├── Pagination.tsx      # Page navigation controls
+│   │   ├── PageLayout.tsx      # Layout wrapper (skip-link)
+│   │   ├── Pagination.tsx      # Windowed page navigation
 │   │   ├── ErrorBoundary.tsx   # Class-based error boundary
-│   │   ├── ThemeToggle.tsx     # Dark/light toggle
+│   │   ├── Logo.tsx            # Wordmark + waveform brand mark
+│   │   ├── WaveformMark.tsx    # Voice/waveform SVG mark
+│   │   ├── ThemeToggle.tsx     # Dark/light toggle (icon)
 │   │   ├── LanguageSwitcher.tsx # EN/AR switcher
-│   │   ├── Button.tsx          # Reusable button (twMerge)
+│   │   ├── Button.tsx          # Reusable button (variants/sizes)
 │   │   └── I18nProviderClient.tsx # Client i18n instance
 │   ├── context/FilterContext.tsx   # Filter state context
+│   ├── proxy.ts                # Middleware: locale redirect + x-locale header
 │   ├── data/
 │   │   ├── scholars.ts         # Combined scholar list
 │   │   ├── scholars/           # 11 categories, each in own file

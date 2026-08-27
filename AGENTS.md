@@ -12,6 +12,7 @@ Next.js 16.2.9 web application for browsing a directory of Islamic scholars and 
 | `pnpm build` | Production build |
 | `pnpm start` | Production server |
 | `pnpm lint` | ESLint (next/core-web-vitals) |
+| `pnpm test` | Vitest (data integrity + pure logic) |
 
 ## Code Rules
 
@@ -66,6 +67,7 @@ import ScholarCard from './ScholarCard';
 | Path | Purpose |
 |------|---------|
 | `src/app/[locale]/page.tsx` | Server: filtering, Arabic search, pagination |
+| `src/app/[locale]/scholars/[id]/page.tsx` | Scholar detail page (i18n, 404 on unknown id) |
 | `src/app/[locale]/HomePageClient.tsx` | Client: search params, FilterProvider, hero |
 | `src/app/[locale]/layout.tsx` | Locale layout: ThemeProvider + I18nProviderClient + ErrorBoundary |
 | `src/app/[locale]/not-found.tsx` | Custom 404 page (i18n) |
@@ -85,11 +87,19 @@ import ScholarCard from './ScholarCard';
 | `src/components/Header.tsx` / `Footer.tsx` / `PageLayout.tsx` | App shell (skip-link, sticky header) |
 | `src/components/Logo.tsx` / `WaveformMark.tsx` | Brand mark + wordmark |
 | `src/components/Button.tsx` | Reusable button (variants/sizes) |
+| `src/components/SocialMediaLinks.tsx` | Social icon links (OCP icon map) |
 | `src/components/filters/` | Search input + filter dropdowns |
 | `src/context/FilterContext.tsx` | Filter state context + `useFilters` hook |
 | `src/lib/theme.tsx` | Custom theme provider |
 | `src/lib/i18n.ts` | i18next server config |
 | `src/lib/search.ts` | Arabic normalization (diacritics, alef/yaa/ta-marbuta) |
+| `src/lib/filterScholars.ts` | Pure server-side filtering logic |
+| `src/lib/pagination.ts` | Pure `paginate()`/`getPages()` helpers |
+| `src/lib/searchParams.ts` | Shared `updateSearchParam` URL helper |
+| `src/lib/locales.ts` | Locale constants (single source of truth) |
+| `src/lib/languages.ts` | `localize()` helper for `LocalizedText` |
+| `src/data/data-integrity.test.ts` | Vitest: unique ids, refs, avatars, vocab |
+| `src/lib/pure-logic.test.ts` | Vitest: filtering + pagination |
 | `src/types/index.ts` | TypeScript types |
 
 ## GitHub Flow
@@ -102,4 +112,4 @@ import ScholarCard from './ScholarCard';
 
 ## ESLint
 
-Flat config (`eslint.config.mjs`) extending `next/core-web-vitals`. Run `pnpm lint` to check; TypeScript is checked by `pnpm build`.
+Flat config (`eslint.config.mjs`) extending `next/core-web-vitals`. Run `pnpm lint` to check; TypeScript is checked by `pnpm build`; Vitest tests run via `pnpm test`.

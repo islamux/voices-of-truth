@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Scholar } from '../types';
 import ScholarAvatar from './ScholarAvatar';
 import ScholarInfo from './ScholarInfo';
@@ -29,7 +30,7 @@ export default function ScholarCard({ scholar, countryName }: ScholarCardProps) 
   );
 
   return (
-    <article className="group flex h-full flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-accent/50 hover:shadow-md">
+    <article className="group relative flex h-full flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-accent/50 hover:shadow-md">
       <ScholarAvatar avatarUrl={scholar.avatarUrl} name={name} />
       <ScholarInfo
         name={name}
@@ -39,6 +40,11 @@ export default function ScholarCard({ scholar, countryName }: ScholarCardProps) 
         languagesLabel={t('languages')}
       />
       <SocialMediaLinks socialMedia={scholar.socialMedia} name={name} />
+      <Link
+        href={`/${i18n.language}/scholars/${scholar.id}`}
+        className="absolute inset-0 rounded-2xl"
+        aria-label={name}
+      />
     </article>
   );
 }

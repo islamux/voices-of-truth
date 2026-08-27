@@ -28,5 +28,6 @@
   "notFoundTitle": "الصفحة غير موجودة",
   "notFoundDescription": "الصفحة التي تبحث عنها غير موجودة.",
   "goHome": "العودة للرئيسية",
-  "skipToContent": "تخطَّ إلى المحتوى"
+  "skipToContent": "تخطَّ إلى المحتوى",
+  "backToDirectory": "العودة إلى الدليل"
 }

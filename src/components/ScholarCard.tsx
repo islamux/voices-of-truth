@@ -18,13 +18,6 @@ export default function ScholarCard({ scholar, countryName }: ScholarCardProps) 
   const { name, bio, languages } = useLocalizedScholar(scholar);
   const { t, i18n } = useTranslation('scholar');
 
-  if (!scholar.name) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Scholar with missing name:', scholar);
-    }
-    return null;
-  }
-
   const localizedLanguages = languages.map((code) =>
     languageLabel(code, i18n.language),
   );

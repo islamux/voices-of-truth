@@ -6,7 +6,7 @@ import { scholars } from '@/data/scholars';
 import { countries } from '@/data/countries';
 import { specializations } from '@/data/specializations';
 import { getTranslation, supportedLngs } from '@/lib/i18n';
-import { languageLabel } from '@/lib/languages';
+import { languageLabel, localize } from '@/lib/languages';
 import SocialMediaLinks from '@/components/SocialMediaLinks';
 
 interface ScholarPageProps {
@@ -29,8 +29,8 @@ export async function generateMetadata({
   const { locale, id } = await params;
   const scholar = getScholar(Number(id));
   if (!scholar) return {};
-  const name = scholar.name[locale] || scholar.name.en;
-  const bio = scholar.bio?.[locale] || scholar.bio?.en;
+  const name = localize(scholar.name, locale);
+  const bio = scholar.bio ? localize(scholar.bio, locale) : undefined;
   return {
     title: name,
     description: bio ?? name,
@@ -44,8 +44,8 @@ export default async function ScholarDetailPage({ params }: ScholarPageProps) {
 
   const { t } = await getTranslation(locale, ['common', 'scholar']);
 
-  const name = scholar.name[locale] || scholar.name.en;
-  const bio = scholar.bio?.[locale] || scholar.bio?.en;
+  const name = localize(scholar.name, locale);
+  const bio = scholar.bio ? localize(scholar.bio, locale) : undefined;
   const country = countries.find((c) => c.id === scholar.countryId);
   const countryName = country
     ? locale === 'ar'

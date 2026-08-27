@@ -3,26 +3,12 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getPages } from '@/lib/pagination';
+import { updateSearchParam } from '@/lib/searchParams';
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-}
-
-type PageItem = number | 'ellipsis';
-
-function getPages(current: number, total: number): PageItem[] {
-  if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1);
-  }
-  const pages: PageItem[] = [1];
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
-  if (start > 2) pages.push('ellipsis');
-  for (let i = start; i <= end; i++) pages.push(i);
-  if (end < total - 1) pages.push('ellipsis');
-  pages.push(total);
-  return pages;
 }
 
 function ChevronIcon({ className = '' }: { className?: string }) {
@@ -49,13 +35,11 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
 
   const goToPage = useCallback(
     (page: number) => {
-      const params = new URLSearchParams(Array.from(searchParams.entries()));
-      if (page <= 1) {
-        params.delete('page');
-      } else {
-        params.set('page', String(page));
-      }
-      const search = params.toString();
+      const search = updateSearchParam(
+        searchParams,
+        'page',
+        page <= 1 ? '' : String(page),
+      ).toString();
       router.replace(`${pathname}${search ? `?${search}` : ''}`);
     },
     [pathname, router, searchParams],

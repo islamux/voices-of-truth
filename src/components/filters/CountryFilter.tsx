@@ -1,6 +1,8 @@
+'use client';
+
 import { useFilters } from '@/context/FilterContext';
-import { useTranslation } from "react-i18next";
-import FilterDropdown from "./FilterDropdown";
+import { useTranslation } from 'react-i18next';
+import FilterDropdown from './FilterDropdown';
 
 export default function CountryFilter() {
   const { uniqueCountries, onCountryChange, currentFilters } = useFilters();

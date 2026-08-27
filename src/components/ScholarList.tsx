@@ -53,8 +53,6 @@ export default function ScholarList({ scholars, countries }: ScholarListProps) {
       animate="show"
     >
       {scholars.map((scholar) => {
-        if (!scholar || !scholar.id || !scholar.name) return null;
-
         const countryObject = countriesMap.get(scholar.countryId);
         const countryName = String(
           countryObject

@@ -17,6 +17,7 @@
 - Responsive grid with staggered Framer Motion animations (`prefers-reduced-motion` aware)
 - URL query params as the single source of truth for filter state (filters reset pagination)
 - FilterContext for clean state management without prop drilling
+- Vitest suite guarding data integrity (unique ids, referential integrity, avatar resolution, language vocabulary) and pure filtering/pagination logic
 
 ## Prerequisites
 
@@ -44,6 +45,7 @@ pnpm dev
 | `pnpm build` | Production build |
 | `pnpm start` | Production server |
 | `pnpm lint` | Run ESLint |
+| `pnpm test` | Run Vitest suite (data integrity + pure logic) |
 
 ## Project Structure
 
@@ -57,7 +59,9 @@ voices-of-truth/
 │   │   │   ├── HomePageClient.tsx  # Client: search params, filters
 │   │   │   ├── loading.tsx     # Route loading skeleton
 │   │   │   ├── error.tsx       # Route error UI (i18n)
-│   │   │   └── not-found.tsx   # Custom 404 page (i18n)
+│   │   │   ├── not-found.tsx   # Custom 404 page (i18n)
+│   │   │   └── scholars/
+│   │   │       └── [id]/page.tsx  # Scholar detail page (i18n)
 │   │   ├── layout.tsx          # Root layout: theme script, lang/dir, next/font
 │   │   ├── globals.css         # Tailwind v4 @theme + OKLCH tokens
 │   │   ├── sitemap.ts          # Dynamic sitemap (env-aware base)
@@ -78,6 +82,7 @@ voices-of-truth/
 │   │   ├── WaveformMark.tsx    # Voice/waveform SVG mark
 │   │   ├── ThemeToggle.tsx     # Dark/light toggle (icon)
 │   │   ├── LanguageSwitcher.tsx # EN/AR switcher
+│   │   ├── SocialMediaLinks.tsx # Social icon links (OCP icon map)
 │   │   ├── Button.tsx          # Reusable button (variants/sizes)
 │   │   └── I18nProviderClient.tsx # Client i18n instance
 │   ├── context/FilterContext.tsx   # Filter state context
@@ -86,15 +91,23 @@ voices-of-truth/
 │   │   ├── scholars.ts         # Combined scholar list
 │   │   ├── scholars/           # 11 categories, each in own file
 │   │   ├── countries.ts        # Country data (10 countries)
-│   │   └── specializations.ts  # 11 specialization categories
+│   │   ├── specializations.ts  # 11 specialization categories
+│   │   └── data-integrity.test.ts # Vitest: unique ids, refs, avatars, vocab
 │   ├── hooks/
 │   │   ├── useHasMounted.ts    # Hydration mismatch guard (useSyncExternalStore)
 │   │   └── useLocalizedScholar.ts # Localized name/bio resolver
 │   ├── lib/
 │   │   ├── i18n.ts             # i18next server config
 │   │   ├── search.ts           # Arabic diacritics normalization
+│   │   ├── filterScholars.ts   # Pure server-side filtering logic
+│   │   ├── pagination.ts       # Pure paginate()/getPages() helpers
+│   │   ├── searchParams.ts     # Shared updateSearchParam URL helper
+│   │   ├── locales.ts          # Locale constants (single source of truth)
+│   │   ├── languages.ts        # LocalizedText localize() helper
+│   │   ├── pure-logic.test.ts  # Vitest: filtering + pagination
 │   │   └── theme.tsx           # Custom ThemeProvider + useTheme
-│   └── types/index.ts          # Scholar, Country, Specialization
+│   └── types/index.ts          # Scholar, Country, Specialization, LocalizedText
+├── vitest.config.ts           # Vitest config (@ alias, node env)
 ├── public/
 │   ├── avatars/                # Scholar avatar images
 │   └── locales/{en,ar}/       # Translation JSON files
@@ -103,7 +116,7 @@ voices-of-truth/
 
 ## Architecture
 
-- **Server-Centric Filtering**: `page.tsx` receives `searchParams`, validates against known data, filters scholars server-side, passes results to client.
+- **Server-Centric Filtering**: `page.tsx` receives `searchParams`, validates against known data, filters scholars server-side (via pure `filterScholars()` in `src/lib/filterScholars.ts`), paginates (via `src/lib/pagination.ts`), and passes results to client. The pure logic is unit-tested by Vitest.
 - **URL as State**: Filter values (query, country, lang, category) live in URL search params. `HomePageClient` reads/writes via `useSearchParams` + `router.replace`.
 - **FilterContext**: Provides `currentFilters`, `onCountryChange`, etc. to all filter components without prop drilling.
 - **Custom Theme**: `ThemeProvider` with `useTheme()` hook, localStorage persistence, system preference detection, and inline script in root layout for flash-free theme application.

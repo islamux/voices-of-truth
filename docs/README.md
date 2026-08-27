@@ -29,7 +29,6 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | [fix-hydration-error](fix-hydration-error.md) | ✅ Implemented | Theme hydration error fix using `useHasMounted()` guard. Applied in `ThemeToggle.tsx`. |
 | [prop-drilling-deep-dive](prop-drilling-deep-dive.md) | ✅ Implemented | Prop drilling refactored using `FilterContext`. `FilterContext.tsx` exists in codebase. |
 | [theme-analysis](archive/theme-analysis.md) | 🗄️ Archived | Historical next-themes / `tailwind.config.ts` migration guide. Superseded by the OKLCH redesign — see [03-styling-guide](03-styling-guide.md). |
-| | | |
 | **New (post-upgrade)** | | |
 | [ErrorBoundary](../src/components/ErrorBoundary.tsx) | ✅ Implemented | Class-based error boundary wrapping `PageLayout` |
 | [Pagination](../src/components/Pagination.tsx) | ✅ Implemented | Server-side pagination (12 per page) with `?page=` search param |
@@ -54,7 +53,9 @@ Documentation for the Voices of Truth — Scholar Directory project.
 | [senior-project-analysis](senior-project-analysis.md) | ✅ Current | Senior-level analysis of architecture, code quality, and improvements. |
 | [17-component-refactoring-suggestions](17-component-refactoring-suggestions.md) | ⚡ Partial | Suggests extracting `useLocalizedScholar` and `SocialIcon`. Hook exists, icon suggestion pending. |
 | [domain-driven-architecture](domain-driven-architecture.md) | 💡 Speculative | DDD principles mapped to the project. Conceptual — no code changes made. |
+| [review-2026-08-07](review-2026-08-07.md) | ✅ Current | Prior review — follow-up fixes landed in PRs #15/#16/#17/#18. |
+| [review-2026-08-27](review-2026-08-27.md) | ✅ Resolved | Full clean-code/SOLID review — findings fixed in PR #20; Vitest suite added in #19. |
 
 ---
 
-*Last updated: 2026-06-30*
+*Last updated: 2026-08-27*

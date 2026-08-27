@@ -24,6 +24,3 @@ export const scholars: Scholar[] = [
   ...quranStudiesScholars,
   ...spiritualityEthicsScholars,
 ];
-
-
-

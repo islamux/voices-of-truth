@@ -5,9 +5,9 @@ import { ThemeProvider } from '@/lib/theme';
 import { getTranslation, supportedLngs } from "@/lib/i18n";
 import type { Metadata } from "next";
 
-interface LocaleLayoutProps{
-  children : React.ReactNode;
-  params: Promise<{locale: string}>;
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
@@ -34,22 +34,21 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   };
 }
 
-export default async function LocaleLayout({children, params}:LocaleLayoutProps){
-
-  const {locale} = await params; 
-  const {resources} = await getTranslation(locale, ['common', 'header']);
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = await params;
+  const { resources } = await getTranslation(locale, ['common', 'header']);
 
   return (
     <ThemeProvider>
-    <I18nProviderClient locale={locale} resources={resources} >
-      <ErrorBoundary><PageLayout> {children} </PageLayout></ErrorBoundary>
-    </I18nProviderClient>
+      <I18nProviderClient locale={locale} resources={resources}>
+        <ErrorBoundary>
+          <PageLayout>{children}</PageLayout>
+        </ErrorBoundary>
+      </I18nProviderClient>
     </ThemeProvider>
   );
 }
 
 export async function generateStaticParams() {
-  return supportedLngs.map(function(locale) {
-    return { locale :locale};
-  });
+  return supportedLngs.map((locale) => ({ locale }));
 }

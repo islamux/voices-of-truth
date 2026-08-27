@@ -9,6 +9,7 @@ import WaveformMark from '@/components/WaveformMark';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FilterProvider } from '@/context/FilterContext';
 import { useTranslation } from 'react-i18next';
+import { updateSearchParam } from '@/lib/searchParams';
 
 interface HomePageClientProps {
   scholars: Scholar[];
@@ -36,16 +37,7 @@ export default function HomePageClient({
 
   const handleFilterChange = useCallback(
     (key: string, value: string) => {
-      const current = new URLSearchParams(Array.from(searchParams.entries()));
-      if (!value) {
-        current.delete(key);
-      } else {
-        current.set(key, value);
-      }
-      if (key !== "page") {
-        current.delete("page");
-      }
-      const search = current.toString();
+      const search = updateSearchParam(searchParams, key, value).toString();
       const query = search ? `?${search}` : '';
       router.replace(`${pathname}${query}`);
     },

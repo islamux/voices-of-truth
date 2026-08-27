@@ -4,6 +4,11 @@ export interface Country {
   ar: string;
 }
 
+export interface LocalizedText {
+  en: string;
+  ar: string;
+}
+
 export interface Specialization {
   id: number;
   en: string;
@@ -12,7 +17,7 @@ export interface Specialization {
 
 export interface Scholar {
   id: number;
-  name: Record<string, string>;
+  name: LocalizedText;
   socialMedia: {
     platform: string;
     link: string;
@@ -22,5 +27,5 @@ export interface Scholar {
   categoryId: number;
   language: string[];
   avatarUrl: string;
-  bio?: Record<string, string>;
+  bio?: LocalizedText;
 }

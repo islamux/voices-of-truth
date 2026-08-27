@@ -1,9 +1,9 @@
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
+import { fallbackLng, supportedLngs } from './locales';
 
-export const fallbackLng = 'en';
-export const supportedLngs = [fallbackLng, 'ar'];
+export { fallbackLng, supportedLngs };
 export const defaultNS = 'common';
 
 async function initI18next(

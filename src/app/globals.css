@@ -38,8 +38,10 @@
   --radius-xl: 1rem;
   --radius-2xl: 1.25rem;
 
-  --font-sans: var(--font-plex), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: var(--font-grotesk), var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-amiri), Georgia, serif;
+  --font-serif: var(--font-source), Georgia, serif;
+  --font-arabic-ui: var(--font-ruqaa), "Noto Naskh Arabic", "Amiri", serif;
 }
 
 @layer base {
@@ -93,8 +95,9 @@
 
   /* Arabic uses the Arabic optical-sized families; overrides cascade to all children. */
   :lang(ar) {
-    --font-sans: var(--font-markazi), var(--font-plex), ui-serif, Georgia, serif;
-    --font-display: var(--font-amiri), var(--font-markazi), serif;
+    --font-sans: var(--font-arabic-ui), "Noto Naskh Arabic", "Amiri", ui-serif, serif;
+    --font-display: var(--font-amiri), "Noto Naskh Arabic", serif;
+    --font-serif: var(--font-amiri), "Noto Naskh Arabic", serif;
   }
 }
 
@@ -157,26 +160,26 @@
 }
 
 @layer components {
-  /* Display scale: characterful grotesk for headings, fluid for responsive rhythm. */
+  /* Display scale: characterful manuscript serif for headings, fluid for responsive rhythm. */
   .text-display {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 700;
     font-size: clamp(2rem, 1.2rem + 3.2vw, 3.5rem);
-    line-height: 1.04;
-    letter-spacing: -0.025em;
+    line-height: 1.15;
+    letter-spacing: 0;
   }
 
   .text-display-sm {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 700;
     font-size: clamp(1.375rem, 1rem + 1.4vw, 2rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
+    line-height: 1.25;
+    letter-spacing: 0;
   }
 
   .text-eyebrow {
-    font-family: var(--font-display);
-    font-weight: 500;
+    font-family: var(--font-sans);
+    font-weight: 600;
     font-size: 0.75rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -191,12 +194,12 @@
   :lang(ar) .text-display-sm {
     font-weight: 700;
     letter-spacing: 0;
-    line-height: 1.3;
+    line-height: 1.4;
   }
 
   :lang(ar) .text-eyebrow {
-    font-weight: 400;
-    letter-spacing: 0.04em;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: none;
   }
 
@@ -205,6 +208,6 @@
   }
 
   :lang(ar) body {
-    line-height: 1.6;
+    line-height: 1.7;
   }
 }

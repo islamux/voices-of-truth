@@ -15,7 +15,7 @@ export default function ScholarInfo({
 }: ScholarInfoProps) {
   return (
     <>
-      <h3 className="font-display text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+      <h3 className="font-display text-lg font-bold text-foreground sm:text-xl">
         {name}
       </h3>
       {country && <p className="mt-1 text-sm text-muted-foreground">{country}</p>}

@@ -16,7 +16,7 @@ function ErrorFallback({ onReset }: { onReset: () => void }) {
   const { t } = useTranslation('common');
   return (
     <div className="flex flex-col items-center justify-center gap-4 px-6 py-24 text-center">
-      <h2 className="font-display text-2xl font-semibold text-foreground">
+      <h2 className="font-display text-2xl font-bold text-foreground">
         {t('errorTitle')}
       </h2>
       <p className="max-w-md text-muted-foreground">{t('errorDescription')}</p>

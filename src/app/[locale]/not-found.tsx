@@ -11,10 +11,10 @@ export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center gap-5 px-6 py-24 text-center">
       <WaveformMark className="h-10 w-10 text-accent" />
-      <p className="font-display text-7xl font-semibold tracking-tight text-foreground">
+      <p className="font-display text-7xl font-bold text-foreground">
         404
       </p>
-      <h2 className="font-display text-xl font-semibold text-foreground">
+      <h2 className="font-display text-xl font-bold text-foreground">
         {t('notFoundTitle')}
       </h2>
       <p className="max-w-md text-muted-foreground">{t('notFoundDescription')}</p>

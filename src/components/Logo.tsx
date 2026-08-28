@@ -15,7 +15,7 @@ export default function Logo() {
       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-accent ring-1 ring-border transition-colors group-hover:text-accent/80">
         <WaveformMark className="h-5 w-5" />
       </span>
-      <span className="font-display text-lg font-semibold tracking-tight text-foreground">
+      <span className="font-display text-lg font-bold text-foreground">
         {t("headerTitle")}
       </span>
     </Link>

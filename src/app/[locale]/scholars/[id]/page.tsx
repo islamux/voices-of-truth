@@ -96,7 +96,7 @@ export default async function ScholarDetailPage({ params }: ScholarPageProps) {
           </span>
         )}
         {bio && (
-          <p className="mt-6 text-foreground/90 leading-relaxed">{bio}</p>
+          <p className="mt-6 text-foreground/90 leading-relaxed font-serif">{bio}</p>
         )}
         <p className="mt-6 text-xs text-muted-foreground">
           {t('languages', { ns: 'scholar' })}

@@ -2,35 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { dir } from "i18next";
 import { headers } from "next/headers";
-import { Space_Grotesk, IBM_Plex_Sans, Markazi_Text, Amiri } from "next/font/google";
-
-const grotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-grotesk",
-  display: "swap",
-});
-
-const plex = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex",
-  display: "swap",
-});
-
-const markazi = Markazi_Text({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600"],
-  variable: "--font-markazi",
-  display: "swap",
-});
-
-const amiri = Amiri({
-  subsets: ["arabic"],
-  weight: ["400", "700"],
-  variable: "--font-amiri",
-  display: "swap",
-});
+import { fontVariables } from "@/lib/fonts";
 
 const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.VERCEL_URL ?? "http://localhost:3000";
 const siteUrl = rawSiteUrl.startsWith("http") ? rawSiteUrl : `https://${rawSiteUrl}`;
@@ -84,7 +56,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body
-        className={`${grotesk.variable} ${plex.variable} ${markazi.variable} ${amiri.variable} bg-background text-foreground w-full min-h-screen antialiased`}
+        className={`${fontVariables} bg-background text-foreground w-full min-h-screen antialiased`}
       >
         {children}
       </body>

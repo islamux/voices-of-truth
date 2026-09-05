@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# presentation deliverables (external to the app; not built or deployed by Vercel)
+/presentation/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

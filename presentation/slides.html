@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="عرض هندسي تقني لمشروع أصوات الحق — دليل العلماء والدعاة">
+<title>أصوات الحق — عرض هندسي تقني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     أصوات الحق — «Contemporary Voices»
+     لوحة OKLCH من المشروع ذاته (globals.css) مع بدائل hex للمتصفحات القديمة
+     ============================================================ */
+  :root {
+    --bg: oklch(0.98 0.006 245);
+    --bg-hex: #f5f6f8;
+    --surface: oklch(0.997 0.003 245);
+    --surface-hex: #fbfcfd;
+    --ink: oklch(0.24 0.027 250);
+    --ink-hex: #1b2433;
+    --muted: oklch(0.45 0.022 250);
+    --muted-hex: #6c7280;
+    --line: oklch(0.90 0.008 245);
+    --line-hex: #dde0e7;
+    --accent: oklch(0.72 0.14 68);
+    --accent-hex: #d99936;
+    --accent-deep: oklch(0.50 0.12 68);
+    --code-bg: oklch(0.93 0.010 245);
+    --code-bg-hex: #eceef3;
+    --good: oklch(0.55 0.13 150);
+    --good-hex: #2e8b57;
+    --bad: oklch(0.58 0.20 25);
+    --bad-hex: #c4462e;
+    --wave: 0.72 0.14 68;
+    --font-body: 'IBM Plex Sans Arabic','Segoe UI',Tahoma,system-ui,sans-serif;
+    --font-display: 'Amiri','Noto Naskh Arabic',Georgia,'Times New Roman',serif;
+    --font-mono: 'JetBrains Mono',Consolas,'Courier New',monospace;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-deck-theme="dark"] {
+    --bg: oklch(0.175 0.022 255);
+    --bg-hex: #131a28;
+    --surface: oklch(0.215 0.024 255);
+    --surface-hex: #1a2437;
+    --ink: oklch(0.95 0.008 245);
+    --ink-hex: #eef1f5;
+    --muted: oklch(0.68 0.018 245);
+    --muted-hex: #a5afc1;
+    --line: oklch(0.30 0.020 255);
+    --line-hex: #2a3852;
+    --accent: oklch(0.76 0.14 75);
+    --accent-hex: #e0a95e;
+    --accent-deep: oklch(0.70 0.14 75);
+    --code-bg: oklch(0.25 0.022 255);
+    --code-bg-hex: #1d2740;
+    --good: oklch(0.66 0.13 150);
+    --good-hex: #57b984;
+    --bad: oklch(0.65 0.18 25);
+    --bad-hex: #d6654b;
+    --wave: 0.76 0.14 75;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-hex);
+    background: var(--bg);
+    color: var(--ink-hex);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* طباعة الحبر الناصع في الحروف العربية */
+  ::selection { background: color-mix(in oklch, var(--accent) 35%, transparent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  .deck { min-height: 100dvh; display: flex; flex-direction: column; }
+
+  /* ============================================================
+     الشريط العلوي
+     ============================================================ */
+  .chrome-top {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    padding: 0.55rem 1rem;
+    background: color-mix(in oklch, var(--surface) 86%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 0.55rem; }
+  .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+  .brand-en { display: block; font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .index { direction: ltr; font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); }
+  .index b { color: var(--accent); }
+
+  .controls { display: flex; align-items: center; gap: 0.35rem; }
+  .ctl {
+    appearance: none; border: 1px solid var(--line); background: var(--surface-hex); background: var(--surface);
+    color: var(--ink-hex); color: var(--ink);
+    border-radius: 10px; min-width: 2.1rem; height: 2.1rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; cursor: pointer;
+    transition: transform 0.12s var(--ease), border-color 0.12s, box-shadow 0.12s;
+  }
+  .ctl:hover { border-color: var(--accent); box-shadow: 0 2px 10px color-mix(in oklch, var(--accent) 25%, transparent); }
+  .ctl:active { transform: scale(0.94); }
+  .ctl svg { width: 1rem; height: 1rem; }
+  .ctl .label { display: none; }
+
+  .wave { display: inline-flex; align-items: center; gap: 2px; }
+  .wave i {
+    display: block; width: 3px; border-radius: 2px; background: currentColor;
+    animation: none;
+  }
+  .wave.i0 i:nth-child(1){height:14px}.wave.i0 i:nth-child(2){height:24px}
+  .wave.i0 i:nth-child(3){height:32px}.wave.i0 i:nth-child(4){height:24px}
+  .wave.i0 i:nth-child(5){height:14px}
+  .wave.i1 i:nth-child(1){height:26px}.wave.i1 i:nth-child(2){height:38px}
+  .wave.i1 i:nth-child(3){height:48px}.wave.i1 i:nth-child(4){height:38px}
+  .wave.i1 i:nth-child(5){height:26px}
+  .wave.i2 i:nth-child(1){height:10px}.wave.i2 i:nth-child(2){height:17px}
+  .wave.i2 i:nth-child(3){height:22px}.wave.i2 i:nth-child(4){height:17px}
+  .wave.i2 i:nth-child(5){height:10px}
+  .wave i:nth-child(3) { background: var(--accent); }
+
+  /* ============================================================
+     الشرائح
+     ============================================================ */
+  .stage { flex: 1; position: relative; overflow: hidden; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none; overflow-y: auto; overflow-x: hidden;
+    padding: clamp(1.4rem, 4vw, 3.4rem) clamp(1.2rem, 5vw, 4.5rem) 4rem;
+  }
+  .slide.active { display: flex; flex-direction: column; justify-content: center; }
+  .slide-inner { margin: 0 auto; width: 100%; max-width: 1160px; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 0.78rem; font-weight: 600; color: var(--accent-deep);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  [data-deck-theme="dark"] .kicker { color: var(--accent); }
+  .kicker .wave { margin-top: 2px; }
+
+  h1, h2 { font-family: var(--font-display); line-height: 1.3; font-weight: 700; }
+  h1 { font-size: clamp(2.2rem, 5.5vw, 4rem); }
+  h2 { font-size: clamp(1.6rem, 3.4vw, 2.5rem); letter-spacing: 0; margin-bottom: 1.1rem; }
+
+  .lead { font-size: clamp(1rem, 1.6vw, 1.2rem); color: var(--muted); max-width: 60ch; }
+
+  .grid { display: grid; gap: 1rem; margin-top: 1.2rem; }
+  .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+  .card {
+    background: var(--surface-hex); background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px; padding: 1.1rem 1.2rem;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+  }
+  .card h3 { font-family: var(--font-display); font-size: 1.08rem; margin-bottom: 0.4rem; }
+  .card p { font-size: 0.92rem; color: var(--muted); }
+  .card .tag { display: inline-block; margin-bottom: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-deep); }
+  [data-deck-theme="dark"] .card .tag { color: var(--accent); }
+
+  ul.tick { list-style: none; margin-top: 1rem; }
+  ul.tick li { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.35rem 0; }
+  ul.tick li::before {
+    content: ""; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); margin-top: 0.72rem; box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 25%, transparent);
+  }
+
+  .code {
+    font-family: var(--font-mono); direction: ltr; text-align: left;
+    background: var(--code-bg-hex); background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 12px; padding: 0.9rem 1.1rem;
+    font-size: 0.82rem; line-height: 1.6;
+    overflow-x: auto; white-space: pre;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .code .cm { color: var(--muted); font-style: italic; }
+  .code .kw { color: var(--bad-hex); }
+  .code .fn { color: var(--accent-deep); font-weight: 600; }
+  [data-deck-theme="dark"] .code .fn { color: var(--accent); }
+  .code .str { color: var(--good-hex); }
+
+  .ref {
+    display: inline-block; margin-top: 0.9rem;
+    font-family: var(--font-mono); direction: ltr; unicode-bidi: embed;
+    font-size: 0.72rem; color: var(--muted);
+    background: var(--surface-hex); background: var(--surface);
+    border: 1px dashed var(--line); border-radius: 8px; padding: 0.25rem 0.6rem;
+  }
+  .note-badge {
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-deep); border: 1px solid var(--line); border-radius: 999px; padding: 0.1rem 0.55rem;
+  }
+  [data-deck-theme="dark"] .note-badge { color: var(--accent); }
+
+  /* عناصر الحالة */
+  .pill { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+  .pill.ok { color: var(--good); border-color: color-mix(in oklch, var(--good) 45%, var(--line)); }
+  .pill.bad { color: var(--bad); border-color: color-mix(in oklch, var(--bad) 45%, var(--line)); }
+
+  /* شارة الأرقام الإحصائية */
+  .stats { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.2rem; }
+  .stat {
+    flex: 1 1 120px; text-align: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 0.6rem;
+  }
+  .stat b { display: block; font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--accent); }
+  .stat span { font-size: 0.78rem; color: var(--muted); }
+
+  /* دفعات قابلة للطي */
+  details.demo { margin-top: 1.1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  details.demo summary { cursor: pointer; padding: 0.8rem 1rem; font-weight: 600; font-family: var(--font-display); border-radius: 14px; }
+  details.demo[open] summary { border-bottom: 1px solid var(--line); }
+  details.demo .wrap { padding: 0.8rem 1rem; }
+
+  /* العلامة المائية */
+  .title-slide .wavemark {
+    position: absolute; inset-inline-end: clamp(1rem, 4vw, 3rem); top: 12%;
+    opacity: 0.10; pointer-events: none; height: 40%;
+  }
+
+  /* التذييل */
+  .foot {
+    margin-top: 2.2rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    font-family: var(--font-mono); direction: ltr; font-size: 0.7rem; color: var(--muted);
+  }
+  .foot .num { color: var(--accent); font-weight: 600; }
+
+  /* ============================================================
+     الشرائح المخصصة
+     ============================================================ */
+  .title-slide { justify-content: flex-start !important; padding-top: 6vh; }
+  .title-slide .kicker { border-bottom: 1px solid var(--line); padding-bottom: 0.6rem; }
+  .title-slide h1 { font-size: clamp(3rem, 8vw, 6rem); margin: 0.6rem 0 0.3rem; }
+  .title-slide .sub { font-family: var(--font-display); font-size: clamp(1.2rem, 2.6vw, 1.9rem); color: var(--muted); }
+  .title-slide .meta { margin-top: 2rem; }
+  .title-slide .meta .row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.6rem; }
+
+  .divider-slide { text-align: center; }
+  .divider-slide .wavemark { margin: 0 auto 1.5rem; justify-content: center; display: flex; }
+  .divider-slide h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); margin-bottom: 0.8rem; }
+  .divider-slide .lead { margin-inline: auto; }
+  .judgement h3 { font-size: 1.15rem; font-family: var(--font-display); }
+  .judgement view { display: block; margin-top: 0.6rem; font-size: 0.9rem; color: var(--muted); }
+
+  .flowline { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.6rem; margin-top: 1.2rem; }
+  .flow-step {
+    position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 0.8rem; text-align: center; font-size: 0.84rem;
+  }
+  .flow-step b { display: block; font-family: var(--font-display); font-size: 0.95rem; margin-bottom: 0.15rem; color: var(--accent-deep); }
+  [data-deck-theme="dark"] .flow-step b { color: var(--accent); }
+  .flow-step::after {
+    content: "←"; position: absolute; inset-inline-start: -0.85rem; top: 50%; transform: translateY(-50%);
+    color: var(--accent); font-weight: 700; z-index: 2;
+  }
+  .flow-step:first-child::after { display: none; }
+
+  .tl { margin-top: 1.3rem; }
+  .tl-item { display: flex; gap: 1rem; position: relative; padding-bottom: 1rem; }
+  .tl-item::before { content: ""; position: absolute; inset-inline-start: 0.42rem; top: 1.4rem; bottom: 0; width: 2px; background: var(--line); }
+  .tl-item:last-child::before { display: none; }
+  .tl-dot { flex: 0 0 auto; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); margin-top: 0.3rem; position: relative; z-index: 1; }
+  .tl-body b { font-family: var(--font-display); font-size: 1rem; }
+  .tl-body p { font-size: 0.86rem; color: var(--muted); }
+
+  .timeline-legend { display: inline-flex; gap: 1rem; margin-top: 0.6rem; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
+  .timeline-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .timeline-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+
+  .aspect-banner {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin-top: 1.2rem; border: 1px solid var(--line); border-radius: 14px;
+    background: var(--surface); padding: 0.8rem 1rem;
+  }
+  .aspect-banner .lbl { font-weight: 700; font-family: var(--font-display); color: var(--accent-deep); }
+  [data-deck-theme="dark"] .aspect-banner .lbl { color: var(--accent); }
+  .aspect-banner p { font-size: 0.88rem; color: var(--muted); flex: 1; min-width: 220px; }
+
+  /* ============================================================
+     لوحات (نظرة عامة / ملاحظات)
+     ============================================================ */
+  .overlay { position: fixed; inset: 0; z-index: 60; background: var(--bg-hex); background: var(--bg); opacity: 0; pointer-events: none; transition: opacity 0.18s var(--ease); }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .overlay-inner { max-width: 1200px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 3rem); }
+  .overlay h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1.2rem; }
+  .ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 0.7rem; }
+  .ov-card {
+    text-align: start; border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    padding: 0.7rem 0.8rem; cursor: pointer; font: inherit; color: inherit;
+    display: flex; gap: 0.6rem; align-items: baseline; transition: border-color 0.12s, transform 0.12s var(--ease);
+  }
+  .ov-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .ov-card b { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); }
+  .ov-card span { font-size: 0.85rem; line-height: 1.5; }
+  .ov-card.cur { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 30%, transparent); }
+
+  .notes-panel {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 50;
+    background: var(--surface-hex); background: var(--surface);
+    border-top: 1px solid var(--line);
+    transform: translateY(105%); transition: transform 0.22s var(--ease);
+    max-height: 42vh; overflow-y: auto;
+    box-shadow: 0 -8px 30px rgba(16,24,40,0.14);
+  }
+  .notes-panel.open { transform: translateY(0); }
+  .notes-inner { max-width: 1100px; margin: 0 auto; padding: 1rem clamp(1rem, 4vw, 3rem); }
+  .notes-inner header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.6rem; }
+  .notes-inner h4 { font-family: var(--font-display); font-size: 1rem; }
+  .notes-text { font-size: 0.95rem; color: var(--muted); max-width: 80ch; }
+
+  /* شريط التقدم */
+  .progress { position: fixed; inset-inline: 0; bottom: 0; height: 4px; background: transparent; z-index: 40; }
+  .progress i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-hex), var(--accent)); transition: width 0.25s var(--ease); }
+
+  /* ============================================================
+     خفض الحركة
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+
+  /* ============================================================
+     استجابة الجوال
+     ============================================================ */
+  @media (max-width: 640px) {
+    .controls .ctl { min-width: 2rem; height: 2rem; }
+    .brand-name { display: none; }
+    .slide { padding: 1.2rem 0.9rem 3.4rem; }
+    .title-slide { justify-content: flex-start !important; padding-top: 3vh; }
+  }
+
+  /* ============================================================
+     الطباعة
+     ============================================================ */
+  @media print {
+    .chrome-top, .controls, .notes-panel, .overlay, .progress { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .stage { overflow: visible; }
+    .slide { position: relative; display: flex !important; flex-direction: column; justify-content: flex-start; page-break-after: always; break-after: page; min-height: 96vh; }
+    .slide.active, .slide { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body data-deck-theme="light">
+<div class="deck">
+
+  <div class="chrome-top" role="toolbar" aria-label="شريط أدوات العرض">
+    <div class="brand">
+      <span class="wave i1" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="brand-name">أصوات الحق<span class="brand-en">Voices of Truth · Tech Review</span></span>
+    </div>
+    <div class="index" id="index" aria-live="polite"><b>1</b> / 34</div>
+    <div class="controls">
+      <button class="ctl" data-action="notes" aria-label="الملاحظات" title="ملاحظات المقدم (N)"><span class="wave i2"><i></i><i></i><i></i><i></i><i></i></span></button>
+      <button class="ctl" data-action="overview" aria-label="نظرة عامة على الشرائح" title="نظرة عامة (O)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+      <button class="ctl" data-action="theme" aria-label="تبديل السمة" title="تبديل السمة (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button>
+      <button class="ctl" data-action="fullscreen" aria-label="ملء الشاشة" title="ملء الشاشة (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      <button class="ctl" data-action="prev" aria-label="الشريحة السابقة" title="السابقة (→)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="ctl" data-action="next" aria-label="الشريحة التالية" title="التالية (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ============================================= 1 · العنوان -->
+    <section class="slide title-slide" data-notes="ابدأ بجملة واحدة: هذا عرض هندسي داخلي، الغاية منه التحقق من أن مالك المشروع يفهم الكود والقرارات، لا ترويج للواجهة. عرّف نفسك واجعل النبرة تقنية. —
+المدة المستهدفة: 5 دقائق للقسم الافتتاحي (شرائح 1-3).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave i1"><i></i><i></i><i></i><i></i><i></i></span> عرض تقني هندسي · 60 دقيقة · للفريق التقني</div>
+        <h1>أصوات الحق</h1>
+        <p class="sub">دليل العلماء والدعاة — بنية تقنية بين الخادم والعميل</p>
+        <div class="meta">
+          <div class="row">
+            <span class="pill">Next.js 16.2.9</span>
+            <span class="pill">React 19</span>
+            <span class="pill">TypeScript 6</span>
+            <span class="pill">Tailwind v4</span>
+            <span class="pill">react-i18next</span>
+            <span class="pill">Vitest 4</span>
+            <span class="pill">pnpm</span>
+          </div>
+          <div class="row">
+            <span class="pill ok">بلا قاعدة بيانات</span>
+            <span class="pill ok">مسبق التوليد للتفاصيل</span>
+            <span class="pill ok">URL هو الحالة</span>
+          </div>
+        </div>
+        <p class="foot"><span class="num">T0</span> · أصوات الحق — دليلٌ للقرآن والتراث والصوت</p>
+      </div>
+      <svg class="wavemark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2.8" y="9" width="2.4" height="6" rx="1.2"/><rect x="6.8" y="6" width="2.4" height="12" rx="1.2"/><rect x="10.8" y="1.5" width="2.4" height="21" rx="1.2"/><rect x="14.8" y="6" width="2.4" height="12" rx="1.2"/><rect x="18.8" y="9" width="2.4" height="6" rx="1.2"/></svg>
+    </section>
+
+    <!-- ============================================= 2 · الغاية -->
+    <section class="slide" data-notes="اشرح بنودًا ثلاثة: (1) سنُثبت الفهم بفتح المصدر عند كل ادعاء، (2) سنتحدث عن المقايضات والحدود لا عن النجاحات فقط، (3) المراجع صيغة path:line وتؤدي للملف الحقيقي. حذّر: هناك ادعاءات سنتجنبها عمدًا (مثل PWA) — والسبب أنها غير موجودة في الكود.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> افتتاح · ماذا تحاول أن تثبت؟</div>
+        <h2>الغاية ليست الترويج، بل إثبات الفهم</h2>
+        <ul class="tick">
+          <li>سنتبع البيانات من ملفاتها الثابتة حتى البطاقة التي يراها المستخدم.</li>
+          <li>كل ادعاء يعرض مصدرًا: <span class="ref">src/lib/filterScholars.ts:11-32</span> على طريقة <span class="ref">path:line-range</span>.</li>
+          <li>سنقف عند الحدود: ما لم يُحل، وما الذي لا يجب أن تدّعيه أمام الفريق.</li>
+          <li>لا نعدِّل أي كود تطبيق: الحزمة توثيق وعرض فقط.</li>
+        </ul>
+        <div class="aspect-banner">
+          <span class="lbl">مبدأ واحد يحكم العرض</span>
+          <p>الادعاء الذي لا تجده في المصدر لا يقوله المقدم. كل رقم هنا جاء من تشغيل فعلي.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 3 · المشكلة -->
+    <section class="slide" data-notes="اطرح السؤال لكل جمهور: لو أن موقعًا يعرض أدباء أو أعلامًا معروفين ببلدهم وتخصصهم ولغتهم، فما البنية الهندسية المطلوبة؟ اذكر صعوبة البحث العربي بموضوعية: التشكيل، الهمزات الأربع، التاء المربوطة. هذه هي البذرة التي كبرت منها كل القرارات.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> افتتاح · الفجوة</div>
+        <h2>ما المشكلة التي يبني هذا المنتجُ حلها؟</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">discoverability</span>
+            <h3>لا فهرس موحّد</h3>
+            <p>من يهتدي إلى عالمٍ بارز معروفٍ بين جمهوره؟ مَن يبحث عن داعية يُتقن العربية في مصر؟ المعرفة موزعة على بلدان وتخصصات ولغات بلا مسار واحد.</p>
+          </div>
+          <div class="card">
+            <span class="tag">arabic-search</span>
+            <h3>البحث العربي برمجيًا</h3>
+            <p>التشكيل (مُحَمَّد)، الهمزات (أ إ آ ٱ)، الياء (ى/ي) والتاء المربوطة (ة/ه) — كلها تجعل القسمة التامة تفشل في مطابقة «محمد» مع «مُحَمَّد».</p>
+          </div>
+          <div class="card">
+            <span class="tag">i18n</span>
+            <h3>جمهور ثنائي اللغة</h3>
+            <p>عربي (RTL كامل) وإنجليزي (LTR)، مع الحفاظ على اتجاه واحد صحيح في كل ترتيب شرائح ومفاتيح أنماط فلكس.</p>
+          </div>
+          <div class="card">
+            <span class="tag">structured not free text</span>
+            <h3>بيانات منظمة لا نصوص حرة</h3>
+            <p>العالمُ له بلد وتخصص ولغات وروابط — كيانات ذات أبعاد ثابتة، وهي ما يسمح بالتصفية على الخادم لا البحث العائم.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 4 · المنتج -->
+    <section class="slide" data-notes="اعرض الأرقام من فحص فعلي لمجلد البيانات. ميّز: 26 عالمًا موزعين على 11 ملفًا بحسب التخصص، 10 دول، 11 تخصصًا، 27 ملف صورة (26 + صورة افتراضية). ثم أشر نحو البارل src/data/scholars.ts:14-26.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> افتتاح · ماذا نعرض؟</div>
+        <h2>دليل ثنائي اللغة ببيانات منظمة</h2>
+        <div class="stats">
+          <div class="stat"><b>26</b><span>عالِمًا وداعية</span></div>
+          <div class="stat"><b>10</b><span>دولاً</span></div>
+          <div class="stat"><b>11</b><span>تخصصًا</span></div>
+          <div class="stat"><b>2</b><span>لغتي واجهة</span></div>
+          <div class="stat"><b>52</b><span>مسار تفاصيل مسبق التوليد</span></div>
+        </div>
+        <ul class="tick">
+          <li>تصفية على الخادم: البلد، اللغـة، التخصص، البحث بالاسم/السيرة.</li>
+          <li>الفلاتر تعيش في <b>URL</b>: قابلة للمشاركة والتراجع وإعادة التحميل.</li>
+          <li>صفحة تفاصيل لكل عالم، مبنية سلفًا عند البناء (generateStaticParams).</li>
+          <li>سمة فاتحة/داكنة بلا وميض + تبديل EN/AR مع انعكاس RTL.</li>
+        </ul>
+        <p class="ref">src/data/scholars.ts:14-26 · src/data/countries.ts · src/data/specializations.ts</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 5 · الفكرة الحاكمة -->
+    <section class="slide" data-notes="هذه أهم شريحة في العرض: القرار المعماري الحاكم. جوهره: كل حسابات الحقائق تُجرى مرة واحدة على الخادم؛ العميل «قشرة» تفاعلية تعيد كتابة URL فقط. هذا ما يجعل كل صفحة أرشيفية وكل شيء قابلًا للاختبار وحديًا.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الأطروحة · الفكرة الحاكمة</div>
+        <h2>الخادم يحسم، والعميل يتفاعل</h2>
+        <p class="lead">كل «الحقائق» — التطبيع، التحقق، التصفية، الترحيل — تُحسم قبل مغادرة الخادم. ما يصل المتصفح هو نتيجة جاهزة، وسلوكه الوحيد هو إعادة كتابة الـ URL.</p>
+        <p class="ref">src/app/[locale]/page.tsx:24-48 (التحقق والفلترة والترحيل على الخادم)</p>
+        <div class="aspect-banner">
+          <span class="lbl">لماذا هذا صحيح هنا؟</span>
+          <p>المحتوى ثابت ومنظم، لذا التصفية الخادمية أرخص وأكثر اتساقًا مع مسبق التوليد؛ وكون الـ URL هو الحالة يعطي الرجوع والتراجع مجانًا.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 6 · الشعار التقني -->
+    <section class="slide" data-notes="قسّم السبورة: نواة نقية (دوال بلا DOM) ضد قشرة تفاعلية. لاحظ أن كل الاختبارات الـ28 تعمل على النواة، ولا اختبار واحد على القشرة — وهذا قرار وليس نقصًا موثقًا في خطة التحسين.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الأطروحة · شكل التصميم</div>
+        <h2>نواة نقية + قشرة تفاعلية رقيقة</h2>
+        <div class="grid cols-2">
+          <div class="card" style="border-color: color-mix(in oklch, var(--good) 55%, var(--line));">
+            <span class="tag">النواة النقية · src/lib + src/data</span>
+            <h3>حساب، بلا متصفح</h3>
+            <p class="code" style="font-size:.78rem">normalizeArabic      # search.ts
+filterScholars       # التصفية الأربعة
+paginate/getPages    # windowed 12/page
+updateSearchParam    # إعادة كتابة URL
+localize/languageLabel</p>
+            <p>تعمل في أي مضيف (Node/Vitest)، وتُقرأ كيفما تستدعيها واجهة.</p>
+          </div>
+          <div class="card" style="border-color: color-mix(in oklch, var(--accent) 60%, var(--line));">
+            <span class="tag">القشرة التفاعلية · src/components</span>
+            <h3>تفاعل، بلا حسابات</h3>
+            <p class="code" style="font-size:.78rem">HomePageClient       # يكتب URL
+FilterBar + filters/  # قوائم + بحث debounce
+ScholarList / Card    # عرض + حركة
+Pagination            # أزرار الصفحات
+ThemeToggle</p>
+            <p>تركّز على الاستجابة للإدخال والكتابة إلى searchParams.</p>
+          </div>
+        </div>
+        <p class="ref">src/lib/filterScholars.ts · src/lib/pagination.ts · src/lib/searchParams.ts · src/lib/search.ts</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 7 · رحلة القرارات -->
+    <section class="slide" data-notes="المطلوب هنا السرد الزمني لا التفاصيل. أظهر أن المشروع بني في موجات: بنى → راجع → قرر → وثّق. اذكر مثالًا واحدًا لكل موجة وسأوسّع في لاحق.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> رحلة القرارات · خريطة زمنية</div>
+        <h2>من «دليل بسيط» إلى عمارة منقّحة</h2>
+        <div class="tl">
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>التأسيس · 2026-05</b><p>أول 8 قرارات ADR: الـ URL كمصدر حقيقة، replace بدل push، Suspense لِـuseSearchParams، تساقط المعامل غير الصالح.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>الترقية Next.js 15 → 16</b><p>إصلاح proxy.ts وإضافة x-locale وبدأ انعكاس تغييرات React 19 على السمة.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>ADR-009 · استبدال next-themes</b><p>مكوّن السمة المخصص + inline script قبل Hydration — القرار المركزي يقاس عليه القسم الأخير من العرض.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>إعادة التصميم «Contemporary Voices»</b><p>OKLCH وطباعة عربية وإشارة الـ waveform كعلامة صوتية واحدة.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>موجات الإصلاح المتعاقبة</b><p>RTL، ترحيل، بحث عربي، أمان أعلى، 404، تفاصيل مسبقة التوليد، مراجعة SOLID، ثم حزمة Vitest (28 اختبارًا).</p>
+          </div></div>
+        </div>
+        <div class="timeline-legend">
+          <span><i></i> قرار موثق في docs/adr.md</span>
+          <span class="ref">docs/adr.md · docs/improvement-plan.md · سجل git (‏git log)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 8 · ADR-009 -->
+    <section class="slide" data-notes="القصة الكاملة: next-themes 0.4.6 يحقن script داخل شجرة React، وReact 19/Next 16 يرفضه بخطأ في الكونسول؛ المكتبة غير محدثة منذ 2024. القرار: منفّذ خاص ~70 سطرًا + السكربت في <head> بالخادم قبل التروية.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> رحلة القرارات · أعمق قرار</div>
+        <h2>ADR-009: لماذا شطبنا next-themes؟</h2>
+        <div class="grid cols-3">
+          <div class="card">
+            <span class="tag">سبب</span>
+            <h3>قرار تقني لا أسلوبي</h3>
+            <p>next-themes 0.4.6 يحقن <span class="ref">&lt;script&gt;</span> داخل شجرة الملحقات، بينما يرفض React 19 / Next 16 هذا النمط بخطأ في الكونسول. المكتبة خاملة منذ 2024.</p>
+          </div>
+          <div class="card">
+            <span class="tag">قرار</span>
+            <h3>منفّذ سمة مخصص</h3>
+            <p>ThemeProvider + useTheme في <span class="ref">src/lib/theme.tsx</span> (~70 سطرًا)، وتتحرك السكربتات إلى <head> الخادم قبل Hydration.</p>
+          </div>
+          <div class="card">
+            <span class="tag">انعكاس</span>
+            <h3>اعتماد صفري</h3>
+            <p>لا أخطاء سكربتات، لا وميض، ولا حزمة خارجية. هذا هو الشرط الذي جعل قسم Hydration كاملًا في هذا العرض إلزاميًا.</p>
+          </div>
+        </div>
+        <p class="ref">docs/adr.md:61-66 · src/lib/theme.tsx:40-65 · src/app/layout.tsx:41-52</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 9 · إعادة التصميم -->
+    <section class="slide" data-notes="اكشف جذور الهوية في النظام اللوني: توكنات OKLCH تتحول أخفظ في :root و .dark ثم تُستهلَك عبر oklch(var(--token)). اللون الواحد: كهرماني (accent). الطباعة: Inter للواجهة وSource Serif للمتن وAmiri للعرض وRuqaa للعربية.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> رحلة القرارات · الهوية البصرية</div>
+        <h2>«Contemporary Voices» — نظام صوتي بصري واحد</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">tokens</span>
+            <h3>OKLCH بتدرج حبري</h3>
+            <p>لوحة موحّدة: حبر مائل نحو 245-255 هُوّة بدلًا من الأسود/الأبيض، مع كهرماني دافئ وحيد (accent) — والسمة الداكنة لا تُفكّك لتصعيد البطاقات.</p>
+          </div>
+          <div class="card">
+            <span class="tag">type</span>
+            <h3>طباعة ثنائية اللغة</h3>
+            <p>4 خطوط محلية عبر next/font: Inter، Source Serif، Amiri (عرض)، Ruqaa (واجهة عربية). قواعد <span class="ref">:lang(ar)</span> تستبدل العائلات وتُصفّر letter-spacing للنَّسخ.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">العلامة المميزة</span>
+          <p>الـ waveform — خمس أشرطة صوتية من <span class="ref">src/components/WaveformMark.tsx:16-20</span> — تتردد في الترويسة والتذييل والـ 404 والأيقونة.</p>
+        </div>
+        <p class="ref">src/app/globals.css:12-45 · src/lib/fonts.ts:3-45 · src/app/[locale]/not-found.tsx:13</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 10 · ما بعد الترقية -->
+    <section class="slide" data-notes="هذه سلسلة «كل مراجعة تنتج قرارًا موثقًا». أمثلة: ADR-004 (gap بدل space-x للـ RTL)، صفحة 12/صفحة مع window، security headers، وCSP dev-only unsafe-eval (إصلاح تعارض مع Turbopack).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> رحلة القرارات · موجات الإصلاح</div>
+        <h2>كل مراجعة حوّلت وجعًا إلى قرار موثق</h2>
+        <div class="grid cols-2">
+          <div class="card"><span class="tag">ADR-004</span><h3>RTL سليم</h3><p>استبدال space-x* بالمتباعدات gap في الفلكس — خطأ اتجاهي شهير ينكسر عربيًّا.</p></div>
+          <div class="card"><span class="tag">#10</span><h3>ترحيل + بحث عربي</h3><p>Pagination ذو نافذة، وnormalizeArabic للديترمين، وsitemap ديناميكي واعٍ بالبيئة.</p></div>
+          <div class="card"><span class="tag">#11</span><h3>جاهزية إنتاج</h3><p>الأفاتار الافتراضي، robots، رؤوس أمنية، not-found.tsx، وسَoma متغير بالبيئة عبر NEXT_PUBLIC_SITE_URL.</p></div>
+          <div class="card"><span class="tag">#18</span><h3>CSP في مواجهة dev</h3><p>استثناء 'unsafe-eval' محدودًا بأوضاع التطوير فقط حتى لا يكسّر Turbopack، مع إبقاء البناء صارمًا.</p></div>
+        </div>
+        <p class="ref">docs/adr.md:26-31 (ADR-004) · src/app/sitemap.ts:5-8 · next.config.ts:7-16</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 11 · أرشيف ADR -->
+    <section class="slide" data-notes="بيّن قيمة التوثيق: كل ADR يتبع صيغة «سياق → قرار → انعكاس». ذكّر الثلاثة الأمثل للفريق: URL-state (002/003)، Suspense (006)، التساقط مع المعامل غير الصالح (008).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> رحلة القرارات · الذاكرة المؤسسية</div>
+        <h2>9 قرارات مسجلة بصيغة: سياق → قرار → انعكاس</h2>
+        <div class="grid cols-3">
+          <div class="card"><span class="tag">ADR-002 · 003</span><h3>URL هو الحالة</h3><p>كل فلتر مقروء من searchParams؛ والتغيير يكتب عبر router.replace فلا تلوث للسجل، والرجوع يعود للصفحة السابقة.</p></div>
+          <div class="card"><span class="tag">ADR-006</span><h3>Suspense إلزامي</h3><p>Nextٌ يمنع useSearchParams خارج Suspense؛ الحدود وُضعت حول HomePageClient في صفحة الخادم مع هيكل تحميل.</p></div>
+          <div class="card"><span class="tag">ADR-008</span><h3>تساقط صامت آمن</h3><p>معامل بلد/تخصص غير صالح لا يكسر النتائج: مجموعة القيم الصالحة تُبنى سلفًا ويُعامل غير الصالح كأنه غير موجود.</p></div>
+        </div>
+        <p class="ref">docs/adr.md · مثال التشغيل: src/app/[locale]/page.tsx:11-12 ثم :30-40</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 12 · مسار البيانات -->
+    <section class="slide" data-notes="اقرأ الخط من اليمين إلى اليسار: 11 ملف بيانات → بارل (26) → صفحة خادم → filterScholars → paginate (12) → Suspense → بطاقات. لا تنسَ أن localStorage والنوافذ نهائية خارج الخادم.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> النموذج الذهني 1/2 · خط مستقيم</div>
+        <h2>من ملف ثابت إلى بطاقة في سبع خطوات</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>11 ملف تخصص</b>بيانات نمطية لكل اختصاص</div>
+          <div class="flow-step"><b>scholars.ts</b>البارل يجمعها بتوزيع</div>
+          <div class="flow-step"><b>page.tsx</b>تطبيع + تحقق (خادم)</div>
+          <div class="flow-step"><b>filterScholars</b>بلد · لغة · تخصص · نص</div>
+          <div class="flow-step"><b>paginate</b>حيث 12 لكل صفحة</div>
+          <div class="flow-step"><b>Suspense</b>HomePageClient القشرة</div>
+          <div class="flow-step"><b>ScholarList</b>عرض شطرنجي + حركة</div>
+        </div>
+        <p class="ref">src/data/scholars.ts:14-26 · src/app/[locale]/page.tsx:30-48 · src/components/ScholarList.tsx:48-70</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 13 · حلقة التدفق -->
+    <section class="slide" data-notes="أهم فكرة: حلقة مغلقة. يتغير فلتر (أو يُكتب في شريط العنوان يدويًا) فتتم إعادة بناء الخادم للنتيجة، والقشرة لا تخزن حالة وهمية. هذه هي اللحظة التي تثبت فيها فهم URL-state.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> النموذج الذهني 2/2 · حلقة مغلقة</div>
+        <h2>URL ← خادم ← DOM ← URL …</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>المستخدم يغيّر فلترًا</b>قائمة أو بحث debounce 300ms</div>
+          <div class="flow-step"><b>handleFilterChange</b>updateSearchParam + reset للصفحة</div>
+          <div class="flow-step"><b>router.replace</b>إعادة كتابة ?query في عنوان الروابط</div>
+          <div class="flow-step"><b>page.tsx يعيد التصيير</b>تحقق → فلترة → ترحيل</div>
+          <div class="flow-step"><b>Suspense skeleton</b>تغذية ذهنية أثناء الاحلال</div>
+          <div class="flow-step"><b>بطاقات جديدة</b>ودورة جديدة على أي تغيير</div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">النتيجة المعمارية</span>
+          <p>الدخول المباشر لعنوان مفلتر، زر الرجوع، ومشاركة الرابط — كلها متكافئة، لأن الحالة ليست داخل ذاكرة الصفحة بل داخل الروابط نفسها.</p>
+        </div>
+        <p class="ref">src/components/HomePageClient.tsx:38-45 · src/lib/searchParams.ts:1-12</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 14 · تجربة: فلترة -->
+    <section class="slide" data-notes="اعرض تغذية الحاجة السلوكية بسرعة: أثناء كتابة البحث، لا طلب حتى سكون 300ms (debounce). زر إعادة الضبط يظهر فقط عند وجود فلتر نشط؛ ولا نتائج يعرض رسالة من الترجمة لا حالة مكسورة.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> تجربة المنتج 1/3</div>
+        <h2>ماذا يرى المستخدم؟ — الفلترة والبحث</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">4 مدخلات</span>
+            <h3>بحث + ثلاث قوائم</h3>
+            <p>بحث الاسم/السيرة، البلد، اللغة، التخصص. البحث مؤجل 300ms حتى سكون الكتابة كي لا تسأل كل مفتاح.</p>
+          </div>
+          <div class="card">
+            <span class="tag">حدود طيّبة</span>
+            <h3>إعادة ضبط و لا-نتيجة</h3>
+            <p>زر «إعادة الضبط» يظهر تلقائيًا متى نشط أي فلتر، ويُعيد لـ pathname الجرد؛ وحالة الفراغ رسالة مترجمة وليست شاشة فارغة.</p>
+          </div>
+        </div>
+        <p class="ref">src/components/FilterBar.tsx:18-40 · src/components/filters/SearchInput.tsx:51-56 · public/locales/ar/common.json:8</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 15 · تجربة: صفحة العالم -->
+    <section class="slide" data-notes="جانبان مثيران تقنيًا: (1) generateStaticParams يبني 52 مسارًا وقت البناء، (2) المعرف غير الموجود يستدعي notFound() فترتد القناة إلى not-found.tsx المخصص بالترجمة.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> تجربة المنتج 2/3</div>
+        <h2>صفحة تفاصيل مبنية سلفًا + 404 مخصص</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>generateStaticParams</b>لغتان × 26 عالمًا = 52 مسارًا</div>
+          <div class="flow-step"><b>getScholar</b>بحث بالمعرف داخل المصفوفة</div>
+          <div class="flow-step"><b>notFound()</b>معرف مجهول → شاشة 404</div>
+          <div class="flow-step"><b>البيانات</b>الاسم والبلد والتخصص واللغات والروابط</div>
+        </div>
+        <p class="ref">src/app/[locale]/scholars/[id]/page.tsx:20-24 (static params) · :43 (notFound) · src/app/[locale]/not-found.tsx</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 16 · تجربة: اللغة والسمة -->
+    <section class="slide" data-notes="لغتان متوازيتان عبر [locale]، والتبديل يعيد كتابة المقطع الأول من المسار فقط. الانعكاس dir يُشتق من i18next. والسمة: زر خامل حتى أول mount ثم أيقونة — تذكير أولي بمشكلة Hydration القادمة.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> تجربة المنتج 3/3</div>
+        <h2>تبديل مزدوج بلا وميض</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">language</span>
+            <h3>EN / AR</h3>
+            <p>LanguageSwitcher يعيد كتابة مقطع الجذر في المسار؛ و<span class="ref">&lt;html lang dir&gt;</span> يتعرفان على الأسطر من i18next (dir(locale)).</p>
+          </div>
+          <div class="card">
+            <span class="tag">theme</span>
+            <h3>فاتحة / داكنة</h3>
+            <p>ThemeToggle يعرض زرًّا خاملًا حتى أول mounting ثم أيقونة حقيقية — أول تمهيد لمشكلة Hydration الواردة في قسم الغوص التقني.</p>
+          </div>
+        </div>
+        <p class="ref">src/components/LanguageSwitcher.tsx:14-19 · src/app/layout.tsx:54 · src/components/ThemeToggle.tsx:66-72</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 17 · حدود server/client -->
+    <section class="slide" data-notes="القسم الأثقل: الغوص التقني (14 دقيقة). ابدأ بحدود المكونات ثم تعمّق. القاعدة العملية: القراءة من window/URL/ترويسات → server؛ التفاعل البشري → client؛ وuseSearchParams يتطلب Suspense.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · حدود المكونات</div>
+        <h2>أين يرسم الخط بين الخادم والعميل؟</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">server · async</span>
+            <h3>منطقة الخادم</h3>
+            <p>page.tsx، generateMetadata، scholar/[id]/page.tsx (مسبق التوليد)، sitemap/robots — كلها تقرأ المعاملات والترويسات وتنتهي قبل الوصول للعميل.</p>
+          </div>
+          <div class="card">
+            <span class="tag">client · use client</span>
+            <h3>منطقة العميل</h3>
+            <p>HomePageClient، FilterBar، ScholarList، Pagination، ThemeToggle، SearchInput — كلها تحتاج window أو أحداثًا أو useSearchParams.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">القانون العملي</span>
+          <p>«مكوّن يقرأ من URL/ترويسات → server. مكوّن ينقر عليه المستخدم → client. وثقب استخدام useSearchParams → Suspense (ADR-006).»</p>
+        </div>
+        <p class="ref">src/app/[locale]/page.tsx:51-81 (Suspense) · src/app/[locale]/HomePageClient.tsx:1-12</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 18 · التوجيه -->
+    <section class="slide" data-notes="سرد التوجيه كمسار: طلب /ar/scholars/6 يدخل proxy.ts يفحص language-accept، ثم يمرر x-locale، ويقوم layout الجذر بقراءته؛ وبهذا تغدو علامتا lang/dir منشأتين من الخادم لا من JS. ثم generateStaticParams في كل من locale و scholar.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · التوجيه</div>
+        <h2>مسار الطلب من الدخول إلى الشاشة</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>proxy.ts</b>فحص المسار وغياب الحرفين → مدى اللغة المقبولة (accept-language)</div>
+          <div class="flow-step"><b>redirect</b>إلى /en أو /ar مع صون بقية المسار</div>
+          <div class="flow-step"><b>x-locale</b>ترويسة مضافة لكل طلب محلي</div>
+          <div class="flow-step"><b>layout الجذر</b>async يقرأ x-locale → html lang/dir + سكربت السمة</div>
+          <div class="flow-step"><b>locale layout</b>ThemeProvider + i18n + ErrorBoundary + generateStaticParams</div>
+          <div class="flow-step"><b>تفاصيل العالم</b>52 مسارًا مسبق التوليد</div>
+        </div>
+        <p class="ref">src/proxy.ts:21-43 · src/app/layout.tsx:40,54 · src/app/[locale]/layout.tsx:52-53</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 19 · التصفية -->
+    <section class="slide" data-notes="مقتطف نموذجي صادق: سطر countryId من page.tsx:32-35 يتحقق عبر المجموعات المسبقة. أبرز أن الخطأ في المعامل يسقط بصمت لا يفسد النتائج، وأن أنبوب filterScholars يطابق name/bio بالعربية والإنجليزية معًا.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i></i></span> الغوص التقني · عمود التصفية</div>
+        <h2>فلترة خادمية محمية بتحققات مسبقة</h2>
+        <div class="code"><span class="cm">// src/app/[locale]/page.tsx:30-40 (مقتطف)</span>
+const filteredScholars = filterScholars(scholars, {
+  searchQuery,
+  countryId: <span class="kw">!isNaN</span>(countryId) &amp;&amp; validCountryIds.<span class="fn">has</span>(countryId)
+    ? countryId : <span class="kw">null</span>,          <span class="cm">// ADR-008</span>
+  categoryId: <span class="kw">!isNaN</span>(categoryId) &amp;&amp; validCategoryIds.<span class="fn">has</span>(categoryId)
+    ? categoryId : <span class="kw">null</span>,
+  lang:         langValue &amp;&amp; scholars.<span class="fn">some</span>(s =&gt; s.language.<span class="fn">includes</span>(langValue))
+    ? langValue : <span class="kw">null</span>,
+});</div>
+        <ul class="tick">
+          <li>مجموعات الصلاحية تُبنى مرة واحدة خارج الدالة — <span class="ref">page.tsx:11-12</span>.</li>
+          <li>المطابقة تجري على name وbio باللغتين، بعد تطبيع السجل وquery معًا.</li>
+          <li>المخرج أنبوب منفصل ومحفوظ للاختبار — <span class="ref">src/lib/filterScholars.ts:17-31</span>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================= 20 · البحث العربي -->
+    <section class="slide" data-notes="المحتوى المفاجئ الذي يحب الجمهور: ثلاث قواعد regex في 10 أسطر تحل معضلة البحث العربي الشائعة. اعرض الاختبارات نفسها من pure-logic.test.ts:38-45 — أمثلة حقيقية من المجموعة.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · معالجة النص</div>
+        <h2>normalizeArabic: معضلة البحث العربي في 10 أسطر</h2>
+        <div class="code"><span class="cm">// src/lib/search.ts:1-9</span>
+<span class="kw">const</span> ARABIC_DIACRITICS_AND_TATWEEL = /[\u064B-\u0652\u0670\u0640]/g;
+<span class="kw">const</span> ALEF_VARIANTS             = /[\u0622\u0623\u0625\u0671]/g;
+
+<span class="kw">export function</span> <span class="fn">normalizeArabic</span>(text: string): string {
+  <span class="kw">return</span> text
+    .replace(ARABIC_DIACRITICS_AND_TATWEEL, <span class="str">""</span>)   <span class="cm">// حذف التشكيل والمدّ</span>
+    .replace(ALEF_VARIANTS, <span class="str">"\u0627"</span>)            <span class="cm">// أ إ آ ٱ → ا</span>
+    .replace(/\u0649/g, <span class="str">"\u064A"</span>)             <span class="cm">// ى → ي</span>
+    .replace(/\u0629/g, <span class="str">"\u0647"</span>);            <span class="cm">// ة → ه</span>
+}</div>
+        <p class="lead">من اختبارات المجموعة نفسها <span class="ref">src/lib/pure-logic.test.ts:38-45</span>:</p>
+        <div class="grid cols-3">
+          <div class="card"><h3>«مُحَمَّد»</h3><p>→ «محمد» (حذف التشكيل والجزم)</p></div>
+          <div class="card"><h3>«أحمد إبراهيم آدم ٱلله»</h3><p>→ «احمد ابراهيم ادم الله» (توحيد الهمزات)</p></div>
+          <div class="card"><h3>«سورة التوبة سعيد»</h3><p>→ «سوره التوبه سعيد» (ى/ة)</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 21 · الترحيل -->
+    <section class="slide" data-notes="تعريف نافذة الترحيل: أول صفحة، والصفحة الحالية ±1، وآخر صفحة، مع علامة حذف بينهما؛ وخارج الـ7 صفحات يعرض الدوال نفسها كاختبارات. ومع 26 عالمًا تكون النتيجة 3 صفحات فقط.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · الترحيل</div>
+        <h2>ترحيل نافذة: 12 لكل صفحة بلا قفزات</h2>
+        <div class="code"><span class="cm">// src/lib/pagination.ts:3-19</span>
+<span class="kw">export function</span> <span class="fn">getPages</span>(current: number, total: number): PageItem[] {
+  <span class="kw">if</span> (total &lt;= 7) { <span class="kw">return</span> Array.from({length: total}, (_, i) =&gt; i + 1); }
+  <span class="kw">const</span> pages: PageItem[] = [1];
+  <span class="kw">const</span> start = Math.max(2, current - 1), end = Math.min(total - 1, current + 1);
+  <span class="kw">if</span> (start &gt; 2) pages.push(<span class="str">'ellipsis'</span>);
+  <span class="kw">for</span> (<span class="kw">let</span> i = start; i &lt;= end; i++) pages.push(i);
+  <span class="kw">if</span> (end &lt; total - 1) pages.push(<span class="str">'ellipsis'</span>);
+  pages.push(total); <span class="kw">return</span> pages;
+}</div>
+        <ul class="tick">
+          <li><span class="ref">PER_PAGE = 12</span> — page.tsx:13؛ و26 عالمًا → 3 صفحات (الثالثة فيها 2).</li>
+          <li>الحماية <span class="ref">Math.min(currentPage, totalPages || 1)</span> — page.tsx:47.</li>
+          <li>الاختبارات تثبت النافذة: منتصف، بداية، نهاية، وعلامة الحذف — <span class="ref">pure-logic.test.ts:101-113</span>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================= 22 · الحالة -->
+    <section class="slide" data-notes="ثلاث طبقات للحالة لكن جميعها تَهرّب إلى URL. SearchInput يحتفظ بمعكوس محلي مصغر مع sync من currentFilters عبر مقارنة يدوية، ثم debounce يكتب عند السكون؛ وأي تغيير فلتر يحذف page تلقائيًا (resetPage).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · إدارة الحالة</div>
+        <h2>حالة من ثلاث طبقات، وجميعها حول URL</h2>
+        <div class="grid cols-3">
+          <div class="card">
+            <span class="tag">المصدر</span>
+            <h3>URL searchParams</h3>
+            <p>مصدر الحقيقة الوحيد (ADR-002). ما لا تجده في العنوان لا يوجد في الواجهة.</p>
+          </div>
+          <div class="card">
+            <span class="tag">الوسيط</span>
+            <h3>FilterContext</h3>
+            <p>ينقل currentFilters + دوال التغيير إلى كل مكوّن بلا prop drilling — <span class="ref">context/FilterContext.tsx:5-19</span>.</p>
+          </div>
+          <div class="card">
+            <span class="tag">الكتابة</span>
+            <h3>router.replace</h3>
+            <p>تحديث الفلتر يستبدل عنوان السجل لا يدفع سجلًا جديدًا (ADR-003) — تاريخ أنظف ورجوع صحيح.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">فرشاة نحيفة</span>
+          <p>بحث يكفل سكونًا ثم يكتب في <span class="ref">SearchInput.tsx:51-56</span>؛ وكل فلتر غير page يعيد ضبط الصفحة عبر <span class="ref">updateSearchParam(...) resetPage</span> — searchParams.ts:1-12.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 23 · الأداء -->
+    <section class="slide" data-notes="حافظ على الصدق: لا يوجد benchmark رسمي. نذكر مزايا بنيوية قابلة للقياس (مسبق التوليد + تصفية خادمية فلا يصل للعميل إلا صفحة واحدة). لاحظ فروقًا: لا PWA هنا — الاحتياط المطلوب. تذكّر من سجل البناء: المفاتيح ƒ لأن الجذر يقرأ الترويسة — لذا لا نقول 'صفحات ثابتة تُخدم من CDN'.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · الأداء</div>
+        <h2>أربعة مكاسب بنيوية بلا أرقام مفرطة</h2>
+        <div class="grid cols-2">
+          <div class="card"><span class="tag">مسبق التوليد</span><h3>52 مسارًا مُعلنًا وقت البناء</h3><p>generateStaticParams يثبّت مجموعة المسارات مسبقًا؛ سجل البناء يظهرها ديناميكية ƒ لأن الجذر يقرأ الترويسة — لا نقول «تُخدَم من CDN».</p></div>
+          <div class="card"><span class="tag">خادم فقط</span><h3>لا يُرسل إلا الصفحة الحالية</h3><p>الفلترة على الخادم تعني أن الـ26 سجلًا لا تصل جميعها للعميل إلا ما تعرضه الصفحة.</p></div>
+          <div class="card"><span class="tag">fonts</span><h3>خطوط محلية + display:swap</h3><p>next/font يوظّف woff2 من المشروع، فلا طلب خط خارجي ولا CLS من التبديل.</p></div>
+          <div class="card"><span class="tag">Suspense</span><h3>هيكل تحميل فور حالة عدم اليقين</h3><p>حلقة ناعمة بدلًاً من spinner مطلق أثناء نحو searchParams.</p></div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">حدّ ادعاءاتنا</span>
+          <p>لا ندّعي «أسرع من X» بلا قياس. القول الصدّق: هذه مكاسب بنيوية قابلة للقياس عند الإطلاق.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 24 · الأمان -->
+    <section class="slide" data-notes="افتح next.config.ts واعرض المصفوفة: التدابير الستة. لماذا 'unsafe-inline'؟ سكربت السمة المضمّن في <head> يحتاج إليه. ولماذا 'unsafe-eval' في التطوير فقط؟ لأن Turbopack يعتمد التحويل/الكود الديناميكي أثناء التطوير.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · الأمان</div>
+        <h2>رؤوس أمنية و CSP صارمة على كل مسار</h2>
+        <div class="code"><span class="cm">// next.config.ts (مقتطف)</span>
+<span class="fn">script-src</span> 'self' 'unsafe-inline'<span class="cm"> + dev: 'unsafe-eval'</span>
+<span class="fn">object-src</span> 'none'   <span class="fn">base-uri</span> 'self'
+<span class="fn">frame-ancestors</span> 'none'   <span class="fn">form-action</span> 'self'</div>
+        <ul class="tick">
+          <li>HSTS <span class="ref">max-age=63072000; includeSubDomains; preload</span> — next.config.ts.</li>
+          <li>X-Content-Type-Options: nosniff · X-Frame-Options: DENY · Referrer-Policy: strict-origin-when-cross-origin.</li>
+          <li>Permissions-Policy تعطيل الكاميرا والميكروفون والجيولوكيشن — غير لازمة أصلًا.</li>
+          <li>نموذج التهديد الحقيقي هنا: XSS مرتبط بـ dangerouslySetInnerHTML للسكربت الوحيد المضمّن — السيطرة عبر URL صارم + التطبيع.</li>
+        </ul>
+        <p class="ref">next.config.ts:5-16,21-41 · src/app/layout.tsx:56 (السكربت المضمّن الوحيد)</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 25 · الاختبارات -->
+    <section class="slide" data-notes="أعرض النتيجة الطازجة: 2 ملفات و28 اختبارًا (Vitest 4.1.11). ثم أصارح: ما لا يغطى هو المكونات وhooks وE2E — وهذا معلن في docs/improvement-plan.md (الأقسام 5.1-5.2) وليس نقصًا مخفيًا.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الغوص التقني · الاختبارات</div>
+        <h2>28 اختبار نجح — وماذا لا يغطون</h2>
+        <div class="stats">
+          <div class="stat"><b>2</b><span>ملفات اختبار</span></div>
+          <div class="stat"><b>28</b><span>اختبار ناجح</span></div>
+          <div class="stat"><b>0</b><span>اختبار E2E / مكوّنات (معلن)</span></div>
+          <div class="stat"><b>4.1.11</b><span>نسخة Vitest</span></div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">data-integrity · 8</span>
+            <h3>سلامة البيانات</h3>
+            <p>معرفات فريدة، مراجع بلد وتخصص صحيحة، كل avatars موجود وعاهرة، ولا ملف يتيم، ومفردات لغوية مغلقة.</p>
+          </div>
+          <div class="card">
+            <span class="tag">pure-logic · 20</span>
+            <h3>المنطق النقي</h3>
+            <p>normalizeArabic (5) · filterScholars (8) · getPages (4) · paginate (3) — كلها من أنقى مصدر بلا DOM.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">المصارحة</span>
+          <p>لا يوجد بعد: مكونات، hooks (useTheme/useFilters)، وE2E. الخطط لهذه موثقة في improvement-plan 5.1-5.2 — المعلن يكسب الثقة.</p>
+        </div>
+        <p class="ref">src/data/data-integrity.test.ts · src/lib/pure-logic.test.ts · docs/improvement-plan.md:416-459</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 26 · Hydration 1 -->
+    <section class="slide" data-notes="هذه سلسلة إلزامية من 4 شرائح. اشرح الخطوات الست بأصوات: (1) ماذا يحسب الخادم وأين لا يصل، (2) متى يصل HTML وأين يُعرض، (3) لماذا يجب أن يطابق أولُ عرض للعميل الشجرة، (4) ما هو الـ hydration بالضبط — إرفاق لا إعادة بناء، (5) أين تقع useEffect بعد الالتزام، (6) ماذا يعني mismatch.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 1/4 · المفهوم</div>
+        <h2>ماذا يحدث بين خادم React والمتصفح؟</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>1 · Server render</b>يصنع الشجرة؛ لا يرى window ولا localStorage</div>
+          <div class="flow-step"><b>2 · HTML response</b>يصل ويعرض قبل اكتمال JavaScript</div>
+          <div class="flow-step"><b>3 · First client render</b>يجب إنتاج نفس الشجرة الأولى حرفيًا</div>
+          <div class="flow-step"><b>4 · Hydration</b>إرفاق React بالإطار القائم وإضافة الأحداث — ليس CSR من DOM فارغ</div>
+          <div class="flow-step"><b>5 · Effects</b>useEffect بعد الالتزام: يقرأ المتصفح ويحدّث حالة لاحقًا</div>
+          <div class="flow-step"><b>6 · Mismatch</b>اختلاف قبل الامتلاء → تحذير/خطأ/إعادة DOM</div>
+        </div>
+        <p class="lead">السؤال المركزي للفريق: «ماذا لو اختلف أولُ عرضٍ على العميل عن شجرة الخادم؟» — الجواب في الشريحة التالية بحالة حقيقية من هذا المشروع.</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 27 · Hydration 2 -->
+    <section class="slide" data-notes="حكاية الخطأ كما وردت في docs/fix-hydration-error.md (مود Install). قبل الإصلاح: ThemeToggle يرسم أيقونة تعتمد على theme من localStorage؛ الخادم لا يملك التفضيل فيرسم أيقونة «قمر»، والعميل الأول يقرأ ويكتب أيقونة مختلفة — شجرتان مختلفتان = mismatch.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 2/4 · قصة الخطأ</div>
+        <h2>الخطأ الذي جعل هذا القسم إلزاميًا</h2>
+        <div class="grid cols-3">
+          <div class="card">
+            <span class="tag">الجذر الخاطئ</span>
+            <h3>قراءة أثناء العرض الأول</h3>
+            <p>لا تعرض «window» أو «localStorage» في جسم المكوّن أثناء أول render — الخادم لا يملك أيًّا منها.</p>
+          </div>
+          <div class="card">
+            <span class="tag">الآلية الخاطئة</span>
+            <h3>مثال مرفوض</h3>
+            <code class="code" style="font-size:.72rem;display:block">const theme = localStorage.getItem('theme') // ✗
+<span class="kw">return</span> theme === 'dark' ? &lt;Moon /&gt; : &lt;Sun /&gt;</code>
+            <p style="margin-top:.5rem">الخادم: «system». العميل الأول: «dark». شجرتان مختلفتان.</p>
+          </div>
+          <div class="card">
+            <span class="tag">النتيجة الموثقة</span>
+            <h3>تقديم مختلف حتى الامتلاء</h3>
+            <p>تحذير/خطأ Hydration، إمكانية إعادة إنشاء DOM أو سلوك غير متوقع — <span class="ref">docs/fix-hydration-error.md:5-10</span>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 28 · Hydration 3 -->
+    <section class="slide" data-notes="أربع تقنيات فعلية في الكود: (1) inline script في <head> يطبّق class قبل التروية + suppressHydrationWarning على <html>، (2) حارس mount يرسم زرًّا خاملًا، (3) useHasMounted عبر useSyncExternalStore، (4) systemDark بنفس الآلية. ولا تنسَ ملاحظة initializer في theme.tsx.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 3/4 · النمط الآمن الفعلي</div>
+        <h2>كيف يتجنّب المشروع mismatch فعلًا؟</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">1 · قبل التروية</span>
+            <h3>inline script في &lt;head&gt;</h3>
+            <p>يطبّق class السمة على documentElement قبل أن يبدأ React — مع suppressHydrationWarning على <html>. <span class="ref">layout.tsx:41-54</span></p>
+          </div>
+          <div class="card">
+            <span class="tag">2 · حارس mount</span>
+            <h3>زرّ خامل حتى الالتزام</h3>
+            <p>لكل حالة useTheme تُرسم druّبة: بعد أول mounting فقط تُعرض الأيقونة الحقيقية. <span class="ref">ThemeToggle.tsx:66-72</span></p>
+          </div>
+          <div class="card">
+            <span class="tag">3 · useSyncExternalStore</span>
+            <h3>useHasMounted</h3>
+            <code class="code" style="font-size:.72rem;display:block">export function useHasMounted() {
+  return useSyncExternalStore(() =&gt; () =&gt; {},
+    () &nbsp;=&gt; true,   // client
+    () &nbsp;=&gt; false); // server</code>
+          </div>
+          <div class="card">
+            <span class="tag">4 · نفس الآلية للضروري</span>
+            <h3>systemDark</h3>
+            <p>matchMedia عبر useSyncExternalStore مع لقطة خادم ثابتة false. <span class="ref">ThemeToggle.tsx:60-64, 19-21</span></p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">ملاحظة دقيقة</span>
+          <p>theme.tsx يقرأ localStorage في مُهيّئ الحالة (theme.tsx:41)؛ وهو آمن هنا رغم إبهام المنطق، لأن القردة لا تُظهر أي ناتج يعتمد عليه في HTML الأول — الحارس يمنع ذلك.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 29 · Hydration 4 -->
+    <section class="slide" data-notes="التمييز الحاسم الذي يقع فيه كثيرون: mismatch أثناء العرض الأول = خطأ. تحديث حالة بعد useEffect/commit = سلوك متوقع تمامًا إذا طابقت الشجرة الأولى. مثال المكوّن الحقيقي: بعد mount يتغير النظام إلى داكن فالأيقونة تنتقل من «قمر» إلى «شمس» — وهذا ليس mismatch.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 4/4 · التمييز الحاسم</div>
+        <h2>mismatch ≠ تحديث بعد الالتزام</h2>
+        <div class="grid cols-2">
+          <div class="card" style="border-color: color-mix(in oklch, var(--bad) 55%, var(--line));">
+            <span class="tag">✗ mismatch</span>
+            <h3>اختلاف في الأشجار الأولى</h3>
+            <p>يحدث لحظة Hydration حين يختلف أولُ render للعميل عن شجرة الخادم. الوقاية: حارس mount + قراءة بعد الالتزام.</p>
+          </div>
+          <div class="card" style="border-color: color-mix(in oklch, var(--good) 55%, var(--line));">
+            <span class="tag">✓ تحديث ما بعد الالتزام</span>
+            <h3>متوقع وصحيح</h3>
+            <p>بعد اكتمال التروية ينقلب زر ThemeToggle من خامل إلى أيقونة فعلية استجابةً لنظام المتصفح — حالة تُحدَّث بعد commit وليس اختلاف أولي.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">القاعدة القاطعة</span>
+          <p>لو تطابقت الشجرة مثل الخادم في أول render، فإن أي تحديث لاحق عبر useEffect/متطلبات خارجية هو تحديث مفهوم لا خطأ — وهذا هو الاسم الذي يجب أن يسمّيه المقدم للفريق.</p>
+        </div>
+        <p class="ref">src/components/ThemeToggle.tsx:74-76 (الحل بعد الالتزام) · docs/fix-hydration-error.md:7-10</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 30 · فاصل العرض الحي -->
+    <section class="slide divider-slide" data-notes="أوقف الشرح واحرص على انتقال سلس للعرض الحي: افتح المتصفح على /ar، ثم مرّ على أربعة أو خمسة مواقف موجزة فقط واذكر أنّ السيناريو الكامل في demo-script.md. إن أنشأت فشلًا للمعاينة: اعرض النسخة المضغوطة ولقطات الشاشة المحفوظة.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave i1"><i></i><i></i><i></i><i></i><i></i></span> العرض الحي · 10 دقائق</div>
+        <h2>دعونا نؤكد بالأدلة لا بالكلمات</h2>
+        <p class="lead">التفاصيل والأعداد في <span class="ref">presentation/demo-script.md</span><br>مسار مخفف 5 دقائق + لقطات شاشة احتياطية في حال انقطاع البنية.</p>
+        <div class="grid cols-3">
+          <div class="card"><h3>الفلترة والبحث</h3><p>بلد × تخصص × لغة + بحث عربي بلهجات الحروف</p></div>
+          <div class="card"><h3>URL كحالة</h3><p>تغيير، إعادة تحميل، رجوع، ومشاركة معاينة</p></div>
+          <div class="card"><h3>السمة واللغة</h3><p>تبديل بلا وميض + 404 مخصص</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 31 · المقايضات -->
+    <section class="slide" data-notes="أنهي بموضوعية: لا توجد براءة مشاركة. عمودا كسب/دفع أمام الفريق، ثم حدّد اللحظة التي تنصح فيها بقلب القرار (عشرات المئات من العلماء أو تحرير غير تقني). الثقة تأتي من الاعتراف بالثمن.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> المقايضات · ماذا كسبنا وماذا دفعنا؟</div>
+        <h2>قرار، ثم ثمنه — كليهما أمامك</h2>
+        <div class="grid cols-3">
+          <div class="card" style="border-color: color-mix(in oklch, var(--good) 55%, var(--line));">
+            <span class="tag">كسبنا</span>
+            <h3>عمارة الطريق السريع للرجوع</h3>
+            <p>URL-state يُعطي الرجوع/التراجع/المشاركة مجانًا؛ مسبق التوليد يثبّت المسارات دون حساب عند الطلب؛ سمة بلا اعتماد؛ وكان اختبار النقاء على الدوال.</p>
+          </div>
+          <div class="card" style="border-color: color-mix(in oklch, var(--bad) 55%, var(--line));">
+            <span class="tag">دفعنا</span>
+            <h3>كلفة ثابتة للتوسيع</h3>
+            <p>بيانات في ملفات TS: إضافة عالم = تغيير كود + إعادة بناء؛ الفلترة O(n) لكل طلب (مقبولة عند 26، مشبوهة عند آلاف)؛ لا CMS ولا تحرير غير تقني.</p>
+          </div>
+          <div class="card">
+            <span class="tag">متى نراجع</span>
+            <h3>عتبة ملفوظة</h3>
+            <p>عندما يقترب عدد العلماء من المئات، أو يريد المحررُ تعديلَ السجل من واجهة — وقتها DB أو CMS تصبح ضرورة لا ترفًا.</p>
+          </div>
+        </div>
+        <p class="ref">docs/adr.md (القرارات) · docs/improvement-plan.md:397-413 (CMS مرتقبة)</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 32 · الحدود -->
+    <section class="slide" data-notes="قسم المسؤولية: نعلن الحدود صراحةً. لا PWA كاملة (manifest وحده لا يكفي)، لا قاعدة بيانات/هوية، لا E2E، لا قياس أداء رسمي، ولا مراقبة أخطاء إنتاج. هذه قرارات مرحلية موثقة لا عيوب غائبة عن الأفق.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> الحدود المعروفة · مصداقية قبل المديح</div>
+        <h2>ما لم يُحل بعد — وهو قرار مرحلي لا سهو</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">لا PWA كاملة</span>
+            <h3>manifest وحده لا يكفي</h3>
+            <p>موجود manifest.ts (اسم/أيقونة/start_url) لكن لا service worker ولا تثبيت ولا وضع غير متصل فعلي. لا تدّعِ «مثبتَ» أو «offline».</p>
+          </div>
+          <div class="card">
+            <span class="tag">لا بيانات/هوية</span>
+            <h3>دليل ثابت مقصود</h3>
+            <p>لا قاعدة بيانات ولا مصادقة ولا API — صفر سطوح إرسال بيانات؛ واختلال الأداء عند المئات مرشح له خطة.</p>
+          </div>
+          <div class="card">
+            <span class="tag">لا E2E</span>
+            <h3>اختبارات النواة لا القشرة</h3>
+            <p>لا مكونات ولا hooks ولا E2E؛ ولا تغطية مقاسة. الخطة 5.1-5.2 تحدد الطريق إلى 70%.</p>
+          </div>
+          <div class="card">
+            <span class="tag">لا قياس/مراقبة</span>
+            <h3>بنية مستعدة بلا أرقام</h3>
+            <p>لا Lighthouse رسمي ولا Sentry ولا LogRocket — مزايا ثابتة بلا إثبات رقمي لها بعد.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 33 · الخارطة -->
+    <section class="slide" data-notes="رتب حسب الخطر لا حسب الشغف: (1) سلامة البيانات أولًا — DB/CMS وسيما for scholars-db.json، (2) معالجة التفاعل بالإختبارات، (3) الأداء تحت النمو بالقياس، (4) ثم المراقبة والأمان. اجعل الفريق يفهم لماذا لم أبدأ بأجمل اقتراح.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> خارطة الطريق · بالخطر لا بالرغبة</div>
+        <h2>الأولوية حسب المخاطرة المركّبة</h2>
+        <div class="tl">
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P0 — خطر البيانات</b><p>تفصيل data إلى DB/CMS وسيما لِـscholars-db.json المعلق، مع سكربت ترحيل واختبار تكامل (حماية الموثوقية قبل أي ميزة).</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P1 — خطر التفاعل</b><p>اختبار مكونات (ThemeToggle/FilterBar) + hooks، ومسار واضح إلى 70% تغطية مقاسة.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P2 — خطر النمو</b><p>قياس صريح لِـfilterScholars فوق >1000 عالم، ثم قرار فهرس/بنية حسب الرقم، لا بالتخمين.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P3 — المراقبة والأمان</b><p>خطأ إنتاج (الأفضل Sentry) + فحص أتمتة CSP في البناء، وقبل كل هذا إعداد نطاق إنتاج حقيقي.</p>
+          </div></div>
+        </div>
+        <p class="ref">docs/improvement-plan.md · scholars-db.json (هيكل معلق، 9 أسطر)</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 34 · الخلاصة -->
+    <section class="slide" data-notes="أغلق بجملة واحدة ثم أسئلة مفتوحة حقيقية (لا أسئلة من أجلي): هل البيانات تبقى ثابتة، أم ننقل DB الآن؟ هل تكفي تغطية النواة عند الإطلاق؟ ثم اشكر وقف ثابتًا. تذكر سؤال براغماتي: أي عالمٍ لا يظهر بالبحث الخطأ هو باغ أيمن.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave i1"><i></i><i></i><i></i><i></i><i></i></span> الخلاصة · جملة واحدة</div>
+        <h2>«أصوات الحق: دليل ثابت البيانات، قرارته على الخادم، حالته في الـ URL، وسلامته في 28 اختبارًا — ومصمم ليبقى قابلاً للنمو التالي.»</h2>
+        <p class="lead" style="margin-top:1.4rem; font-weight:600; color: inherit;">أسئلة مفتوحة</p>
+        <ul class="tick">
+          <li>هل نقل البيانات إلى DB/CMS أولوية الآن أم بعد تجاوز عتبة المئات؟</li>
+          <li>هل تُطلب تغطية المكونات قبل الإطلاق، أم تكفي سلامة النواة؟</li>
+          <li>أي قيد من القيود المعلنة يقلق الفريق أكثر؟ (هذه إشارة إلى أولوية الخارطة)</li>
+        </ul>
+        <div class="row" style="margin-top:1.6rem">
+          <span class="pill ok">شكرًا — ننتقل للأسئلة الآن</span>
+          <span class="ref">presentation/demo-script.md · presentation/qa-guide.md</span>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /stage -->
+
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+</div><!-- /deck -->
+
+<!-- لوحة النظرة العامة -->
+<div class="overlay" id="overview" role="dialog" aria-modal="true" aria-label="نظرة عامة على الشرائح">
+  <div class="overlay-inner">
+    <h3>نظرة عامة على الشرائح</h3>
+    <div class="ov-grid" id="ov-grid"></div>
+  </div>
+</div>
+
+<!-- لوحة الملاحظات -->
+<aside class="notes-panel" id="notes" aria-label="ملاحظات المقدم">
+  <div class="notes-inner">
+    <header>
+      <h4>ملاحظات المقدم</h4>
+      <button class="ctl" data-action="notes-close" aria-label="إغلاق الملاحظات">✕</button>
+    </header>
+    <div class="notes-text" id="notes-text"></div>
+  </div>
+</aside>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var indexEl = document.getElementById('index');
+  var bar = document.getElementById('bar');
+  var overview = document.getElementById('overview');
+  var ovGrid = document.getElementById('ov-grid');
+  var notes = document.getElementById('notes');
+  var notesText = document.getElementById('notes-text');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- بناء نظرة عامة + ترقيم ---------- */
+  slides.forEach(function (s, i) {
+    var title = s.querySelector('h1, h2');
+    var label = title ? title.textContent.trim() : ('شريحة ' + (i + 1));
+    var btn = document.createElement('button');
+    btn.className = 'ov-card';
+    btn.setAttribute('data-goto', i);
+    btn.innerHTML = '<b>' + (i + 1) + '</b><span></span>';
+    btn.querySelector('span').textContent = label;
+    ovGrid.appendChild(btn);
+  });
+
+  function fmtIndex() { indexEl.innerHTML = '<b>' + (current + 1) + '</b> / ' + total; }
+  function fmtBar() { bar.style.width = ((current + 1) / total * 100) + '%'; }
+
+  function setCurrent(i, announce) {
+    i = Math.max(0, Math.min(total - 1, i));
+    if (i === current && announce !== 'force') return;
+    current = i;
+    slides.forEach(function (s, k) { s.classList.toggle('active', k === current); });
+    Array.prototype.forEach.call(ovGrid.children, function (c) {
+      c.classList.toggle('cur', Number(c.getAttribute('data-goto')) === current);
+    });
+    fmtIndex(); fmtBar();
+    if (window.history.replaceState) {
+      try { window.history.replaceState(null, '', '#' + (current + 1)); } catch (e) {}
+    }
+    var notesTxt = slides[current].getAttribute('data-notes') || '';
+    notesText.textContent = notesTxt;
+    if (notes.classList.contains('open') && announce) {
+      closeNotes();
+    }
+  }
+
+  var stage = document.getElementById('stage');
+  function ensureActiveInit() {
+    var hash = parseInt((window.location.hash || '').replace('#', ''), 10);
+    var start = (hash >= 1 && hash <= total) ? hash - 1 : 0;
+    setCurrent(start, 'force');
+    stage.style.display = 'block';
+  }
+
+  /* ---------- أزرار ---------- */
+  function act(el) {
+    if (el.hasAttribute('data-action')) return el.getAttribute('data-action');
+    for (var p = el.parentElement; p; p = p.parentElement) {
+      if (p.hasAttribute('data-action')) return p.getAttribute('data-action');
+    }
+    return null;
+  }
+
+  document.addEventListener('click', function (e) {
+    var action = act(e.target);
+    if (!action) return;
+    if (action === 'next') setCurrent(current + 1);
+    if (action === 'prev') setCurrent(current - 1);
+    if (action === 'fullscreen') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    }
+    if (action === 'theme') toggleTheme();
+    if (action === 'overview') openOverview();
+    if (action === 'overview-close') closeOverview();
+    if (action === 'notes') toggleNotes();
+    if (action === 'notes-close') closeNotes();
+  });
+
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest ? e.target.closest('[data-goto]') : null;
+    if (g) { setCurrent(Number(g.getAttribute('data-goto'))); }
+  });
+
+  function toggleTheme() {
+    var root = document.documentElement;
+    var cur = document.body.getAttribute('data-deck-theme') === 'dark' ? 'dark' : 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-deck-theme', next);
+    try { localStorage.setItem('deck-theme', next); } catch (e) {}
+  }
+  (function initTheme() {
+    var saved = 'light';
+    try { saved = localStorage.getItem('deck-theme') || 'light'; } catch (e) {}
+    if (saved !== 'dark' && saved !== 'light') saved = 'light';
+    document.body.setAttribute('data-deck-theme', saved);
+  })();
+
+  function openOverview() { overview.classList.add('open'); overview.classList.remove('close'); }
+  function closeOverview() { overview.classList.remove('open'); }
+  function toggleNotes() { notes.classList.toggle('open'); }
+  function closeNotes() { notes.classList.remove('open'); }
+
+  /* ---------- لوحة المفاتيح ---------- */
+  document.addEventListener('keydown', function (e) {
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': case ' ': setCurrent(current + 1); e.preventDefault(); break;
+      case 'ArrowLeft': case 'PageUp': setCurrent(current - 1); e.preventDefault(); break;
+      case 'Home': setCurrent(0); e.preventDefault(); break;
+      case 'End': setCurrent(total - 1); e.preventDefault(); break;
+      case 'f': case 'F': document.documentElement.requestFullscreen && (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()); break;
+      case 'o': case 'O': overview.classList.contains('open') ? closeOverview() : openOverview(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 't': case 'T': toggleTheme(); break;
+      case 'Escape':
+        if (overview.classList.contains('open')) closeOverview();
+        if (notes.classList.contains('open')) closeNotes();
+        break;
+    }
+  });
+
+  overview.addEventListener('click', function (e) {
+    if (e.target === overview) closeOverview();
+  });
+
+  /* ---------- اللمس ---------- */
+  var tsX = null;
+  stage.addEventListener('touchstart', function (e) {
+    tsX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  stage.addEventListener('touchend', function (e) {
+    if (tsX === null) return;
+    var dx = e.changedTouches[0].clientX - tsX;
+    var swipe = dx > 45 ? -1 : dx < -45 ? 1 : 0;
+    if (swipe !== 0) setCurrent(current + swipe);
+    tsX = null;
+  }, { passive: true });
+
+  window.addEventListener('resize', fmtBar);
+
+  /* ---------- تشغيل ---------- */
+  ensureActiveInit();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Technical engineering review of the Voices of Truth project — the directory of scholars and preachers">
+<title>Voices of Truth — Technical Engineering Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Voices of Truth — "Contemporary Voices"
+     OKLCH palette from the project itself (globals.css) with hex
+     fallbacks for older browsers
+     ============================================================ */
+  :root {
+    --bg: oklch(0.98 0.006 245);
+    --bg-hex: #f5f6f8;
+    --surface: oklch(0.997 0.003 245);
+    --surface-hex: #fbfcfd;
+    --ink: oklch(0.24 0.027 250);
+    --ink-hex: #1b2433;
+    --muted: oklch(0.45 0.022 250);
+    --muted-hex: #6c7280;
+    --line: oklch(0.90 0.008 245);
+    --line-hex: #dde0e7;
+    --accent: oklch(0.72 0.14 68);
+    --accent-hex: #d99936;
+    --accent-deep: oklch(0.50 0.12 68);
+    --code-bg: oklch(0.93 0.010 245);
+    --code-bg-hex: #eceef3;
+    --good: oklch(0.55 0.13 150);
+    --good-hex: #2e8b57;
+    --bad: oklch(0.58 0.20 25);
+    --bad-hex: #c4462e;
+    --wave: 0.72 0.14 68;
+    --font-body: 'Inter','Segoe UI',system-ui,sans-serif;
+    --font-display: 'Source Serif 4',Georgia,'Times New Roman',serif;
+    --font-mono: 'JetBrains Mono',Consolas,'Courier New',monospace;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-deck-theme="dark"] {
+    --bg: oklch(0.175 0.022 255);
+    --bg-hex: #131a28;
+    --surface: oklch(0.215 0.024 255);
+    --surface-hex: #1a2437;
+    --ink: oklch(0.95 0.008 245);
+    --ink-hex: #eef1f5;
+    --muted: oklch(0.68 0.018 245);
+    --muted-hex: #a5afc1;
+    --line: oklch(0.30 0.020 255);
+    --line-hex: #2a3852;
+    --accent: oklch(0.76 0.14 75);
+    --accent-hex: #e0a95e;
+    --accent-deep: oklch(0.70 0.14 75);
+    --code-bg: oklch(0.25 0.022 255);
+    --code-bg-hex: #1d2740;
+    --good: oklch(0.66 0.13 150);
+    --good-hex: #57b984;
+    --bad: oklch(0.65 0.18 25);
+    --bad-hex: #d6654b;
+    --wave: 0.76 0.14 75;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-hex);
+    background: var(--bg);
+    color: var(--ink-hex);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: color-mix(in oklch, var(--accent) 35%, transparent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  .deck { min-height: 100dvh; display: flex; flex-direction: column; }
+
+  /* ============================================================
+     Top chrome
+     ============================================================ */
+  .chrome-top {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    padding: 0.55rem 1rem;
+    background: color-mix(in oklch, var(--surface) 86%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 0.55rem; }
+  .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+  .brand-en { display: block; font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .index { direction: ltr; font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); }
+  .index b { color: var(--accent); }
+
+  .controls { display: flex; align-items: center; gap: 0.35rem; }
+  .ctl {
+    appearance: none; border: 1px solid var(--line); background: var(--surface-hex); background: var(--surface);
+    color: var(--ink-hex); color: var(--ink);
+    border-radius: 10px; min-width: 2.1rem; height: 2.1rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; cursor: pointer;
+    transition: transform 0.12s var(--ease), border-color 0.12s, box-shadow 0.12s;
+  }
+  .ctl:hover { border-color: var(--accent); box-shadow: 0 2px 10px color-mix(in oklch, var(--accent) 25%, transparent); }
+  .ctl:active { transform: scale(0.94); }
+  .ctl svg { width: 1rem; height: 1rem; }
+  .ctl .label { display: none; }
+
+  .wave { display: inline-flex; align-items: center; gap: 2px; }
+  .wave i {
+    display: block; width: 3px; border-radius: 2px; background: currentColor;
+    animation: none;
+  }
+  .wave.i0 i:nth-child(1){height:14px}.wave.i0 i:nth-child(2){height:24px}
+  .wave.i0 i:nth-child(3){height:32px}.wave.i0 i:nth-child(4){height:24px}
+  .wave.i0 i:nth-child(5){height:14px}
+  .wave.i1 i:nth-child(1){height:26px}.wave.i1 i:nth-child(2){height:38px}
+  .wave.i1 i:nth-child(3){height:48px}.wave.i1 i:nth-child(4){height:38px}
+  .wave.i1 i:nth-child(5){height:26px}
+  .wave.i2 i:nth-child(1){height:10px}.wave.i2 i:nth-child(2){height:17px}
+  .wave.i2 i:nth-child(3){height:22px}.wave.i2 i:nth-child(4){height:17px}
+  .wave.i2 i:nth-child(5){height:10px}
+  .wave i:nth-child(3) { background: var(--accent); }
+
+  /* ============================================================
+     Slides
+     ============================================================ */
+  .stage { flex: 1; position: relative; overflow: hidden; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none; overflow-y: auto; overflow-x: hidden;
+    padding: clamp(1.4rem, 4vw, 3.4rem) clamp(1.2rem, 5vw, 4.5rem) 4rem;
+  }
+  .slide.active { display: flex; flex-direction: column; justify-content: center; }
+  .slide-inner { margin: 0 auto; width: 100%; max-width: 1160px; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 0.78rem; font-weight: 600; color: var(--accent-deep);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  [data-deck-theme="dark"] .kicker { color: var(--accent); }
+  .kicker .wave { margin-top: 2px; }
+
+  h1, h2 { font-family: var(--font-display); line-height: 1.3; font-weight: 700; }
+  h1 { font-size: clamp(2.2rem, 5.5vw, 4rem); }
+  h2 { font-size: clamp(1.6rem, 3.4vw, 2.5rem); letter-spacing: 0; margin-bottom: 1.1rem; }
+
+  .lead { font-size: clamp(1rem, 1.6vw, 1.2rem); color: var(--muted); max-width: 60ch; }
+
+  .grid { display: grid; gap: 1rem; margin-top: 1.2rem; }
+  .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+  .card {
+    background: var(--surface-hex); background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px; padding: 1.1rem 1.2rem;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+  }
+  .card h3 { font-family: var(--font-display); font-size: 1.08rem; margin-bottom: 0.4rem; }
+  .card p { font-size: 0.92rem; color: var(--muted); }
+  .card .tag { display: inline-block; margin-bottom: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-deep); }
+  [data-deck-theme="dark"] .card .tag { color: var(--accent); }
+
+  ul.tick { list-style: none; margin-top: 1rem; }
+  ul.tick li { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.35rem 0; }
+  ul.tick li::before {
+    content: ""; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); margin-top: 0.72rem; box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 25%, transparent);
+  }
+
+  .code {
+    font-family: var(--font-mono); direction: ltr; text-align: left;
+    background: var(--code-bg-hex); background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 12px; padding: 0.9rem 1.1rem;
+    font-size: 0.82rem; line-height: 1.6;
+    overflow-x: auto; white-space: pre;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .code .cm { color: var(--muted); font-style: italic; }
+  .code .kw { color: var(--bad-hex); }
+  .code .fn { color: var(--accent-deep); font-weight: 600; }
+  [data-deck-theme="dark"] .code .fn { color: var(--accent); }
+  .code .str { color: var(--good-hex); }
+
+  .ref {
+    display: inline-block; margin-top: 0.9rem;
+    font-family: var(--font-mono); direction: ltr; unicode-bidi: embed;
+    font-size: 0.72rem; color: var(--muted);
+    background: var(--surface-hex); background: var(--surface);
+    border: 1px dashed var(--line); border-radius: 8px; padding: 0.25rem 0.6rem;
+  }
+  .note-badge {
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-deep); border: 1px solid var(--line); border-radius: 999px; padding: 0.1rem 0.55rem;
+  }
+  [data-deck-theme="dark"] .note-badge { color: var(--accent); }
+
+  /* state elements */
+  .pill { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+  .pill.ok { color: var(--good); border-color: color-mix(in oklch, var(--good) 45%, var(--line)); }
+  .pill.bad { color: var(--bad); border-color: color-mix(in oklch, var(--bad) 45%, var(--line)); }
+
+  /* number badges */
+  .stats { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.2rem; }
+  .stat {
+    flex: 1 1 120px; text-align: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 0.6rem;
+  }
+  .stat b { display: block; font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--accent); }
+  .stat span { font-size: 0.78rem; color: var(--muted); }
+
+  /* collapsible blocks */
+  details.demo { margin-top: 1.1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  details.demo summary { cursor: pointer; padding: 0.8rem 1rem; font-weight: 600; font-family: var(--font-display); border-radius: 14px; }
+  details.demo[open] summary { border-bottom: 1px solid var(--line); }
+  details.demo .wrap { padding: 0.8rem 1rem; }
+
+  /* watermark */
+  .title-slide .wavemark {
+    position: absolute; inset-inline-end: clamp(1rem, 4vw, 3rem); top: 12%;
+    opacity: 0.10; pointer-events: none; height: 40%;
+  }
+
+  /* footer */
+  .foot {
+    margin-top: 2.2rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    font-family: var(--font-mono); direction: ltr; font-size: 0.7rem; color: var(--muted);
+  }
+  .foot .num { color: var(--accent); font-weight: 600; }
+
+  /* ============================================================
+     Custom slides
+     ============================================================ */
+  .title-slide { justify-content: flex-start !important; padding-top: 6vh; }
+  .title-slide .kicker { border-bottom: 1px solid var(--line); padding-bottom: 0.6rem; }
+  .title-slide h1 { font-size: clamp(3rem, 8vw, 6rem); margin: 0.6rem 0 0.3rem; }
+  .title-slide .sub { font-family: var(--font-display); font-size: clamp(1.2rem, 2.6vw, 1.9rem); color: var(--muted); }
+  .title-slide .meta { margin-top: 2rem; }
+  .title-slide .meta .row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.6rem; }
+
+  .divider-slide { text-align: center; }
+  .divider-slide .wavemark { margin: 0 auto 1.5rem; justify-content: center; display: flex; }
+  .divider-slide h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); margin-bottom: 0.8rem; }
+  .divider-slide .lead { margin-inline: auto; }
+  .judgement h3 { font-size: 1.15rem; font-family: var(--font-display); }
+  .judgement view { display: block; margin-top: 0.6rem; font-size: 0.9rem; color: var(--muted); }
+
+  .flowline { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.6rem; margin-top: 1.2rem; }
+  .flow-step {
+    position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 0.8rem; text-align: center; font-size: 0.84rem;
+  }
+  .flow-step b { display: block; font-family: var(--font-display); font-size: 0.95rem; margin-bottom: 0.15rem; color: var(--accent-deep); }
+  [data-deck-theme="dark"] .flow-step b { color: var(--accent); }
+  .flow-step::after {
+    content: "←"; position: absolute; inset-inline-start: -0.85rem; top: 50%; transform: translateY(-50%);
+    color: var(--accent); font-weight: 700; z-index: 2;
+  }
+  .flow-step:first-child::after { display: none; }
+
+  .tl { margin-top: 1.3rem; }
+  .tl-item { display: flex; gap: 1rem; position: relative; padding-bottom: 1rem; }
+  .tl-item::before { content: ""; position: absolute; inset-inline-start: 0.42rem; top: 1.4rem; bottom: 0; width: 2px; background: var(--line); }
+  .tl-item:last-child::before { display: none; }
+  .tl-dot { flex: 0 0 auto; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); margin-top: 0.3rem; position: relative; z-index: 1; }
+  .tl-body b { font-family: var(--font-display); font-size: 1rem; }
+  .tl-body p { font-size: 0.86rem; color: var(--muted); }
+
+  .timeline-legend { display: inline-flex; gap: 1rem; margin-top: 0.6rem; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
+  .timeline-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .timeline-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+
+  .aspect-banner {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin-top: 1.2rem; border: 1px solid var(--line); border-radius: 14px;
+    background: var(--surface); padding: 0.8rem 1rem;
+  }
+  .aspect-banner .lbl { font-weight: 700; font-family: var(--font-display); color: var(--accent-deep); }
+  [data-deck-theme="dark"] .aspect-banner .lbl { color: var(--accent); }
+  .aspect-banner p { font-size: 0.88rem; color: var(--muted); flex: 1; min-width: 220px; }
+
+  /* ============================================================
+     Panels (overview / notes)
+     ============================================================ */
+  .overlay { position: fixed; inset: 0; z-index: 60; background: var(--bg-hex); background: var(--bg); opacity: 0; pointer-events: none; transition: opacity 0.18s var(--ease); }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .overlay-inner { max-width: 1200px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 3rem); }
+  .overlay h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 1.2rem; }
+  .ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 0.7rem; }
+  .ov-card {
+    text-align: start; border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    padding: 0.7rem 0.8rem; cursor: pointer; font: inherit; color: inherit;
+    display: flex; gap: 0.6rem; align-items: baseline; transition: border-color 0.12s, transform 0.12s var(--ease);
+  }
+  .ov-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .ov-card b { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); }
+  .ov-card span { font-size: 0.85rem; line-height: 1.5; }
+  .ov-card.cur { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 30%, transparent); }
+
+  .notes-panel {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 50;
+    background: var(--surface-hex); background: var(--surface);
+    border-top: 1px solid var(--line);
+    transform: translateY(105%); transition: transform 0.22s var(--ease);
+    max-height: 42vh; overflow-y: auto;
+    box-shadow: 0 -8px 30px rgba(16,24,40,0.14);
+  }
+  .notes-panel.open { transform: translateY(0); }
+  .notes-inner { max-width: 1100px; margin: 0 auto; padding: 1rem clamp(1rem, 4vw, 3rem); }
+  .notes-inner header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.6rem; }
+  .notes-inner h4 { font-family: var(--font-display); font-size: 1rem; }
+  .notes-text { font-size: 0.95rem; color: var(--muted); max-width: 80ch; }
+
+  /* progress bar */
+  .progress { position: fixed; inset-inline: 0; bottom: 0; height: 4px; background: transparent; z-index: 40; }
+  .progress i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-hex), var(--accent)); transition: width 0.25s var(--ease); }
+
+  /* ============================================================
+     Reduced motion
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+
+  /* ============================================================
+     Mobile
+     ============================================================ */
+  @media (max-width: 640px) {
+    .controls .ctl { min-width: 2rem; height: 2rem; }
+    .brand-name { display: none; }
+    .slide { padding: 1.2rem 0.9rem 3.4rem; }
+    .title-slide { justify-content: flex-start !important; padding-top: 3vh; }
+  }
+
+  /* ============================================================
+     Print
+     ============================================================ */
+  @media print {
+    .chrome-top, .controls, .notes-panel, .overlay, .progress { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .stage { overflow: visible; }
+    .slide { position: relative; display: flex !important; flex-direction: column; justify-content: flex-start; page-break-after: always; break-after: page; min-height: 96vh; }
+    .slide.active, .slide { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body data-deck-theme="light">
+<div class="deck">
+
+  <div class="chrome-top" role="toolbar" aria-label="Deck toolbar">
+    <div class="brand">
+      <span class="wave i1" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="brand-name">Voices of Truth<span class="brand-en">Technical Review</span></span>
+    </div>
+    <div class="index" id="index" aria-live="polite"><b>1</b> / 34</div>
+    <div class="controls">
+      <button class="ctl" data-action="notes" aria-label="Notes" title="Presenter notes (N)"><span class="wave i2"><i></i><i></i><i></i><i></i><i></i></span></button>
+      <button class="ctl" data-action="overview" aria-label="Overview of slides" title="Overview (O)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+      <button class="ctl" data-action="theme" aria-label="Toggle theme" title="Toggle theme (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button>
+      <button class="ctl" data-action="fullscreen" aria-label="Fullscreen" title="Fullscreen (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      <button class="ctl" data-action="prev" aria-label="Previous slide" title="Previous (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="ctl" data-action="next" aria-label="Next slide" title="Next (→)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- ============================================= 1 · Title -->
+    <section class="slide title-slide" data-notes="Open with a single sentence: this is an internal engineering review whose goal is to prove that the owner understands the code and the decisions — not to market the UI. Introduce yourself and keep the tone technical. —
+Targeted duration: 5 minutes for the opening section (slides 1-3).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave i1"><i></i><i></i><i></i><i></i><i></i></span> Technical Engineering Review · 60 min · For the tech team</div>
+        <h1>Voices of Truth</h1>
+        <p class="sub">A directory of scholars and preachers — an engineering architecture between server and client</p>
+        <div class="meta">
+          <div class="row">
+            <span class="pill">Next.js 16.2.9</span>
+            <span class="pill">React 19</span>
+            <span class="pill">TypeScript 6</span>
+            <span class="pill">Tailwind v4</span>
+            <span class="pill">react-i18next</span>
+            <span class="pill">Vitest 4</span>
+            <span class="pill">pnpm</span>
+          </div>
+          <div class="row">
+            <span class="pill ok">No database</span>
+            <span class="pill ok">Pre-declared details</span>
+            <span class="pill ok">URL is the state</span>
+          </div>
+        </div>
+        <p class="foot"><span class="num">T0</span> · Voices of Truth — a directory for the Qur'an, heritage, and voice</p>
+      </div>
+      <svg class="wavemark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2.8" y="9" width="2.4" height="6" rx="1.2"/><rect x="6.8" y="6" width="2.4" height="12" rx="1.2"/><rect x="10.8" y="1.5" width="2.4" height="21" rx="1.2"/><rect x="14.8" y="6" width="2.4" height="12" rx="1.2"/><rect x="18.8" y="9" width="2.4" height="6" rx="1.2"/></svg>
+    </section>
+
+    <!-- ============================================= 2 · Purpose -->
+    <section class="slide" data-notes="Explain three items: (1) we will prove understanding by opening the source on every claim, (2) we will talk about trade-offs and limits, not only successes, (3) refs are path:line references that lead to the real file. Warn: there are claims we will deliberately avoid (like PWA) — because they do not exist in the code.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Opening · what are we trying to prove?</div>
+        <h2>Purpose is not promotion — it's proving understanding</h2>
+        <ul class="tick">
+          <li>We will trace data from its static files to the card the user sees.</li>
+          <li>Every claim shows a source: <span class="ref">src/lib/filterScholars.ts:11-32</span> in <span class="ref">path:line-range</span> style.</li>
+          <li>We will stop at the limits: what is not yet solved, and what you must not claim in front of the team.</li>
+          <li>We modify no app code: this package is documentation and presentation only.</li>
+        </ul>
+        <div class="aspect-banner">
+          <span class="lbl">One principle governs the deck</span>
+          <p>A claim you can't find in the source is a claim the presenter does not make. Every number here came from an actual run.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 3 · The problem -->
+    <section class="slide" data-notes="Ask the question to any audience: if a site listed scholars or public figures known by country, specialization, and language, what engineering architecture would it need? Mention Arabic search difficulty objectively: diacritics, the four hamza variants, the taa marbuta. This is the seed every decision grew from.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Opening · the gap</div>
+        <h2>What problem does this product build a solution for?</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">discoverability</span>
+            <h3>No unified index</h3>
+            <p>How does one find a prominent scholar known among his audience? Who searches for a preacher fluent in Arabic in Egypt? Knowledge is scattered across countries, specializations, and languages with no single path.</p>
+          </div>
+          <div class="card">
+            <span class="tag">arabic-search</span>
+            <h3>Arabic search, programmatically</h3>
+            <p>Diacritics (مُحَمَّد), hamzas (أ إ آ ٱ), yaa (ى/ي), and taa marbuta (ة/ه) — all of them make an exact match fail to pair 'محمد' with 'مُحَمَّد'.</p>
+          </div>
+          <div class="card">
+            <span class="tag">i18n</span>
+            <h3>A bilingual audience</h3>
+            <p>Arabic (full RTL) and English (LTR), with one correct direction kept in every layout and flex arrangement.</p>
+          </div>
+          <div class="card">
+            <span class="tag">structured not free text</span>
+            <h3>Structured data, not free text</h3>
+            <p>A scholar has a country, a specialization, languages, and links — entities with fixed dimensions, and that is what makes server-side filtering possible instead of floating search.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 4 · The product -->
+    <section class="slide" data-notes="Show the numbers from an actual inspection of the data folder. Distinguish: 26 scholars split across 11 specialization files, 10 countries, 11 specializations, 27 image files (26 + a default avatar). Then point to the barrel src/data/scholars.ts:14-26.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Opening · what we build</div>
+        <h2>A bilingual directory with structured data</h2>
+        <div class="stats">
+          <div class="stat"><b>26</b><span>scholars and preachers</span></div>
+          <div class="stat"><b>10</b><span>countries</span></div>
+          <div class="stat"><b>11</b><span>specializations</span></div>
+          <div class="stat"><b>2</b><span>interface languages</span></div>
+          <div class="stat"><b>52</b><span>detail paths declared at build</span></div>
+        </div>
+        <ul class="tick">
+          <li>Server-side filtering: country, language, specialization, and name/bio search.</li>
+          <li>Filters live in the <b>URL</b>: shareable, back-friendly, reload-safe.</li>
+          <li>A detail page per scholar, declared up front at build time (generateStaticParams).</li>
+          <li>Flash-free light/dark theme + EN/AR switch with an RTL flip.</li>
+        </ul>
+        <p class="ref">src/data/scholars.ts:14-26 · src/data/countries.ts · src/data/specializations.ts</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 5 · Governing idea -->
+    <section class="slide" data-notes="This is the most important slide in the deck: the governing architectural decision. Its core: every fact computation happens once on the server; the client is an interactive shell that only rewrites the URL. That is what makes every page archival and everything unit-testable.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Thesis · the governing idea</div>
+        <h2>The server decides; the client interacts</h2>
+        <p class="lead">Every "fact" — normalization, validation, filtering, pagination — is settled before leaving the server. What reaches the browser is a finished result, and its only behavior is rewriting the URL.</p>
+        <p class="ref">src/app/[locale]/page.tsx:24-48 (validation, filtering, and pagination on the server)</p>
+        <div class="aspect-banner">
+          <span class="lbl">Why is this right here?</span>
+          <p>The content is static and structured, so server-side filtering is cheaper and consistent with pre-generation; and URL-as-state gives back/undo for free.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 6 · Design shape -->
+    <section class="slide" data-notes="Split the board: a pure core (functions with no DOM) against an interactive shell. Note that all 28 tests run on the core, and none on the shell — a decision, documented in the improvement plan, not a hidden gap.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Thesis · design shape</div>
+        <h2>A pure core + a thin interactive shell</h2>
+        <div class="grid cols-2">
+          <div class="card" style="border-color: color-mix(in oklch, var(--good) 55%, var(--line));">
+            <span class="tag">pure core · src/lib + src/data</span>
+            <h3>Computation, without a browser</h3>
+            <p class="code" style="font-size:.78rem">normalizeArabic      # search.ts
+filterScholars       # the four filters
+paginate/getPages    # windowed 12/page
+updateSearchParam    # URL rewrite
+localize/languageLabel</p>
+            <p>Runs on any host (Node/Vitest), called however the UI wants to call it.</p>
+          </div>
+          <div class="card" style="border-color: color-mix(in oklch, var(--accent) 60%, var(--line));">
+            <span class="tag">interactive shell · src/components</span>
+            <h3>Interactivity, without computation</h3>
+            <p class="code" style="font-size:.78rem">HomePageClient       # writes the URL
+FilterBar + filters/  # menus + debounced search
+ScholarList / Card    # rendering + motion
+Pagination            # page buttons
+ThemeToggle</p>
+            <p>Focuses on responding to input and writing to searchParams.</p>
+          </div>
+        </div>
+        <p class="ref">src/lib/filterScholars.ts · src/lib/pagination.ts · src/lib/searchParams.ts · src/lib/search.ts</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 7 · Decision journey -->
+    <section class="slide" data-notes="What is needed here is chronological narration, not detail. Show that the project was built in waves: built → reviewed → decided → documented. Give one example per wave; we expand later.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The decision journey · a time map</div>
+        <h2>From "a simple directory" to a refined architecture</h2>
+        <div class="tl">
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>Foundation · 2026-05</b><p>First 8 ADR decisions: URL as source of truth, replace instead of push, Suspense for useSearchParams, silent fall-through for invalid params.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>Upgrade Next.js 15 → 16</b><p>Fix proxy.ts, add the x-locale header, and start reflecting the React 19 changes on the theme.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>ADR-009 · Replacing next-themes</b><p>The custom theme provider + the inline pre-hydration script — the central decision the final section of the deck is measured against.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>The "Contemporary Voices" redesign</b><p>OKLCH palette, Arabic typography, and the single audio signature of the waveform mark.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>Successive repair waves</b><p>RTL, pagination, Arabic search, tighter security, 404, pre-declared details, SOLID review, then the Vitest package (28 tests).</p>
+          </div></div>
+        </div>
+        <div class="timeline-legend">
+          <span><i></i> a decision documented in docs/adr.md</span>
+          <span class="ref">docs/adr.md · docs/improvement-plan.md · git history (git log)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 8 · ADR-009 -->
+    <section class="slide" data-notes="The full story: next-themes 0.4.6 injects a script inside the React tree, and React 19 / Next 16 rejects that pattern with a console error; the library has been stale since 2024. The decision: an in-house ~70-line provider plus the script in <head> on the server before hydration.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The decision journey · the deepest decision</div>
+        <h2>ADR-009: why we dropped next-themes</h2>
+        <div class="grid cols-3">
+          <div class="card">
+            <span class="tag">Cause</span>
+            <h3>A technical decision, not a stylistic one</h3>
+            <p>next-themes 0.4.6 injects <span class="ref">&lt;script&gt;</span> inside the provider tree, while React 19 / Next 16 rejects that pattern with a console error. The library has been stale since 2024.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Decision</span>
+            <h3>A custom theme provider</h3>
+            <p>ThemeProvider + useTheme in <span class="ref">src/lib/theme.tsx</span> (~70 lines), and the script moves to the server <head> before hydration.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Reflection</span>
+            <h3>Zero dependency</h3>
+            <p>No script errors, no flash, no external bundle. This is the condition that made the full Hydration section of this deck a must.</p>
+          </div>
+        </div>
+        <p class="ref">docs/adr.md:61-66 · src/lib/theme.tsx:40-65 · src/app/layout.tsx:41-52</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 9 · The redesign -->
+    <section class="slide" data-notes="Reveal the roots of the identity in the color system: OKLCH tokens shift silently in :root and .dark, then are consumed via oklch(var(--token)). The single color: amber accent. Typography: Inter for the UI, Source Serif for body copy, Amiri for the display, Ruqaa for the Arabic UI.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The decision journey · visual identity</div>
+        <h2>"Contemporary Voices" — one audiovisual system</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">tokens</span>
+            <h3>OKLCH in an inky scale</h3>
+            <p>A unified palette: ink tilted toward the 245–255 hue instead of black/white, with a single warm amber accent — and the dark theme is not collapsed, so cards stay elevated.</p>
+          </div>
+          <div class="card">
+            <span class="tag">type</span>
+            <h3>Bilingual typography</h3>
+            <p>4 self-hosted families via next/font: Inter, Source Serif, Amiri (display), Ruqaa (Arabic UI). The <span class="ref">:lang(ar)</span> rules swap families and zero out letter-spacing for naskh correctness.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">The signature</span>
+          <p>The waveform — five audio bars from <span class="ref">src/components/WaveformMark.tsx:16-20</span> — echoes across header, footer, 404, and icon.</p>
+        </div>
+        <p class="ref">src/app/globals.css:12-45 · src/lib/fonts.ts:3-45 · src/app/[locale]/not-found.tsx:13</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 10 · Repair waves -->
+    <section class="slide" data-notes="This is a 'every review produces a documented decision' series. Examples: ADR-004 (gap instead of space-x for RTL), 12-per-page windowed pagination, security headers, and a dev-only CSP unsafe-eval (fixing a Turbopack conflict).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The decision journey · repair waves</div>
+        <h2>Every review turned a pain into a documented decision</h2>
+        <div class="grid cols-2">
+          <div class="card"><span class="tag">ADR-004</span><h3>Correct RTL</h3><p>Replacing space-x* utilities with gap spacing in flex — a famous directional bug that breaks in Arabic.</p></div>
+          <div class="card"><span class="tag">#10</span><h3>Pagination + Arabic search</h3><p>Windowed pagination, normalizeArabic for determinism, and an env-aware dynamic sitemap.</p></div>
+          <div class="card"><span class="tag">#11</span><h3>Production readiness</h3><p>Default avatar, robots, security headers, not-found.tsx, and an env-driven sitemap base via NEXT_PUBLIC_SITE_URL.</p></div>
+          <div class="card"><span class="tag">#18</span><h3>CSP vs dev</h3><p>A 'unsafe-eval' exception limited to development modes only so Turbopack keeps working — while the build stays strict.</p></div>
+        </div>
+        <p class="ref">docs/adr.md:26-31 (ADR-004) · src/app/sitemap.ts:5-8 · next.config.ts:7-16</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 11 · ADR archive -->
+    <section class="slide" data-notes="Show the value of documentation: every ADR follows a 'context → decision → reflection' format. Remind the three your team should know by heart: URL-state (002/003), Suspense (006), and the invalid-param fall-through (008).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The decision journey · institutional memory</div>
+        <h2>9 decisions recorded as: context → decision → reflection</h2>
+        <div class="grid cols-3">
+          <div class="card"><span class="tag">ADR-002 · 003</span><h3>URL is the state</h3><p>Every filter is readable from searchParams; changes write via router.replace so history stays clean and back returns to the previous page.</p></div>
+          <div class="card"><span class="tag">ADR-006</span><h3>Suspense is mandatory</h3><p>Next forbids useSearchParams outside a Suspense boundary; the boundary wraps HomePageClient in the server page with a loading shell.</p></div>
+          <div class="card"><span class="tag">ADR-008</span><h3>Safe silent fall-through</h3><p>An invalid country/specialization param does not break results: the set of valid values is built upfront and the invalid one is treated as absent.</p></div>
+        </div>
+        <p class="ref">docs/adr.md · the running example: src/app/[locale]/page.tsx:11-12 then :30-40</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 12 · Data path -->
+    <section class="slide" data-notes="Read the line left to right: 11 data files → barrel (26) → server page → filterScholars → paginate (12) → Suspense → cards. Don't forget that localStorage and window are forever out of the server's reach.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Mental model 1/2 · a straight line</div>
+        <h2>From a static file to a card in seven steps</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>11 specialization files</b>typed data per specialization</div>
+          <div class="flow-step"><b>scholars.ts</b>the barrel combines them by distribution</div>
+          <div class="flow-step"><b>page.tsx</b>normalize + validate (server)</div>
+          <div class="flow-step"><b>filterScholars</b>country · language · specialization · text</div>
+          <div class="flow-step"><b>paginate</b>where 12 per page</div>
+          <div class="flow-step"><b>Suspense</b>the HomePageClient shell</div>
+          <div class="flow-step"><b>ScholarList</b>grid render + motion</div>
+        </div>
+        <p class="ref">src/data/scholars.ts:14-26 · src/app/[locale]/page.tsx:30-48 · src/components/ScholarList.tsx:48-70</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 13 · Closed loop -->
+    <section class="slide" data-notes="The core idea: a closed loop. A filter changes (or is typed into the address bar by hand), the server rebuilds the result, and the shell stores no phantom state. This is the moment you prove you understand URL-state.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Mental model 2/2 · a closed loop</div>
+        <h2>URL ← server ← DOM ← URL …</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>A user changes a filter</b>a menu or a 300ms-debounced search</div>
+          <div class="flow-step"><b>handleFilterChange</b>updateSearchParam + a page reset</div>
+          <div class="flow-step"><b>router.replace</b>rewrites ?query in the address bar</div>
+          <div class="flow-step"><b>page.tsx re-renders</b>validate → filter → paginate</div>
+          <div class="flow-step"><b>Suspense skeleton</b>the mental intake while refreshing</div>
+          <div class="flow-step"><b>New cards</b>and a new cycle on any change</div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">The architectural payoff</span>
+          <p>Directly linking to a filtered URL, the back button, and link sharing — all equivalent, because state lives not in page memory but in the URLs themselves.</p>
+        </div>
+        <p class="ref">src/components/HomePageClient.tsx:38-45 · src/lib/searchParams.ts:1-12</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 14 · Experience: filtering -->
+    <section class="slide" data-notes="Show behavioral feedback quickly: while typing a search, no request until 300ms of quiet (debounce). The reset button appears only when a filter is active; an empty result shows a translated message, not a broken screen.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Product experience 1/3</div>
+        <h2>What does the user see? — filtering and search</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">4 inputs</span>
+            <h3>Search + three menus</h3>
+            <p>Name/bio search, country, language, specialization. Search is debounced 300ms until the typing settles, so the page is not asked per keystroke.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Kind limits</span>
+            <h3>Reset and the empty state</h3>
+            <p>The "Reset" button appears automatically once any filter is active, and returns just the pathname; the empty state is a translated message, not a blank screen.</p>
+          </div>
+        </div>
+        <p class="ref">src/components/FilterBar.tsx:18-40 · src/components/filters/SearchInput.tsx:51-56 · public/locales/ar/common.json:8</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 15 · Experience: scholar page -->
+    <section class="slide" data-notes="Two technically interesting sides: (1) generateStaticParams declares 52 paths at build time, (2) an unknown id calls notFound(), so the route falls through to the localized custom not-found.tsx.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Product experience 2/3</div>
+        <h2>A pre-declared detail page + a custom 404</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>generateStaticParams</b>2 languages × 26 scholars = 52 paths</div>
+          <div class="flow-step"><b>getScholar</b>an id lookup inside the array</div>
+          <div class="flow-step"><b>notFound()</b>unknown id → the 404 screen</div>
+          <div class="flow-step"><b>data</b>name, country, specialization, languages, links</div>
+        </div>
+        <p class="ref">src/app/[locale]/scholars/[id]/page.tsx:20-24 (static params) · :43 (notFound) · src/app/[locale]/not-found.tsx</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 16 · Experience: language and theme -->
+    <section class="slide" data-notes="Two equal languages under [locale]; switching rewrites only the first segment of the path. The dir flip is derived from i18next. And the theme: a placeholder button until first mount, then the real icon — an early tease of the Hydration problem ahead.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Product experience 3/3</div>
+        <h2>A double switch with no flash</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">language</span>
+            <h3>EN / AR</h3>
+            <p>LanguageSwitcher rewrites the root segment of the path; <span class="ref">&lt;html lang dir&gt;</span> are derived from i18next (dir(locale)).</p>
+          </div>
+          <div class="card">
+            <span class="tag">theme</span>
+            <h3>light / dark</h3>
+            <p>ThemeToggle renders a placeholder button until the first mounting, then the real icon — the first tease of the Hydration problem that comes in the technical dive.</p>
+          </div>
+        </div>
+        <p class="ref">src/components/LanguageSwitcher.tsx:14-19 · src/app/layout.tsx:54 · src/components/ThemeToggle.tsx:66-72</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 17 · Server/client boundary -->
+    <section class="slide" data-notes="The heaviest section: the technical dive (14 minutes). Start with component boundaries, then go deeper. The working rule: reading from window/URL/headers → server; human interaction → client; and useSearchParams requires Suspense.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · component boundaries</div>
+        <h2>Where is the line between server and client drawn?</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">server · async</span>
+            <h3>The server zone</h3>
+            <p>page.tsx, generateMetadata, scholar/[id]/page.tsx (pre-declared), sitemap/robots — all read params and headers and finish before reaching the client.</p>
+          </div>
+          <div class="card">
+            <span class="tag">client · use client</span>
+            <h3>The client zone</h3>
+            <p>HomePageClient, FilterBar, ScholarList, Pagination, ThemeToggle, SearchInput — all need window, events, or useSearchParams.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">The working rule</span>
+          <p>"A component that reads the URL/headers → server. A component the user clicks → client. And a useSearchParams usage → Suspense (ADR-006)."</p>
+        </div>
+        <p class="ref">src/app/[locale]/page.tsx:51-81 (Suspense) · src/app/[locale]/HomePageClient.tsx:1-12</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 18 · Routing -->
+    <section class="slide" data-notes="Narrate routing as a path: a request for /en/scholars/6 enters proxy.ts, which checks accept-language, then passes x-locale, and the root layout reads it; so the lang/dir attributes are derived server-side, not by JS. Then generateStaticParams in both [locale] and scholar.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · routing</div>
+        <h2>A request's journey from entry to screen</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>proxy.ts</b>path check and missing segment → accept-language</div>
+          <div class="flow-step"><b>redirect</b>to /en or /ar, preserving the rest of the path</div>
+          <div class="flow-step"><b>x-locale</b>a header added to every localized request</div>
+          <div class="flow-step"><b>root layout</b>async reads x-locale → html lang/dir + the theme script</div>
+          <div class="flow-step"><b>locale layout</b>ThemeProvider + i18n + ErrorBoundary + generateStaticParams</div>
+          <div class="flow-step"><b>scholar details</b>52 pre-declared paths</div>
+        </div>
+        <p class="ref">src/proxy.ts:21-43 · src/app/layout.tsx:40,54 · src/app/[locale]/layout.tsx:52-53</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 19 · Filtering -->
+    <section class="slide" data-notes="An honest representative snippet: the countryId line from page.tsx:32-35 validates through the prebuilt sets. Note that a bad param falls through silently without corrupting the results, and the filterScholars pipeline matches name/bio in both Arabic and English.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · the filter column</div>
+        <h2>Server-side filtering guarded by prebuilt validation sets</h2>
+        <div class="code"><span class="cm">// src/app/[locale]/page.tsx:30-40 (excerpt)</span>
+const filteredScholars = filterScholars(scholars, {
+  searchQuery,
+  countryId: <span class="kw">!isNaN</span>(countryId) &amp;&amp; validCountryIds.<span class="fn">has</span>(countryId)
+    ? countryId : <span class="kw">null</span>,          <span class="cm">// ADR-008</span>
+  categoryId: <span class="kw">!isNaN</span>(categoryId) &amp;&amp; validCategoryIds.<span class="fn">has</span>(categoryId)
+    ? categoryId : <span class="kw">null</span>,
+  lang:         langValue &amp;&amp; scholars.<span class="fn">some</span>(s =&gt; s.language.<span class="fn">includes</span>(langValue))
+    ? langValue : <span class="kw">null</span>,
+});</div>
+        <ul class="tick">
+          <li>The validity sets are built once outside the function — <span class="ref">page.tsx:11-12</span>.</li>
+          <li>Matching runs over name and bio in both languages, with both the record and the query normalized.</li>
+          <li>The output is a separate, testable pipe — <span class="ref">src/lib/filterScholars.ts:17-31</span>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================= 20 · Arabic search -->
+    <section class="slide" data-notes="The crowd-surprise: three regex rules in ~10 lines solve the classic Arabic search puzzle. Show the very tests from pure-logic.test.ts:38-45 — real examples from the dataset.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · text processing</div>
+        <h2>normalizeArabic: the Arabic search puzzle in ~10 lines</h2>
+        <div class="code"><span class="cm">// src/lib/search.ts:1-9</span>
+<span class="kw">const</span> ARABIC_DIACRITICS_AND_TATWEEL = /[\u064B-\u0652\u0670\u0640]/g;
+<span class="kw">const</span> ALEF_VARIANTS             = /[\u0622\u0623\u0625\u0671]/g;
+
+<span class="kw">export function</span> <span class="fn">normalizeArabic</span>(text: string): string {
+  <span class="kw">return</span> text
+    .replace(ARABIC_DIACRITICS_AND_TATWEEL, <span class="str">""</span>)   <span class="cm">// drop diacritics and tatweel</span>
+    .replace(ALEF_VARIANTS, <span class="str">"\u0627"</span>)            <span class="cm">// أ إ آ ٱ → ا</span>
+    .replace(/\u0649/g, <span class="str">"\u064A"</span>)             <span class="cm">// ى → ي</span>
+    .replace(/\u0629/g, <span class="str">"\u0647"</span>);            <span class="cm">// ة → ه</span>
+}</div>
+        <p class="lead">From the project's own tests <span class="ref">src/lib/pure-logic.test.ts:38-45</span>:</p>
+        <div class="grid cols-3">
+          <div class="card"><h3>«مُحَمَّد»</h3><p>→ «محمد» (diacritics and tatweel removed)</p></div>
+          <div class="card"><h3>«أحمد إبراهيم آدم ٱلله»</h3><p>→ «احمد ابراهيم ادم الله» (hamzas unified)</p></div>
+          <div class="card"><h3>«سورة التوبة سعيد»</h3><p>→ «سوره التوبه سعيد» (ى/ة)</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 21 · Pagination -->
+    <section class="slide" data-notes="Define the window: first page, current ±1, last page, with an ellipsis marker between them; beyond 7 pages it shows the very functions as the tests run them. And with 26 scholars the result is only 3 pages.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · pagination</div>
+        <h2>Windowed pagination: 12 per page, no jumps</h2>
+        <div class="code"><span class="cm">// src/lib/pagination.ts:3-19</span>
+<span class="kw">export function</span> <span class="fn">getPages</span>(current: number, total: number): PageItem[] {
+  <span class="kw">if</span> (total &lt;= 7) { <span class="kw">return</span> Array.from({length: total}, (_, i) =&gt; i + 1); }
+  <span class="kw">const</span> pages: PageItem[] = [1];
+  <span class="kw">const</span> start = Math.max(2, current - 1), end = Math.min(total - 1, current + 1);
+  <span class="kw">if</span> (start &gt; 2) pages.push(<span class="str">'ellipsis'</span>);
+  <span class="kw">for</span> (<span class="kw">let</span> i = start; i &lt;= end; i++) pages.push(i);
+  <span class="kw">if</span> (end &lt; total - 1) pages.push(<span class="str">'ellipsis'</span>);
+  pages.push(total); <span class="kw">return</span> pages;
+}</div>
+        <ul class="tick">
+          <li><span class="ref">PER_PAGE = 12</span> — page.tsx:13; and 26 scholars → 3 pages (the last holds 2).</li>
+          <li>The clamp <span class="ref">Math.min(currentPage, totalPages || 1)</span> — page.tsx:47.</li>
+          <li>The tests pin the window: middle, start, end, and the ellipsis — <span class="ref">pure-logic.test.ts:101-113</span>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================= 22 · State -->
+    <section class="slide" data-notes="Three layers of state, but all of them escape to the URL. SearchInput keeps a small local mirror synced from currentFilters via a manual comparison, then a debounce writes when it quiets; any non-page filter change drops page automatically (resetPage).">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · state management</div>
+        <h2>Three layers of state, all around the URL</h2>
+        <div class="grid cols-3">
+          <div class="card">
+            <span class="tag">Source</span>
+            <h3>URL searchParams</h3>
+            <p>The single source of truth (ADR-002). What is not in the address does not exist in the UI.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Middleware</span>
+            <h3>FilterContext</h3>
+            <p>Carries currentFilters + the change functions to every component without prop drilling — <span class="ref">context/FilterContext.tsx:5-19</span>.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Writer</span>
+            <h3>router.replace</h3>
+            <p>A filter update replaces the history entry instead of pushing a new one (ADR-003) — cleaner history and a correct back button.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">A thin brush</span>
+          <p>Search waits for silence, then writes at <span class="ref">SearchInput.tsx:51-56</span>; every non-page filter resets the page via <span class="ref">updateSearchParam(...) resetPage</span> — searchParams.ts:1-12.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 23 · Performance -->
+    <section class="slide" data-notes="Stay honest: there is no official benchmark. We cite measurable structural gains (pre-declaration + server-side filtering, so only one page reaches the client). Note the differences: no PWA here — the required disclaimer. Remember from the build log: the keys are ƒ because the root reads the header — so we don't say 'static pages served from a CDN'.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · performance</div>
+        <h2>Four structural gains without inflated numbers</h2>
+        <div class="grid cols-2">
+          <div class="card"><span class="tag">Pre-declared</span><h3>52 paths declared at build</h3><p>generateStaticParams pins the path set ahead of time; the build log shows them as dynamic ƒ because the root reads the header — we don't say "served from a CDN".</p></div>
+          <div class="card"><span class="tag">Server-only</span><h3>Only the current page is sent</h3><p>Server-side filtering means the 26 records never all reach the client — only what the page displays.</p></div>
+          <div class="card"><span class="tag">fonts</span><h3>Self-hosted fonts + display:swap</h3><p>next/font ships woff2 from the project; no external font request, no CLS from the swap.</p></div>
+          <div class="card"><span class="tag">Suspense</span><h3>A loading shell for uncertainty</h3><p>A soft skeleton instead of an absolute spinner while searchParams settles.</p></div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">Drawing the line</span>
+          <p>We don't claim "faster than X" without measurement. The honest phrase: these are structural, measurable-at-launch gains.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 24 · Security -->
+    <section class="slide" data-notes="Open next.config.ts and walk the array: the six measures. Why 'unsafe-inline'? The inline theme script in <head> needs it. And why 'unsafe-eval' development-only? Because Turbopack relies on transforms/dynamic code during development.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · security</div>
+        <h2>Security headers and a strict CSP on every route</h2>
+        <div class="code"><span class="cm">// next.config.ts (excerpt)</span>
+<span class="fn">script-src</span> 'self' 'unsafe-inline'<span class="cm"> + dev: 'unsafe-eval'</span>
+<span class="fn">object-src</span> 'none'   <span class="fn">base-uri</span> 'self'
+<span class="fn">frame-ancestors</span> 'none'   <span class="fn">form-action</span> 'self'</div>
+        <ul class="tick">
+          <li>HSTS <span class="ref">max-age=63072000; includeSubDomains; preload</span> — next.config.ts.</li>
+          <li>X-Content-Type-Options: nosniff · X-Frame-Options: DENY · Referrer-Policy: strict-origin-when-cross-origin.</li>
+          <li>Permissions-Policy disabling camera, microphone, and geolocation — not needed anyway.</li>
+          <li>The real threat model here: XSS tied to dangerouslySetInnerHTML for the single inline script — controlled via strict URL input + normalization.</li>
+        </ul>
+        <p class="ref">next.config.ts:5-16,21-41 · src/app/layout.tsx:56 (the only inline script)</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 25 · Testing -->
+    <section class="slide" data-notes="Show the fresh output: 2 files and 28 tests (Vitest 4.1.11). Then be candid: what is not covered is components, hooks, and E2E — and that is declared in docs/improvement-plan.md (sections 5.1-5.2), not a hidden gap.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> The technical dive · testing</div>
+        <h2>28 tests passed — and what they don't cover</h2>
+        <div class="stats">
+          <div class="stat"><b>2</b><span>test files</span></div>
+          <div class="stat"><b>28</b><span>tests passed</span></div>
+          <div class="stat"><b>0</b><span>E2E / component tests (declared)</span></div>
+          <div class="stat"><b>4.1.11</b><span>Vitest version</span></div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">data-integrity · 8</span>
+            <h3>Data integrity</h3>
+            <p>Unique ids, valid country and specialization refs, every avatar file present, no orphaned files, and a closed language vocabulary.</p>
+          </div>
+          <div class="card">
+            <span class="tag">pure-logic · 20</span>
+            <h3>Pure logic</h3>
+            <p>normalizeArabic (5) · filterScholars (8) · getPages (4) · paginate (3) — all from the purest source, with no DOM.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">Candor</span>
+          <p>Still missing: components, hooks (useTheme/useFilters), and E2E. The plans are documented in improvement-plan 5.1-5.2 — declaring earns trust.</p>
+        </div>
+        <p class="ref">src/data/data-integrity.test.ts · src/lib/pure-logic.test.ts · docs/improvement-plan.md:416-459</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 26 · Hydration 1 -->
+    <section class="slide" data-notes="This is a mandatory 4-slide series. Walk the six steps into voices: (1) what the server computes and where it stops, (2) when the HTML arrives and where it renders, (3) why the client's first render must literally match the tree, (4) what hydration exactly is — attaching, not rebuilding, (5) where useEffect sits after commit, (6) what a mismatch means.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 1/4 · the concept</div>
+        <h2>What happens between the React server and the browser?</h2>
+        <div class="flowline">
+          <div class="flow-step"><b>1 · Server render</b>builds the tree; sees no window, no localStorage</div>
+          <div class="flow-step"><b>2 · HTML response</b>arrives and renders before the JavaScript is complete</div>
+          <div class="flow-step"><b>3 · First client render</b>must produce the same initial tree, literally</div>
+          <div class="flow-step"><b>4 · Hydration</b>attaching React to the existing shell and wiring events — not CSR from an empty DOM</div>
+          <div class="flow-step"><b>5 · Effects</b>useEffect runs after commit: reads the browser, updates state later</div>
+          <div class="flow-step"><b>6 · Mismatch</b>a difference before hydration → warning / error / DOM reset</div>
+        </div>
+        <p class="lead">The central question for the team: "What if the client's first render differs from the server tree?" — the answer is on the next slide, with a real case from this project.</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 27 · Hydration 2 -->
+    <section class="slide" data-notes="The error story as recorded in docs/fix-hydration-error.md (Install section). Before the fix: ThemeToggle renders an icon that depends on theme from localStorage; the server has no preference, so it renders a 'moon', and the first client render reads and writes a different icon — two different trees = mismatch.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 2/4 · the error story</div>
+        <h2>The error that made this section mandatory</h2>
+        <div class="grid cols-3">
+          <div class="card">
+            <span class="tag">The wrong root</span>
+            <h3>A read during the first render</h3>
+            <p>Never touch "window" or "localStorage" in the component body during the first render — the server has neither.</p>
+          </div>
+          <div class="card">
+            <span class="tag">The wrong mechanism</span>
+            <h3>A rejected example</h3>
+            <code class="code" style="font-size:.72rem;display:block">const theme = localStorage.getItem('theme') // ✗
+<span class="kw">return</span> theme === 'dark' ? &lt;Moon /&gt; : &lt;Sun /&gt;</code>
+            <p style="margin-top:.5rem">Server: "system". First client render: "dark". Two different trees.</p>
+          </div>
+          <div class="card">
+            <span class="tag">The documented outcome</span>
+            <h3>Different rendering until hydration</h3>
+            <p>A Hydration warning/error, a possible DOM rebuild or unexpected behavior — <span class="ref">docs/fix-hydration-error.md:5-10</span>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 28 · Hydration 3 -->
+    <section class="slide" data-notes="Four actual techniques in the code: (1) an inline <head> script applies the theme class before rendering + suppressHydrationWarning on <html>, (2) a mount guard renders an inert button, (3) useHasMounted via useSyncExternalStore, (4) systemDark with the same mechanism. Don't skip the initializer note in theme.tsx.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 3/4 · the actual safe pattern</div>
+        <h2>How does the project actually avoid a mismatch?</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">1 · Before hydration</span>
+            <h3>An inline &lt;head&gt; script</h3>
+            <p>Applies the theme class to documentElement before React starts — with suppressHydrationWarning on <html>. <span class="ref">layout.tsx:41-54</span></p>
+          </div>
+          <div class="card">
+            <span class="tag">2 · Mount guard</span>
+            <h3>A placeholder button until commit</h3>
+            <p>For every useTheme state a placeholder renders: only after the first mounting does the real icon appear. <span class="ref">ThemeToggle.tsx:66-72</span></p>
+          </div>
+          <div class="card">
+            <span class="tag">3 · useSyncExternalStore</span>
+            <h3>useHasMounted</h3>
+            <code class="code" style="font-size:.72rem;display:block">export function useHasMounted() {
+  return useSyncExternalStore(() =&gt; () =&gt; {},
+    () &nbsp;=&gt; true,   // client
+    () &nbsp;=&gt; false); // server</code>
+          </div>
+          <div class="card">
+            <span class="tag">4 · Same mechanism when needed</span>
+            <h3>systemDark</h3>
+            <p>matchMedia via useSyncExternalStore with a stable false server snapshot. <span class="ref">ThemeToggle.tsx:60-64, 19-21</span></p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">A precise note</span>
+          <p>theme.tsx reads localStorage in its state initializer (theme.tsx:41); it is safe here despite the gray-zone logic, because the guard never exposes any output that depends on it in the first HTML — the guard prevents that.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 29 · Hydration 4 -->
+    <section class="slide" data-notes="The decisive distinction many miss: a mismatch during the first render = an error. State updating after useEffect/commit = entirely expected behavior if the initial tree matches. Real component example: after mount the system turns dark, so the icon moves from 'moon' to 'sun' — this is not a mismatch.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Hydration 4/4 · the decisive distinction</div>
+        <h2>mismatch ≠ an update after commit</h2>
+        <div class="grid cols-2">
+          <div class="card" style="border-color: color-mix(in oklch, var(--bad) 55%, var(--line));">
+            <span class="tag">✗ mismatch</span>
+            <h3>A difference in the initial trees</h3>
+            <p>Happens at Hydration when the client's first render differs from the server tree. Prevention: a mount guard + a read after commit.</p>
+          </div>
+          <div class="card" style="border-color: color-mix(in oklch, var(--good) 55%, var(--line));">
+            <span class="tag">✓ post-commit update</span>
+            <h3>Expected and correct</h3>
+            <p>After hydration completes, ThemeToggle flips from a placeholder to a real icon in response to the browser's system — a state updated after commit, not an initial difference.</p>
+          </div>
+        </div>
+        <div class="aspect-banner">
+          <span class="lbl">The ruling rule</span>
+          <p>If the first render matches the server tree, any later update via useEffect/external cues is an understood update, not an error — and that is the name the presenter must give the team.</p>
+        </div>
+        <p class="ref">src/components/ThemeToggle.tsx:74-76 (the post-commit fix) · docs/fix-hydration-error.md:7-10</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 30 · Live divider -->
+    <section class="slide divider-slide" data-notes="Stop the explanation and make a smooth transition to the live demo: open the browser on /en, then run only four or five short scenarios and mention the full script in demo-script.md. If the preview fails: show the compressed track and the saved screenshots.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave i1"><i></i><i></i><i></i><i></i><i></i></span> The live demo · 10 minutes</div>
+        <h2>Let's confirm with evidence, not words</h2>
+        <p class="lead">Details and numbers in <span class="ref">presentation/demo-script.md</span><br>A 5-minute compressed track + backup screenshots if the infrastructure breaks.</p>
+        <div class="grid cols-3">
+          <div class="card"><h3>Filtering and search</h3><p>country × specialization × language + Arabic search across letter variants</p></div>
+          <div class="card"><h3>URL as state</h3><p>change, reload, back, and share the preview</p></div>
+          <div class="card"><h3>Theme and language</h3><p>flash-free switching + a custom 404</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 31 · Trade-offs -->
+    <section class="slide" data-notes="Close objectively: there is no innocent choice. Put a gain/cost column in front of the team, then name the moment you'd recommend flipping the decision (hundreds of scholars, or non-technical editing). Trust comes from acknowledging the price.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Trade-offs · what did we gain and what did we pay?</div>
+        <h2>A decision, then its price — both in front of you</h2>
+        <div class="grid cols-3">
+          <div class="card" style="border-color: color-mix(in oklch, var(--good) 55%, var(--line));">
+            <span class="tag">Gained</span>
+            <h3>A back-button-friendly architecture</h3>
+            <p>URL-state gives back/undo/share for free; pre-declaration pins paths without request-time computation; a zero-dependency theme; and pure functions tested in isolation.</p>
+          </div>
+          <div class="card" style="border-color: color-mix(in oklch, var(--bad) 55%, var(--line));">
+            <span class="tag">Paid</span>
+            <h3>A fixed scaling cost</h3>
+            <p>Data in TS files: adding a scholar = a code change + a rebuild; O(n) filtering per request (fine at 26, suspicious at thousands); no CMS, no non-technical editing.</p>
+          </div>
+          <div class="card">
+            <span class="tag">When to revisit</span>
+            <h3>A stated threshold</h3>
+            <p>When the scholar count approaches the hundreds, or an editor wants to change a record from a UI — at that point a DB or CMS becomes a necessity, not a luxury.</p>
+          </div>
+        </div>
+        <p class="ref">docs/adr.md (the decisions) · docs/improvement-plan.md:397-413 (the future CMS)</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 32 · Limits -->
+    <section class="slide" data-notes="The accountability section: we declare the limits explicitly. No full PWA (a manifest alone is not enough), no database/identity, no E2E, no official performance measurement, and no production error monitoring. These are documented stage decisions, not blind spots.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Known limits · credibility before praise</div>
+        <h2>What is not solved yet — a stage decision, not an oversight</h2>
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">No full PWA</span>
+            <h3>A manifest alone is not enough</h3>
+            <p>manifest.ts exists (name/icon/start_url), but there is no service worker, no install, and no real offline mode. Don't claim "installable" or "offline".</p>
+          </div>
+          <div class="card">
+            <span class="tag">No data/identity</span>
+            <h3>A deliberately static directory</h3>
+            <p>No database, no auth, no API — zero data-ingress surfaces; and the scale pain at hundreds has a planned path.</p>
+          </div>
+          <div class="card">
+            <span class="tag">No E2E</span>
+            <h3>Core tests, not shell tests</h3>
+            <p>No components, no hooks, no E2E; no measured coverage. Plan 5.1-5.2 charts the route to 70%.</p>
+          </div>
+          <div class="card">
+            <span class="tag">No measurement/monitoring</span>
+            <h3>A structure ready without numbers</h3>
+            <p>No official Lighthouse, no Sentry, no LogRocket — fixed benefits with no numeric proof yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================= 33 · Roadmap -->
+    <section class="slide" data-notes="Order by risk, not by passion: (1) data integrity first — a DB/CMS and a schema for the pending scholars-db.json, (2) interaction coverage with tests, (3) performance under growth with measurement, (4) then monitoring and security. Make the team see why you didn't start with the shiniest proposal.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span> Roadmap · by risk, not by liking</div>
+        <h2>Priority by compounded risk</h2>
+        <div class="tl">
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P0 — data risk</b><p>Split the data into a DB/CMS with a schema for the pending scholars-db.json, plus a migration script and an integration test (protect trust before any feature).</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P1 — interaction risk</b><p>Component tests (ThemeToggle/FilterBar) + hooks, with a clear path to 70% measured coverage.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P2 — growth risk</b><p>Explicit measurement of filterScholars above 1,000 scholars, then an index/structure decision by number, not by guesswork.</p>
+          </div></div>
+          <div class="tl-item"><span class="tl-dot"></span><div class="tl-body">
+            <b>P3 — monitoring and security</b><p>Production error capture (ideally Sentry) + automated CSP checks in the build, and before all that a real production domain.</p>
+          </div></div>
+        </div>
+        <p class="ref">docs/improvement-plan.md · scholars-db.json (pending structure, 9 lines)</p>
+      </div>
+    </section>
+
+    <!-- ============================================= 34 · Conclusion -->
+    <section class="slide" data-notes="Close with a single sentence, then genuinely open questions (not questions for my benefit): does the data stay static, or do we move to a DB now? Is core coverage enough at launch? Then thank them and hold still. Remember the pragmatic litmus: any scholar who doesn't appear on a correct search is a bug, left and right.">
+      <div class="slide-inner">
+        <div class="kicker"><span class="wave i1"><i></i><i></i><i></i><i></i><i></i></span> Conclusion · one sentence</div>
+        <h2>"Voices of Truth: a static-data directory, decided on the server, state in the URL, and safe in 28 tests — designed to survive its next stage of growth."</h2>
+        <p class="lead" style="margin-top:1.4rem; font-weight:600; color: inherit;">Open questions</p>
+        <ul class="tick">
+          <li>Is moving the data to a DB/CMS a priority now, or after the hundreds threshold?</li>
+          <li>Are component tests required before launch, or is core integrity enough?</li>
+          <li>Which declared limit worries the team the most? (that is a signal for the roadmap priority)</li>
+        </ul>
+        <div class="row" style="margin-top:1.6rem">
+          <span class="pill ok">Thank you — let's move to questions</span>
+          <span class="ref">presentation/demo-script.md · presentation/qa-guide.md</span>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /stage -->
+
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+</div><!-- /deck -->
+
+<!-- Overview panel -->
+<div class="overlay" id="overview" role="dialog" aria-modal="true" aria-label="Overview of slides">
+  <div class="overlay-inner">
+    <h3>Overview of slides</h3>
+    <div class="ov-grid" id="ov-grid"></div>
+  </div>
+</div>
+
+<!-- Notes panel -->
+<aside class="notes-panel" id="notes" aria-label="Presenter notes">
+  <div class="notes-inner">
+    <header>
+      <h4>Presenter notes</h4>
+      <button class="ctl" data-action="notes-close" aria-label="Close notes">✕</button>
+    </header>
+    <div class="notes-text" id="notes-text"></div>
+  </div>
+</aside>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var indexEl = document.getElementById('index');
+  var bar = document.getElementById('bar');
+  var overview = document.getElementById('overview');
+  var ovGrid = document.getElementById('ov-grid');
+  var notes = document.getElementById('notes');
+  var notesText = document.getElementById('notes-text');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- build overview + numbering ---------- */
+  slides.forEach(function (s, i) {
+    var title = s.querySelector('h1, h2');
+    var label = title ? title.textContent.trim() : ('Slide ' + (i + 1));
+    var btn = document.createElement('button');
+    btn.className = 'ov-card';
+    btn.setAttribute('data-goto', i);
+    btn.innerHTML = '<b>' + (i + 1) + '</b><span></span>';
+    btn.querySelector('span').textContent = label;
+    ovGrid.appendChild(btn);
+  });
+
+  function fmtIndex() { indexEl.innerHTML = '<b>' + (current + 1) + '</b> / ' + total; }
+  function fmtBar() { bar.style.width = ((current + 1) / total * 100) + '%'; }
+
+  function setCurrent(i, announce) {
+    i = Math.max(0, Math.min(total - 1, i));
+    if (i === current && announce !== 'force') return;
+    current = i;
+    slides.forEach(function (s, k) { s.classList.toggle('active', k === current); });
+    Array.prototype.forEach.call(ovGrid.children, function (c) {
+      c.classList.toggle('cur', Number(c.getAttribute('data-goto')) === current);
+    });
+    fmtIndex(); fmtBar();
+    if (window.history.replaceState) {
+      try { window.history.replaceState(null, '', '#' + (current + 1)); } catch (e) {}
+    }
+    var notesTxt = slides[current].getAttribute('data-notes') || '';
+    notesText.textContent = notesTxt;
+    if (notes.classList.contains('open') && announce) {
+      closeNotes();
+    }
+  }
+
+  var stage = document.getElementById('stage');
+  function ensureActiveInit() {
+    var hash = parseInt((window.location.hash || '').replace('#', ''), 10);
+    var start = (hash >= 1 && hash <= total) ? hash - 1 : 0;
+    setCurrent(start, 'force');
+    stage.style.display = 'block';
+  }
+
+  /* ---------- buttons ---------- */
+  function act(el) {
+    if (el.hasAttribute('data-action')) return el.getAttribute('data-action');
+    for (var p = el.parentElement; p; p = p.parentElement) {
+      if (p.hasAttribute('data-action')) return p.getAttribute('data-action');
+    }
+    return null;
+  }
+
+  document.addEventListener('click', function (e) {
+    var action = act(e.target);
+    if (!action) return;
+    if (action === 'next') setCurrent(current + 1);
+    if (action === 'prev') setCurrent(current - 1);
+    if (action === 'fullscreen') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    }
+    if (action === 'theme') toggleTheme();
+    if (action === 'overview') openOverview();
+    if (action === 'overview-close') closeOverview();
+    if (action === 'notes') toggleNotes();
+    if (action === 'notes-close') closeNotes();
+  });
+
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest ? e.target.closest('[data-goto]') : null;
+    if (g) { setCurrent(Number(g.getAttribute('data-goto'))); }
+  });
+
+  function toggleTheme() {
+    var root = document.documentElement;
+    var cur = document.body.getAttribute('data-deck-theme') === 'dark' ? 'dark' : 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-deck-theme', next);
+    try { localStorage.setItem('deck-theme', next); } catch (e) {}
+  }
+  (function initTheme() {
+    var saved = 'light';
+    try { saved = localStorage.getItem('deck-theme') || 'light'; } catch (e) {}
+    if (saved !== 'dark' && saved !== 'light') saved = 'light';
+    document.body.setAttribute('data-deck-theme', saved);
+  })();
+
+  function openOverview() { overview.classList.add('open'); overview.classList.remove('close'); }
+  function closeOverview() { overview.classList.remove('open'); }
+  function toggleNotes() { notes.classList.toggle('open'); }
+  function closeNotes() { notes.classList.remove('open'); }
+
+  /* ---------- keyboard ---------- */
+  document.addEventListener('keydown', function (e) {
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': case ' ': setCurrent(current + 1); e.preventDefault(); break;
+      case 'ArrowLeft': case 'PageUp': setCurrent(current - 1); e.preventDefault(); break;
+      case 'Home': setCurrent(0); e.preventDefault(); break;
+      case 'End': setCurrent(total - 1); e.preventDefault(); break;
+      case 'f': case 'F': document.documentElement.requestFullscreen && (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()); break;
+      case 'o': case 'O': overview.classList.contains('open') ? closeOverview() : openOverview(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 't': case 'T': toggleTheme(); break;
+      case 'Escape':
+        if (overview.classList.contains('open')) closeOverview();
+        if (notes.classList.contains('open')) closeNotes();
+        break;
+    }
+  });
+
+  overview.addEventListener('click', function (e) {
+    if (e.target === overview) closeOverview();
+  });
+
+  /* ---------- touch ---------- */
+  var tsX = null;
+  stage.addEventListener('touchstart', function (e) {
+    tsX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  stage.addEventListener('touchend', function (e) {
+    if (tsX === null) return;
+    var dx = e.changedTouches[0].clientX - tsX;
+    var swipe = dx > 45 ? -1 : dx < -45 ? 1 : 0;
+    if (swipe !== 0) setCurrent(current + swipe);
+    tsX = null;
+  }, { passive: true });
+
+  window.addEventListener('resize', fmtBar);
+
+  /* ---------- boot ---------- */
+  ensureActiveInit();
+})();
+</script>
+</body>
+</html>
